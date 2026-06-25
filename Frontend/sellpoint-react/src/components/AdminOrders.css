@@ -1,0 +1,27 @@
+.admin-orders-container {
+    min-height: 100vh;
+    background: #f5f5f5;
+}
+.admin-orders-header { background: white; padding: 15px 30px; display: flex; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.admin-orders-main { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+.filter-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+.filter-tab { padding: 8px 20px; background: white; border-radius: 20px; cursor: pointer; }
+.filter-tab.active { background: #667eea; color: white; }
+.orders-table { width: 100%; border-collapse: collapse; background: white; }
+.orders-table th, .orders-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+.status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+.badge-pending { background: #fef3c7; color: #92400e; }
+.badge-confirmed { background: #fed7e2; color: #97266d; }
+.badge-shipped { background: #bee3f8; color: #2c5282; }
+.badge-delivered { background: #c6f6d5; color: #22543d; }
+.badge-cancelled { background: #fed7d7; color: #c53030; }
+.dispute-yes { color: #f56565; font-weight: bold; }
+.loading { text-align: center; padding: 60px; }
+.modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+.modal-content { background: white; border-radius: 10px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; }
+.modal-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; }
+.modal-body { padding: 20px; }
+.close-btn { background: #e2e8f0; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; }
+.items-table { width: 100%; margin: 10px 0; border-collapse: collapse; }
+.items-table th, .items-table td { border-bottom: 1px solid #edf2f7; padding: 8px; text-align: left; }
+.summary { margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 8px; }

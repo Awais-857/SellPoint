@@ -1,0 +1,5 @@
+.admin-disputes-container { min-height: 100vh; background: #f5f5f5; }
+.admin-disputes-header { background: white; padding: 15px 30px; display: flex; justify-content: space-between; }
+.admin-disputes-main { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+.disputes-table { width: 100%; background: white; border-collapse: collapse; }
+.disputes-table th, .disputes-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }

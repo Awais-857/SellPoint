@@ -1,0 +1,124 @@
+/* src/components/ReviewForm.css */
+.review-form-container {
+    min-height: 100vh;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.review-form-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.review-form-card h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.star-rating {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.star {
+    font-size: 32px;
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.2s;
+}
+
+.star.selected {
+    color: #fbbf24;
+}
+
+.star:hover {
+    color: #fbbf24;
+}
+
+.review-form-card .form-group {
+    margin-bottom: 20px;
+}
+
+.review-form-card label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.review-form-card textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    width: auto;
+    padding: 8px 20px;
+}
+
+.form-actions button:first-child {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.form-actions button:first-child:hover {
+    background: #cbd5e0;
+}
+
+.review-success {
+    text-align: center;
+}
+
+.review-success h2 {
+    color: #48bb78;
+}
+
+.review-success button {
+    width: auto;
+    padding: 10px 25px;
+    margin-top: 15px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    width: auto;
+    padding: 8px 20px;
+}
+
+.form-actions button:first-child {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.error-message {
+    background: #fed7d7;
+    color: #c53030;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}

@@ -1,0 +1,391 @@
+/* src/components/ProductListing.css */
+
+.product-listing-container {
+    min-height: 100vh;
+    background: #f5f5f5;
+}
+
+/* Header */
+.listing-header {
+    background: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.listing-header h1 {
+    color: #667eea;
+    margin: 0;
+    cursor: pointer;
+}
+
+.header-links span {
+    margin-left: 20px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s;
+}
+
+.header-links span:hover {
+    color: #667eea;
+}
+
+/* Main Layout */
+.listing-main {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Sidebar Filters */
+.filters-sidebar {
+    width: 260px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.filters-sidebar h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.filter-section {
+    margin-bottom: 25px;
+    overflow-x: hidden;
+}
+
+.filter-section h4 {
+    margin: 0 0 10px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.category-filter {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: #f7fafc;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.category-filter:hover {
+    background: #edf2f7;
+}
+
+.category-filter.active {
+    background: #667eea;
+    color: white;
+}
+
+/* Replace the existing .price-inputs section with this */
+.price-inputs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.price-inputs input {
+    flex: 1;
+    min-width: 0;  /* This prevents overflow */
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;  /* Ensures padding doesn't add to width */
+}
+
+.price-inputs span {
+    flex-shrink: 0;
+}
+
+.apply-price-btn {
+    width: 100%;
+    padding: 8px;
+    background: #e2e8f0;
+    color: #333;
+    font-size: 14px;
+}
+
+.apply-price-btn:hover {
+    background: #cbd5e0;
+}
+
+.filter-section select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.clear-filters-btn {
+    width: 100%;
+    padding: 10px;
+    background: #f56565;
+    color: white;
+    font-size: 14px;
+}
+
+.clear-filters-btn:hover {
+    background: #c53030;
+}
+
+/* Products Main Area */
+.products-main {
+    flex: 1;
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.search-bar button {
+    width: auto;
+    padding: 12px 25px;
+    background: #667eea;
+    font-size: 16px;
+}
+
+.results-info {
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Product Card */
+.product-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.product-card-image {
+    position: relative;
+    height: 200px;
+    background: #f7fafc;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.product-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #a0aec0;
+    font-size: 14px;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f56565;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.product-card-info {
+    padding: 15px;
+}
+
+.product-name {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    cursor: pointer;
+    color: #333;
+}
+
+.product-name:hover {
+    color: #667eea;
+}
+
+.product-vendor {
+    color: #718096;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.product-rating {
+    color: #fbbf24;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.product-rating span {
+    color: #a0aec0;
+    margin-left: 5px;
+}
+
+.product-price {
+    margin-bottom: 12px;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #a0aec0;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.discounted-price, .price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.add-to-cart-btn {
+    width: 100%;
+    padding: 10px;
+    background: #4a5568;
+    color: white;
+    font-size: 14px;
+}
+
+.add-to-cart-btn:hover:not(:disabled) {
+    background: #2d3748;
+}
+
+.add-to-cart-btn:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+}
+
+/* Loading State */
+.loading-state {
+    text-align: center;
+    padding: 60px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e2e8f0;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Error & No Products */
+.error-state, .no-products {
+    text-align: center;
+    padding: 60px;
+}
+
+.error-state button, .no-products button {
+    width: auto;
+    padding: 10px 25px;
+    margin-top: 15px;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.pagination button {
+    width: auto;
+    padding: 8px 15px;
+    background: white;
+    color: #4a5568;
+    font-size: 14px;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #667eea;
+    color: white;
+}
+
+.pagination button.active {
+    background: #667eea;
+    color: white;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    padding: 8px 12px;
+    color: #a0aec0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .listing-main {
+        flex-direction: column;
+    }
+    
+    .filters-sidebar {
+    width: 260px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+    overflow-x: hidden;  /* Add this to prevent overflow */
+}
+    
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+}

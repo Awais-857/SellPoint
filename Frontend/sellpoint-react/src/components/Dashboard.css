@@ -1,0 +1,114 @@
+/* src/components/Dashboard.css */
+.dashboard-container {
+    min-height: 100vh;
+    background: #f7fafc;
+}
+
+.dashboard-nav {
+    background: white;
+    padding: 20px 40px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-nav h1 {
+    color: #667eea;
+    margin: 0;
+}
+
+.logout-btn {
+    width: auto;
+    padding: 8px 20px;
+    background: #f56565;
+}
+
+.logout-btn:hover {
+    background: #c53030;
+}
+
+.dashboard-content {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dashboard-card h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+}
+
+.dashboard-card h3 {
+    margin: 0 0 15px 0;
+    color: #4a5568;
+}
+
+.dashboard-card p {
+    margin: 10px 0;
+    color: #666;
+}
+
+.info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.info-card h3 {
+    margin: 0 0 15px 0;
+    color: #4a5568;
+}
+
+.info-card ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.info-card li {
+    margin: 10px 0;
+    color: #666;
+}
+
+/* Customer Dashboard specific styles */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-links span {
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s;
+}
+
+.nav-links span:hover {
+    color: #667eea;
+}
+
+.stat-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.dashboard-card button {
+    transition: all 0.3s ease;
+}
+
+.dashboard-card button:hover {
+    transform: translateY(-1px);
+}
