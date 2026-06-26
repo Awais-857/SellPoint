@@ -1,5 +1,5 @@
 # SELLPOINT – Multi‑Vendor Marketplace
-
+![SellPoint Banner](./banner.png)
 A full‑stack e‑commerce platform where multiple vendors can register, list products,
 and manage orders. Customers can browse, purchase, and track orders – all in one
 marketplace.
