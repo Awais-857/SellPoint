@@ -143,7 +143,7 @@ function ProductListing() {
         <div className="product-listing-container">
             {/* Header with navigation */}
             <div className="listing-header">
-                <h1>SellPoint Marketplace</h1>
+                <h1>SellPoint</h1>
                 <div className="header-links">
                     <span onClick={() => navigate('/dashboard')}>My Dashboard</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
