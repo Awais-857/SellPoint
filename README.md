@@ -4,7 +4,7 @@ A full‑stack e‑commerce platform where multiple vendors can register, list p
 and manage orders. Customers can browse, purchase, and track orders – all in one
 marketplace.
 
-Live Demo: [URL]
+**Live Demo:** [SellPoint](https://sell-point-seven.vercel.app/)
 
 ## FEATURES
 
