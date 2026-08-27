@@ -85,9 +85,9 @@ App runs on `http://localhost:3000`.
 
 ## DEPLOYMENT
 
-- **Frontend:** Vercel / Netlify (static)
-- **Backend:** Render / Azure App Service (with environment variables)
-- **Database:** Azure SQL / Supabase (PostgreSQL compatible)
+- **Frontend:** Vercel
+- **Backend:** Azure App Service (with environment variables)
+- **Database:** Azure SQL
 
 ## LICENSE
 
@@ -95,4 +95,4 @@ This project was created for academic and portfolio purposes. No commercial lice
 
 ## CONTACT
 - [Awais Iqbal](https://github.com/Awais-857)
-- [LinkedIn](https://github.com/Awais-857)
+- [LinkedIn](www.linkedin.com/in/awais-iqbal-hi)
