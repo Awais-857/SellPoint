@@ -95,4 +95,4 @@ This project was created for academic and portfolio purposes. No commercial lice
 
 ## CONTACT
 - [Awais Iqbal](https://github.com/Awais-857)
-- [LinkedIn](www.linkedin.com/in/awais-iqbal-hi)
+- [LinkedIn](https://www.linkedin.com/in/awais-iqbal-hi/)
