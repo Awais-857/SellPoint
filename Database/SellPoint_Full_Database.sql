@@ -1,7 +1,7 @@
 -- =============================================================
 -- SellPoint Full Database Script
 --
--- Author: Student Name
+-- Author: Awais Iqbal
 -- Environment: Microsoft SQL Server
 --
 -- Contents:
