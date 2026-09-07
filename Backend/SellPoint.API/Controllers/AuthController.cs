@@ -114,16 +114,24 @@ namespace SellPoint.API.Controllers
         {
             try
             {
+                // 1. Feature flag check
+                if (!_configuration.GetValue<bool>("Features:EnablePasswordReset"))
+                {
+                    return BadRequest(new { message = "Password reset is temporarily disabled." });
+                }
+
+                // 2. Generate token and attempt to store it
                 string resetToken = Guid.NewGuid().ToString();
                 var userId = await _databaseService.RequestPasswordReset(model.Email, resetToken);
-                if (userId.HasValue)
-                    return Ok(new { message = "Password reset link sent!", resetToken });
-                else
-                    return BadRequest(new { message = "Email not found" });
+
+                // 3. Always return the same generic message for security
+                // This prevents attackers from knowing which emails are registered.
+                return Ok(new { message = "If your email is registered, you will receive a reset link." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Failed to process request", error = ex.Message });
+                // Log the error internally, but return a generic message
+                return StatusCode(500, new { message = "Failed to process request. Please try again later." });
             }
         }
 
@@ -132,8 +140,12 @@ namespace SellPoint.API.Controllers
         {
             try
             {
+                if (!_configuration.GetValue<bool>("Features:EnablePasswordReset"))
+                {
+                    return BadRequest(new { message = "Password reset is temporarily disabled." });
+                }
                 var userId = await _databaseService.ValidateResetToken(model.Token);
-                if (!userId.HasValue) return BadRequest(new { message = "Invalid or expired reset token" });
+                if (!userId.HasValue) return BadRequest(new { message = "Invalid or expired reset link." });
 
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
                 var result = await _databaseService.ResetPassword(model.Token, hashedPassword);
