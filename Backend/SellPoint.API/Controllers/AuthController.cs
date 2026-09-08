@@ -154,7 +154,7 @@ namespace SellPoint.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Password reset failed", error = ex.Message });
+                return StatusCode(500, new { message = "An error occurred. Please try again." });
             }
         }
 
