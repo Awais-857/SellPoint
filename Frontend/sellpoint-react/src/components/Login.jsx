@@ -7,6 +7,7 @@ import api from '../services/api';
 import './Auth.css';
 
 function Login() {
+    const isResetEnabled = process.env.REACT_APP_ENABLE_PASSWORD_RESET === 'true';
     const [formData, setFormData] = useState({
         usernameOrEmail: '',
         password: ''
@@ -100,7 +101,9 @@ function Login() {
                 </form>
 
                 <div className="auth-links">
-                    <Link to="/forgot-password">Forgot Password?</Link>
+                    {isResetEnabled && (
+                        <Link to="/forgot-password">Forgot Password?</Link>
+                    )}
                     <p>
                         Don't have an account? <Link to="/register">Register here</Link>
                     </p>
