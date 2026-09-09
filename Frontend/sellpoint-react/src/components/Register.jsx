@@ -1,5 +1,4 @@
 // src/components/Register.jsx
-// Updated with file upload support for vendors
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -268,7 +267,6 @@ if (formData.userType === 'Vendor') {
                         >
                             <option value="Customer">Customer</option>
                             <option value="Vendor">Vendor</option>
-                            <option value="Admin">Admin</option>
                         </select>
                     </div>
 
