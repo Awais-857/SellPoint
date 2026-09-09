@@ -29,6 +29,9 @@ namespace SellPoint.API.Controllers
                 var exists = await _databaseService.CheckUserExists(model.Username, model.Email);
                 if (exists.UsernameExists) return BadRequest(new { message = "Username already exists" });
                 if (exists.EmailExists) return BadRequest(new { message = "Email already exists" });
+                // Reject Admin registration from public endpoint
+                if (model.UserType == "Admin")
+                    return BadRequest(new { message = "Admin accounts cannot be created via this endpoint." });
         
                 string hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
                 int userId = await _databaseService.RegisterUser(model, hashedPassword);
