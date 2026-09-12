@@ -170,43 +170,26 @@ namespace SellPoint.API.Services
             }
         }
 
-        public async Task<(int VendorProfileId, string UploadToken)> CreateVendorProfile(int userId, RegisterModel model)
-{
-    using (SqlConnection conn = new SqlConnection(_connectionString))
-    using (SqlCommand cmd = new SqlCommand("sp_CreateVendorProfile", conn))
-    {
-        cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Parameters.AddWithValue("@UserID", userId);
-        cmd.Parameters.AddWithValue("@BusinessName", model.BusinessName ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@TaxID", model.TaxID ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@BusinessPhone", model.BusinessPhone ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@BusinessEmail", model.BusinessEmail ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@Website", model.Website ?? (object)DBNull.Value);
-        cmd.Parameters.AddWithValue("@BusinessDescription", model.BusinessDescription ?? (object)DBNull.Value);
-        await conn.OpenAsync();
-        using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+        public async Task<int> CreateVendorProfile(int userId, RegisterModel model)
         {
-            if (await reader.ReadAsync())
-            {
-                int vendorProfileId = Convert.ToInt32(reader.GetValue(0));
-                string uploadToken = reader.GetString(1);
-                return (vendorProfileId, uploadToken);
-            }
-        }
-    }
-    return (0, null);
-}
-
-        public async Task<bool> ValidateVendorUploadToken(int userId, string token)
-        {
+            var autoApprove = _configuration.GetValue<bool>("VendorSettings:AutoApprove");
+            var approvalStatus = autoApprove ? "Approved" : "Pending";
+        
             using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = new SqlCommand("SELECT COUNT(1) FROM VendorProfiles WHERE UserID = @UserID AND UploadToken = @Token AND UploadTokenExpiry > GETDATE() AND ApprovalStatus = 'Pending'", conn))
+            using (SqlCommand cmd = new SqlCommand("sp_CreateVendorProfile", conn))
             {
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.Parameters.AddWithValue("@Token", token);
+                cmd.Parameters.AddWithValue("@BusinessName", model.BusinessName ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@TaxID", model.TaxID ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@BusinessPhone", model.BusinessPhone ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@BusinessEmail", model.BusinessEmail ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Website", model.Website ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@BusinessDescription", model.BusinessDescription ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ApprovalStatus", approvalStatus);
                 await conn.OpenAsync();
-                int count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-                return count > 0;
+                var result = await cmd.ExecuteScalarAsync();
+                return result != null ? Convert.ToInt32(result) : 0;
             }
         }
 
@@ -1455,55 +1438,6 @@ private async Task<int> GetProductVendorId(int productId, SqlConnection conn, Sq
             return new DashboardStats();
         }
 
-        // ========== VENDOR DOCUMENTS ==========
-
-        public async Task<int> UploadVendorDocument(int userId, string documentType, string fileName, string filePath, int? fileSize = null, string contentType = null)
-        {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = new SqlCommand("sp_UploadVendorDocument", conn))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.Parameters.AddWithValue("@DocumentType", documentType);
-                cmd.Parameters.AddWithValue("@FileName", fileName);
-                cmd.Parameters.AddWithValue("@FilePath", filePath);
-                cmd.Parameters.AddWithValue("@FileSize", fileSize ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@ContentType", contentType ?? (object)DBNull.Value);
-                await conn.OpenAsync();
-                return Convert.ToInt32(await cmd.ExecuteScalarAsync());
-            }
-        }
-
-        public async Task<List<VendorDocument>> GetVendorDocuments(int userId)
-        {
-            var documents = new List<VendorDocument>();
-            using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = new SqlCommand("sp_GetVendorDocuments", conn))
-            {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                await conn.OpenAsync();
-                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        documents.Add(new VendorDocument
-                        {
-                            DocumentID = reader.GetInt32(reader.GetOrdinal("DocumentID")),
-                            DocumentType = reader.GetString(reader.GetOrdinal("DocumentType")),
-                            FileName = reader.GetString(reader.GetOrdinal("FileName")),
-                            FilePath = reader.GetString(reader.GetOrdinal("FilePath")),
-                            FileSize = reader.IsDBNull(reader.GetOrdinal("FileSize")) ? null : reader.GetInt32(reader.GetOrdinal("FileSize")),
-                            ContentType = reader.IsDBNull(reader.GetOrdinal("ContentType")) ? null : reader.GetString(reader.GetOrdinal("ContentType")),
-                            UploadedDate = reader.GetDateTime(reader.GetOrdinal("UploadedDate")),
-                            IsVerified = reader.GetBoolean(reader.GetOrdinal("IsVerified"))
-                        });
-                    }
-                }
-            }
-            return documents;
-        }
-
         // ========== ADMIN ORDERS ==========
 public async Task<List<AdminOrderListItem>> GetAllOrders(string? status = null, DateTime? fromDate = null, DateTime? toDate = null, int page = 1, int pageSize = 50)
 {
@@ -1841,19 +1775,6 @@ public async Task<bool> ResolveDispute(int disputeId, ResolveDisputeModel model)
 }
 
         // ========== INNER CLASSES (Models) ==========
-
-        public class VendorDocument
-        {
-            public int DocumentID { get; set; }
-            public int UserID { get; set; }
-            public string DocumentType { get; set; }
-            public string FileName { get; set; }
-            public string FilePath { get; set; }
-            public int? FileSize { get; set; }
-            public string? ContentType { get; set; }
-            public DateTime UploadedDate { get; set; }
-            public bool IsVerified { get; set; }
-        }
 
         public class CartItem
         {

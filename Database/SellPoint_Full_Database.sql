@@ -77,27 +77,10 @@ CREATE TABLE VendorProfiles (
     ApprovedBy INT NULL,
     ApprovedDate DATETIME,
     RejectionReason NVARCHAR(255),
-    UploadToken NVARCHAR(100) NULL,
-    UploadTokenExpiry DATETIME NULL,
     CreatedDate DATETIME DEFAULT GETDATE(),
     ModifiedDate DATETIME DEFAULT GETDATE(),
     CONSTRAINT FK_VendorProfiles_Users FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
     CONSTRAINT UQ_VendorProfiles_UserID UNIQUE (UserID)
-);
-GO
-
--- Vendor Documents Table
-CREATE TABLE VendorDocuments (
-    DocumentID INT IDENTITY(1,1) PRIMARY KEY,
-    UserID INT NOT NULL,
-    DocumentType NVARCHAR(50) NOT NULL, -- 'BusinessLicense', 'TaxCertificate', etc.
-    FileName NVARCHAR(255) NOT NULL,
-    FilePath NVARCHAR(500) NOT NULL,
-    FileSize INT,
-    ContentType NVARCHAR(100),
-    UploadedDate DATETIME DEFAULT GETDATE(),
-    IsVerified BIT DEFAULT 0,
-    CONSTRAINT FK_VendorDocuments_Users FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
 GO
 
@@ -332,7 +315,6 @@ CREATE INDEX IX_Users_UserType ON Users(UserType);
 CREATE INDEX IX_Users_PasswordResetToken ON Users(PasswordResetToken);
 CREATE INDEX IX_VendorProfiles_ApprovalStatus ON VendorProfiles(ApprovalStatus);
 CREATE INDEX IX_VendorProfiles_BusinessName ON VendorProfiles(BusinessName);
-CREATE INDEX IX_VendorDocuments_UserID ON VendorDocuments(UserID);
 CREATE INDEX IX_PasswordResetHistory_Token ON PasswordResetHistory(ResetToken);
 CREATE INDEX IX_Categories_Parent ON Categories(ParentCategoryID);
 CREATE INDEX IX_Products_Vendor ON Products(VendorID);
@@ -421,41 +403,27 @@ END;
 GO
 
 -- SP: Create Vendor Profile
-CREATE OR ALTER PROCEDURE sp_CreateVendorProfile
+CREATE PROCEDURE sp_CreateVendorProfile
     @UserID INT,
     @BusinessName NVARCHAR(100),
     @TaxID NVARCHAR(50),
     @BusinessPhone NVARCHAR(20) = NULL,
     @BusinessEmail NVARCHAR(100) = NULL,
     @Website NVARCHAR(100) = NULL,
-    @BusinessDescription NVARCHAR(500) = NULL
+    @BusinessDescription NVARCHAR(500) = NULL,
+    @ApprovalStatus NVARCHAR(20) = 'Pending'
 AS
 BEGIN
     SET NOCOUNT ON;
-    DECLARE @UploadToken NVARCHAR(100) = NEWID();
-    DECLARE @Expiry DATETIME = DATEADD(HOUR, 1, GETDATE());
 
-    INSERT INTO VendorProfiles (UserID, BusinessName, TaxID, BusinessPhone, BusinessEmail, Website, BusinessDescription, UploadToken, UploadTokenExpiry)
-    VALUES (@UserID, @BusinessName, @TaxID, @BusinessPhone, @BusinessEmail, @Website, @BusinessDescription, @UploadToken, @Expiry);
-    
-    SELECT SCOPE_IDENTITY() AS VendorProfileID, @UploadToken AS UploadToken;
-END;
-GO
+    INSERT INTO VendorProfiles
+        (UserID, BusinessName, TaxID, BusinessPhone, BusinessEmail,
+         Website, BusinessDescription, ApprovalStatus)
+    VALUES
+        (@UserID, @BusinessName, @TaxID, @BusinessPhone, @BusinessEmail,
+         @Website, @BusinessDescription, @ApprovalStatus);
 
--- SP: Upload Vendor Document
-CREATE PROCEDURE sp_UploadVendorDocument
-    @UserID INT,
-    @DocumentType NVARCHAR(50),
-    @FileName NVARCHAR(255),
-    @FilePath NVARCHAR(500),
-    @FileSize INT = NULL,
-    @ContentType NVARCHAR(100) = NULL
-AS
-BEGIN
-    SET NOCOUNT ON;
-    INSERT INTO VendorDocuments (UserID, DocumentType, FileName, FilePath, FileSize, ContentType)
-    VALUES (@UserID, @DocumentType, @FileName, @FilePath, @FileSize, @ContentType);
-    SELECT SCOPE_IDENTITY() AS DocumentID;
+    SELECT SCOPE_IDENTITY() AS VendorProfileID;
 END;
 GO
 
@@ -640,17 +608,6 @@ BEGIN
     LEFT JOIN VendorProfiles vp ON u.UserID = vp.UserID
     LEFT JOIN AdminProfiles ap ON u.UserID = ap.UserID
     WHERE u.UserID = @UserID;
-END;
-GO
-
--- SP: Get Vendor Documents
-CREATE PROCEDURE sp_GetVendorDocuments
-    @UserID INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SELECT DocumentID, DocumentType, FileName, FilePath, FileSize, ContentType, UploadedDate, IsVerified
-    FROM VendorDocuments WHERE UserID = @UserID ORDER BY UploadedDate DESC;
 END;
 GO
 

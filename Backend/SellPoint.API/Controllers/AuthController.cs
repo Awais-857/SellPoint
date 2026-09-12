@@ -41,13 +41,12 @@ namespace SellPoint.API.Controllers
                     case "Vendor":
                         if (string.IsNullOrEmpty(model.BusinessName) || string.IsNullOrEmpty(model.TaxID))
                             return BadRequest(new { message = "Business Name and Tax ID are required for vendors" });
-                        var (vendorProfileId, uploadToken) = await _databaseService.CreateVendorProfile(userId, model);
+                        await _databaseService.CreateVendorProfile(userId, model);
                         return Ok(new
                         {
                             message = "Registration successful!",
                             userId,
-                            userType = model.UserType,
-                            uploadToken = uploadToken
+                            userType = model.UserType
                         });
                     case "Admin":
                         await _databaseService.CreateAdminProfile(userId, model);

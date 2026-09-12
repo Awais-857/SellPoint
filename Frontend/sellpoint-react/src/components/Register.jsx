@@ -33,11 +33,6 @@ function Register() {
         jobTitle: ''
     });
 
-    const [files, setFiles] = useState({
-        businessLicense: null,
-        taxCertificate: null
-    });
-
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
@@ -48,36 +43,6 @@ function Register() {
             ...formData,
             [e.target.name]: e.target.value
         });
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        const fieldName = e.target.name;
-
-        if (file) {
-            // Validate file size (5MB limit)
-            if (file.size > 5 * 1024 * 1024) {
-                setError(`${fieldName} file size must be less than 5MB`);
-                e.target.value = null; // Clear the input
-                return;
-            }
-
-            // Validate file type
-            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-            if (!allowedTypes.includes(file.type)) {
-                setError(`${fieldName} must be PDF, JPEG, or PNG`);
-                e.target.value = null; // Clear the input
-                return;
-            }
-
-            // Clear any previous errors
-            setError('');
-
-            setFiles({
-                ...files,
-                [fieldName]: file
-            });
-        }
     };
 
     const handleUserTypeChange = (e) => {
@@ -95,14 +60,6 @@ function Register() {
                 businessName: '', taxID: '', businessPhone: '', businessEmail: '', website: '', businessDescription: ''
             })
         });
-
-        // Clear files if switching away from vendor
-        if (newType !== 'Vendor') {
-            setFiles({
-                businessLicense: null,
-                taxCertificate: null
-            });
-        }
     };
 
     const validateForm = () => {
@@ -134,51 +91,23 @@ if (formData.userType === 'Vendor') {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    
-    setLoading(true);
-    setError('');
-    setSuccess('');
+        e.preventDefault();
+        if (!validateForm()) return;
 
-    try {
-        const registerResponse = await api.post('/auth/register', formData);
-        const { userId, uploadToken, userType } = registerResponse.data;
-        
-        if (userType === 'Vendor' && (files.businessLicense || files.taxCertificate)) {
-            try {
-                const uploadPromises = [];
-                if (files.businessLicense) {
-                    const fd = new FormData();
-                    fd.append('userId', userId);
-                    fd.append('token', uploadToken);
-                    fd.append('documentType', 'BusinessLicense');
-                    fd.append('file', files.businessLicense);  // lowercase 'file'
-                    uploadPromises.push(api.post('/document/temp-upload', fd));
-                }
-                if (files.taxCertificate) {
-                    const fd = new FormData();
-                    fd.append('userId', userId);
-                    fd.append('token', uploadToken);
-                    fd.append('documentType', 'TaxCertificate');
-                    fd.append('file', files.taxCertificate);   // lowercase 'file'
-                    uploadPromises.push(api.post('/document/temp-upload', fd));
-                }
-                await Promise.all(uploadPromises);
-            } catch (uploadErr) {
-                console.error('Upload error:', uploadErr);
-                alert('Account created but document upload failed. You can upload later via support.');
-            }
+        setLoading(true);
+        setError('');
+        setSuccess('');
+
+        try {
+            await api.post('/auth/register', formData);
+            setSuccess('Registration successful! Redirecting to login...');
+            setTimeout(() => navigate('/login'), 2000);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Registration failed');
+        } finally {
+            setLoading(false);
         }
-        
-        setSuccess('Registration successful! Redirecting to login...');
-        setTimeout(() => navigate('/login'), 2000);
-    } catch (err) {
-        setError(err.response?.data?.message || 'Registration failed');
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     if (success) {
         return (
@@ -369,30 +298,6 @@ if (formData.userType === 'Vendor') {
                                     rows="3"
                                 />
                             </div>
-
-                            {/* File Upload Section */}
-                            <h3 style={{ margin: '20px 0 10px', color: '#4a5568' }}>Required Documents</h3>
-
-                            <div className="form-group">
-    <label>Business License (Optional)</label>
-    <input type="file" name="businessLicense" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" style={{ padding: '5px' }} />
-    <small>PDF, JPEG or PNG (Max 5MB) – Optional</small>
-    {files.businessLicense && (
-        <small style={{ color: '#48bb78', display: 'block', marginTop: '5px' }}>
-            ✓ Selected: {files.businessLicense.name}
-        </small>
-    )}
-</div>
-<div className="form-group">
-    <label>Tax Certificate (Optional)</label>
-    <input type="file" name="taxCertificate" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" style={{ padding: '5px' }} />
-    <small>PDF, JPEG or PNG (Max 5MB) – Optional</small>
-    {files.taxCertificate && (
-        <small style={{ color: '#48bb78', display: 'block', marginTop: '5px' }}>
-            ✓ Selected: {files.taxCertificate.name}
-        </small>
-    )}
-</div>
                         </div>
                     )}
 
