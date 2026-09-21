@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
-import './Auth.css';
+import styles from './Auth.module.css';
 
 function ResetPassword() {
     const [formData, setFormData] = useState({
@@ -89,8 +89,8 @@ function ResetPassword() {
 
     if (validating) {
         return (
-            <div className="auth-container">
-                <div className="auth-card">
+            <div className={styles['auth-container']}>
+                <div className={styles['auth-card']}>
                     <h2>Validating Token...</h2>
                     <p>Please wait while we verify your reset link.</p>
                 </div>
@@ -100,11 +100,11 @@ function ResetPassword() {
 
     if (!tokenValid) {
         return (
-            <div className="auth-container">
-                <div className="auth-card">
+            <div className={styles['auth-container']}>
+                <div className={styles['auth-card']}>
                     <h2>Invalid Reset Link</h2>
-                    <div className="error-message">{error}</div>
-                    <p className="auth-link">
+                    <div className={styles['error-message']}>{error}</div>
+                    <p className={styles['auth-link']}>
                         <Link to="/forgot-password">Request a new password reset</Link>
                     </p>
                 </div>
@@ -114,12 +114,12 @@ function ResetPassword() {
 
     if (success) {
         return (
-            <div className="auth-container">
-                <div className="auth-card">
+            <div className={styles['auth-container']}>
+                <div className={styles['auth-card']}>
                     <h2>Password Reset Successful!</h2>
-                    <div className="success-message">{success}</div>
+                    <div className={styles['success-message']}>{success}</div>
                     <p>Redirecting you to login page...</p>
-                    <p className="auth-link">
+                    <p className={styles['auth-link']}>
                         <Link to="/login">Click here if not redirected</Link>
                     </p>
                 </div>
@@ -128,15 +128,15 @@ function ResetPassword() {
     }
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
+        <div className={styles['auth-container']}>
+            <div className={styles['auth-card']}>
                 <h2>Reset Your Password</h2>
                 <p>Enter your new password below.</p>
 
-                {error && <div className="error-message">{error}</div>}
+                {error && <div className={styles['error-message']}>{error}</div>}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>New Password</label>
                         <input
                             type="password"
@@ -149,7 +149,7 @@ function ResetPassword() {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>Confirm New Password</label>
                         <input
                             type="password"
@@ -167,7 +167,7 @@ function ResetPassword() {
                     </button>
                 </form>
 
-                <p className="auth-link">
+                <p className={styles['auth-link']}>
                     <Link to="/login">Back to Login</Link>
                 </p>
             </div>

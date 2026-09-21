@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './AdminCategories.css';
+import styles from './AdminCategories.module.css';
 
 function AdminCategories() {
     const navigate = useNavigate();
@@ -204,10 +204,10 @@ function AdminCategories() {
 
     if (loading) {
         return (
-            <div className="admin-categories-container">
-                <div className="admin-categories-header">
+            <div className={styles['admin-categories-container']}>
+                <div className={styles['admin-categories-header']}>
                     <h1 onClick={() => navigate('/admin-dashboard')}>SellPoint Admin</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/admin-dashboard')}>Dashboard</span>
                         <span onClick={() => navigate('/admin/vendors')}>Vendors</span>
                         <span onClick={() => {
@@ -216,8 +216,8 @@ function AdminCategories() {
                         }}>Logout</span>
                     </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading categories...</p>
                 </div>
             </div>
@@ -225,11 +225,11 @@ function AdminCategories() {
     }
 
     return (
-        <div className="admin-categories-container">
+        <div className={styles['admin-categories-container']}>
             {/* Header */}
-            <div className="admin-categories-header">
+            <div className={styles['admin-categories-header']}>
                 <h1 onClick={() => navigate('/admin-dashboard')}>SellPoint Admin</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/admin-dashboard')}>Dashboard</span>
                     <span onClick={() => navigate('/admin/vendors')}>Vendors</span>
                     <span onClick={() => {
@@ -239,13 +239,13 @@ function AdminCategories() {
                 </div>
             </div>
 
-            <div className="admin-categories-main">
-                <div className="page-header">
+            <div className={styles['admin-categories-main']}>
+                <div className={styles['page-header']}>
                     <h2>Category Management</h2>
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <button
                             onClick={() => setShowInactive(!showInactive)}
-                            className="add-category-btn"
+                            className={styles['add-category-btn']}
                             style={{
                                 background: showInactive ? '#ed8936' : '#48bb78',
                                 width: 'auto'
@@ -253,31 +253,31 @@ function AdminCategories() {
                         >
                             {showInactive ? '📋 Showing All (Incl. Inactive)' : '✓ Show Active Only'}
                         </button>
-                        <button className="add-category-btn" onClick={handleOpenAddModal}>
+                        <button className={styles['add-category-btn']} onClick={handleOpenAddModal}>
                             + Add New Category
                         </button>
                     </div>
                 </div>
 
                 {error && (
-                    <div className="error-message">
+                    <div className={styles['error-message']}>
                         <p>{error}</p>
                         <button onClick={fetchCategories}>Retry</button>
                     </div>
                 )}
 
                 {categories.length === 0 && !error ? (
-                    <div className="empty-categories">
-                        <div className="empty-icon">📁</div>
+                    <div className={styles['empty-categories']}>
+                        <div className={styles['empty-icon']}>📁</div>
                         <h3>No Categories Yet</h3>
                         <p>Create categories to organize products.</p>
-                        <button onClick={handleOpenAddModal} className="add-first-btn">
+                        <button onClick={handleOpenAddModal} className={styles['add-first-btn']}>
                             Add First Category
                         </button>
                     </div>
                 ) : (
-                    <div className="categories-table-container">
-                        <table className="categories-table">
+                    <div className={styles['categories-table-container']}>
+                        <table className={styles['categories-table']}>
                             <thead>
                                 <tr>
                                     <th>Category Name</th>
@@ -290,37 +290,37 @@ function AdminCategories() {
                             </thead>
                             <tbody>
                                 {hierarchicalCategories.map(category => (
-                                    <tr key={category.categoryId} className={!category.isActive ? 'inactive-row' : ''}>
-                                        <td className="category-name-cell">
+                                    <tr key={category.categoryId} className={styles[!category.isActive ? 'inactive-row' : '']}>
+                                        <td className={styles['category-name-cell']}>
                                             <div style={{ paddingLeft: `${category.level * 20}px` }}>
-                                                {category.level > 0 && <span className="level-indent">└─ </span>}
-                                                <span className="category-name">{category.categoryName}</span>
+                                                {category.level > 0 && <span className={styles['level-indent']}>└─ </span>}
+                                                <span className={styles['category-name']}>{category.categoryName}</span>
                                             </div>
                                         </td>
-                                        <td className="description-cell">
+                                        <td className={styles['description-cell']}>
                                             {category.description || '—'}
                                         </td>
                                         <td>{getParentCategoryName(category.parentCategoryId)}</td>
-                                        <td className="products-count">
+                                        <td className={styles['products-count']}>
                                             {category.productCount || 0}
                                         </td>
                                         <td>
                                             <button
-                                                className={`status-toggle ${category.isActive ? 'active' : 'inactive'}`}
+                                                className={styles['status-toggle'] + ' ' + styles[category.isActive ? 'active' : 'inactive']}
                                                 onClick={() => handleToggleStatus(category.categoryId, category.isActive)}
                                             >
                                                 {category.isActive ? 'Active' : 'Inactive'}
                                             </button>
                                         </td>
-                                        <td className="actions-cell">
+                                        <td className={styles['actions-cell']}>
                                             <button
-                                                className="edit-btn"
+                                                className={styles['edit-btn']}
                                                 onClick={() => handleOpenEditModal(category)}
                                             >
                                                 Edit
                                             </button>
                                             <button
-                                                className="delete-btn"
+                                                className={styles['delete-btn']}
                                                 onClick={() => handleDeleteCategory(category.categoryId, category.productCount > 0, category.isActive)}
                                                 disabled={category.productCount > 0}
                                             >

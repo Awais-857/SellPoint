@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './Checkout.css';
+import styles from './Checkout.module.css';
 
 function Checkout() {
     const navigate = useNavigate();
@@ -247,13 +247,13 @@ function Checkout() {
 
     if (loading) {
         return (
-            <div className="checkout-container">
-                <div className="checkout-header">
+            <div className={styles['checkout-container']}>
+                <div className={styles['checkout-header']}>
                     <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                     <span onClick={() => navigate('/cart')}>Back to Cart</span>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading checkout...</p>
                 </div>
             </div>
@@ -263,41 +263,41 @@ function Checkout() {
     const selectedAddress = addresses.find(a => a.addressId === selectedAddressId);
 
     return (
-        <div className="checkout-container">
+        <div className={styles['checkout-container']}>
             {/* Header */}
-            <div className="checkout-header">
+            <div className={styles['checkout-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                <div className="header-steps">
-                    <span className="step completed">Cart</span>
-                    <span className="step-separator">→</span>
-                    <span className="step active">Checkout</span>
-                    <span className="step-separator">→</span>
-                    <span className="step">Confirmation</span>
+                <div className={styles['header-steps']}>
+                    <span className={styles['step']} className={styles['completed']}>Cart</span>
+                    <span className={styles['step-separator']}>→</span>
+                    <span className={styles['step']} className={styles['active']}>Checkout</span>
+                    <span className={styles['step-separator']}>→</span>
+                    <span className={styles['step']}>Confirmation</span>
                 </div>
-                <span onClick={() => navigate('/cart')} className="back-link">Back to Cart</span>
+                <span onClick={() => navigate('/cart')} className={styles['back-link']}>Back to Cart</span>
             </div>
 
-            <div className="checkout-main">
+            <div className={styles['checkout-main']}>
                 {error && (
-                    <div className="checkout-error">
+                    <div className={styles['checkout-error']}>
                         <p>{error}</p>
                     </div>
                 )}
 
-                <div className="checkout-content">
+                <div className={styles['checkout-content']}>
                     {/* Left Column - Shipping & Payment */}
-                    <div className="checkout-left">
+                    <div className={styles['checkout-left']}>
                         {/* Shipping Address Section */}
-                        <div className="section">
+                        <div className={styles['section']}>
     <h2>1. Shipping Address</h2>
 
     {/* Show saved addresses if any */}
     {addresses.length > 0 && !showAddressForm && (
-        <div className="address-list">
+        <div className={styles['address-list']}>
             {addresses.map(address => (
                 <div
                     key={address.addressId}
-                    className={`address-card ${selectedAddressId === address.addressId ? 'selected' : ''}`}
+                    className={styles['address-card'] + (selectedAddressId === address.addressId ? ' ' + styles['selected'] : '')}
                     onClick={() => handleAddressChange(address.addressId)}
                 >
                     <input
@@ -305,23 +305,23 @@ function Checkout() {
                         checked={selectedAddressId === address.addressId}
                         onChange={() => handleAddressChange(address.addressId)}
                     />
-                    <div className="address-details">
-                        <p className="address-line">
+                    <div className={styles['address-details']}>
+                        <p className={styles['address-line']}>
                             {address.addressLine1}
                             {address.addressLine2 && `, ${address.addressLine2}`}
                         </p>
-                        <p className="address-line">
+                        <p className={styles['address-line']}>
                             {address.city}, {address.state} {address.zipCode}
                         </p>
-                        <p className="address-line">{address.country}</p>
+                        <p className={styles['address-line']}>{address.country}</p>
                         {address.isDefault && (
-                            <span className="default-badge">Default</span>
+                            <span className={styles['default-badge']}>Default</span>
                         )}
                     </div>
                 </div>
             ))}
             <button
-                className="add-address-btn"
+                className={styles['add-address-btn']}
                 onClick={() => setShowAddressForm(true)}
             >
                 + Add New Address
@@ -331,10 +331,10 @@ function Checkout() {
 
     {/* If no saved addresses and form is not shown, prompt to add */}
     {addresses.length === 0 && !showAddressForm && (
-        <div className="empty-address-state" style={{ textAlign: 'center', padding: '20px' }}>
+        <div className={styles['empty-address-state']} style={{ textAlign: 'center', padding: '20px' }}>
             <p>You haven't saved any addresses yet.</p>
             <button
-                className="add-address-btn"
+                className={styles['add-address-btn']}
                 onClick={() => setShowAddressForm(true)}
             >
                 + Add Shipping Address
@@ -344,9 +344,9 @@ function Checkout() {
 
     {/* Address form (shared for add and edit) */}
     {showAddressForm && (
-        <form onSubmit={handleAddAddress} className="address-form">
+        <form onSubmit={handleAddAddress} className={styles['address-form']}>
             <h3>{addresses.length === 0 ? 'Add Your Address' : 'New Address'}</h3>
-            <div className="form-group">
+            <div className={styles['form-group']}>
                 <label>Address Line 1 *</label>
                 <input
                     type="text"
@@ -355,7 +355,7 @@ function Checkout() {
                     required
                 />
             </div>
-            <div className="form-group">
+            <div className={styles['form-group']}>
                 <label>Address Line 2 (Optional)</label>
                 <input
                     type="text"
@@ -363,8 +363,8 @@ function Checkout() {
                     onChange={(e) => setNewAddress({ ...newAddress, addressLine2: e.target.value })}
                 />
             </div>
-            <div className="form-row">
-                <div className="form-group">
+            <div className={styles['form-row']}>
+                <div className={styles['form-group']}>
                     <label>City *</label>
                     <input
                         type="text"
@@ -373,7 +373,7 @@ function Checkout() {
                         required
                     />
                 </div>
-                <div className="form-group">
+                <div className={styles['form-group']}>
                     <label>State *</label>
                     <input
                         type="text"
@@ -383,8 +383,8 @@ function Checkout() {
                     />
                 </div>
             </div>
-            <div className="form-row">
-                <div className="form-group">
+            <div className={styles['form-row']}>
+                <div className={styles['form-group']}>
                     <label>ZIP Code *</label>
                     <input
                         type="text"
@@ -393,7 +393,7 @@ function Checkout() {
                         required
                     />
                 </div>
-                <div className="form-group">
+                <div className={styles['form-group']}>
                     <label>Country</label>
                     <input
                         type="text"
@@ -402,7 +402,7 @@ function Checkout() {
                     />
                 </div>
             </div>
-            <div className="form-group checkbox">
+            <div className={`${styles['form-group']} ${styles['checkbox']}`}>
                 <label>
                     <input
                         type="checkbox"
@@ -412,11 +412,11 @@ function Checkout() {
                     Set as default address
                 </label>
             </div>
-            <div className="form-actions">
-                <button type="button" onClick={() => setShowAddressForm(false)} className="cancel-btn">
+            <div className={styles['form-actions']}>
+                <button type="button" onClick={() => setShowAddressForm(false)} className={styles['cancel-btn']}>
                     Cancel
                 </button>
-                <button type="submit" className="save-btn">
+                <button type="submit" className={styles['save-btn']}>
                     Save Address
                 </button>
             </div>
@@ -425,12 +425,12 @@ function Checkout() {
 </div>
 
                         {/* Payment Method Section */}
-                        <div className="section">
+                        <div className={styles['section']}>
                             <h2>2. Payment Method</h2>
 
-                            <div className="payment-methods">
+                            <div className={styles['payment-methods']}>
                                 <div
-                                    className={`payment-option ${paymentMethod === 'cashondelivery' ? 'selected' : ''}`}
+                                    className={styles['payment-option'] + ' ' + (paymentMethod === 'cashondelivery' ? styles['selected'] : '')}
                                     onClick={() => setPaymentMethod('cashondelivery')}
                                 >
                                     <input
@@ -438,8 +438,8 @@ function Checkout() {
                                         checked={paymentMethod === 'cashondelivery'}
                                         onChange={() => setPaymentMethod('cashondelivery')}
                                     />
-                                    <div className="payment-info">
-                                        <span className="payment-icon">💵</span>
+                                    <div className={styles['payment-info']}>
+                                        <span className={styles['payment-icon']}>💵</span>
                                         <div>
                                             <strong>Cash on Delivery</strong>
                                             <p>Pay when you receive your order</p>
@@ -448,7 +448,7 @@ function Checkout() {
                                 </div>
 
                                 <div
-                                    className={`payment-option ${paymentMethod === 'creditcard' ? 'selected' : ''}`}
+                                    className={styles['payment-option'] + ' ' + (paymentMethod === 'creditcard' ? styles['selected'] : '')}
                                     onClick={() => setPaymentMethod('creditcard')}
                                 >
                                     <input
@@ -456,8 +456,8 @@ function Checkout() {
                                         checked={paymentMethod === 'creditcard'}
                                         onChange={() => setPaymentMethod('creditcard')}
                                     />
-                                    <div className="payment-info">
-                                        <span className="payment-icon">💳</span>
+                                    <div className={styles['payment-info']}>
+                                        <span className={styles['payment-icon']}>💳</span>
                                         <div>
                                             <strong>Credit / Debit Card</strong>
                                             <p>Pay securely with your card</p>
@@ -467,9 +467,9 @@ function Checkout() {
                             </div>
 
                             {paymentMethod === 'creditcard' && (
-                                <div className="card-details-form">
+                                <div className={styles['card-details-form']}>
                                     <h3>Card Details</h3>
-                                    <div className="form-group">
+                                    <div className={styles['form-group']}>
                                         <label>Card Number</label>
                                         <input
                                             type="text"
@@ -481,7 +481,7 @@ function Checkout() {
                                             required
                                         />
                                     </div>
-                                    <div className="form-group">
+                                    <div className={styles['form-group']}>
                                         <label>Name on Card</label>
                                         <input
                                             type="text"
@@ -492,8 +492,8 @@ function Checkout() {
                                             required
                                         />
                                     </div>
-                                    <div className="form-row">
-                                        <div className="form-group">
+                                    <div className={styles['form-row']}>
+                                        <div className={styles['form-group']}>
                                             <label>Expiry Month</label>
                                             <select
                                                 name="expiryMonth"
@@ -507,7 +507,7 @@ function Checkout() {
                                                 ))}
                                             </select>
                                         </div>
-                                        <div className="form-group">
+                                        <div className={styles['form-group']}>
                                             <label>Expiry Year</label>
                                             <select
                                                 name="expiryYear"
@@ -522,7 +522,7 @@ function Checkout() {
                                                 })}
                                             </select>
                                         </div>
-                                        <div className="form-group">
+                                        <div className={styles['form-group']}>
                                             <label>CVV</label>
                                             <input
                                                 type="password"
@@ -535,27 +535,27 @@ function Checkout() {
                                             />
                                         </div>
                                     </div>
-                                    <p className="secure-note">🔒 Your payment information is secure and encrypted</p>
+                                    <p className={styles['secure-note']}>🔒 Your payment information is secure and encrypted</p>
                                 </div>
                             )}
                         </div>
                     </div>
 
                     {/* Right Column - Order Summary */}
-                    <div className="checkout-right">
-                        <div className="order-summary-card">
+                    <div className={styles['checkout-right']}>
+                        <div className={styles['order-summary-card']}>
                             <h3>Order Summary</h3>
 
-                            <div className="order-items-preview">
+                            <div className={styles['order-items-preview']}>
                                 {Object.values(groupedItems).map((group, idx) => (
-                                    <div key={idx} className="vendor-summary">
-                                        <div className="vendor-name">{group.vendorName}</div>
+                                    <div key={idx} className={styles['vendor-summary']}>
+                                        <div className={styles['vendor-name']}>{group.vendorName}</div>
                                         {group.items.map(item => (
-                                            <div key={item.cartId} className="order-item">
-                                                <span className="item-name">
+                                            <div key={item.cartId} className={styles['order-item']}>
+                                                <span className={styles['item-name']}>
                                                     {item.quantity} × {item.productName}
                                                 </span>
-                                                <span className="item-price">
+                                                <span className={styles['item-price']}>
                                                     ${item.itemTotal.toFixed(2)}
                                                 </span>
                                             </div>
@@ -564,40 +564,40 @@ function Checkout() {
                                 ))}
                             </div>
 
-                            <div className="summary-divider"></div>
+                            <div className={styles['summary-divider']}></div>
 
-                            <div className="summary-row">
+                            <div className={styles['summary-row']}>
                                 <span>Subtotal ({cartSummary.itemCount} items)</span>
                                 <span>${cartSummary.subtotal.toFixed(2)}</span>
                             </div>
-                            <div className="summary-row">
+                            <div className={styles['summary-row']}>
                                 <span>Shipping ({cartSummary.vendorCount} vendors)</span>
                                 <span>${cartSummary.shipping.toFixed(2)}</span>
                             </div>
-                            <div className="summary-row">
+                            <div className={styles['summary-row']}>
                                 <span>Tax (10%)</span>
                                 <span>${cartSummary.tax.toFixed(2)}</span>
                             </div>
-                            <div className="summary-divider"></div>
-                            <div className="summary-row total">
+                            <div className={styles['summary-divider']}></div>
+                            <div className={styles['summary-row']} className={styles['total']}>
                                 <span>Total</span>
                                 <span>${cartSummary.total.toFixed(2)}</span>
                             </div>
 
-                            <div className="shipping-info">
+                            <div className={styles['shipping-info']}>
                                 <p>📦 Estimated Delivery</p>
                                 <small>5-7 business days after order confirmation</small>
                             </div>
 
                             <button
-                                className="place-order-btn"
+                                className={styles['place-order-btn']}
                                 onClick={handlePlaceOrder}
                                 disabled={placingOrder || !selectedAddressId}
                             >
                                 {placingOrder ? 'Placing Order...' : `Place Order • $${cartSummary.total.toFixed(2)}`}
                             </button>
 
-                            <p className="order-note">
+                            <p className={styles['order-note']}>
                                 By placing your order, you agree to our Terms and Conditions.
                             </p>
                         </div>

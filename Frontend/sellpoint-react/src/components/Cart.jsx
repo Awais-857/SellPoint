@@ -1,4 +1,5 @@
 // src/components/Cart.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -8,7 +9,7 @@ import {
     removeItem,
     clearCart
 } from '../services/cartHelper';
-import './Cart.css';
+import styles from './Cart.module.css';
 
 function Cart() {
     const navigate = useNavigate();
@@ -129,18 +130,18 @@ function Cart() {
 
     if (loading) {
         return (
-            <div className="cart-container">
-                <div className="cart-header">
+            <div className={styles['cart-container']}>
+                <div className={styles['cart-header']}>
                     <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/products')}>Continue Shopping</span>
                         {loggedIn
                             ? <span onClick={() => navigate('/dashboard')}>My Account</span>
                             : <span onClick={() => navigate('/login')}>Login</span>}
                     </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading your cart...</p>
                 </div>
             </div>
@@ -148,10 +149,10 @@ function Cart() {
     }
 
     return (
-        <div className="cart-container">
-            <div className="cart-header">
+        <div className={styles['cart-container']}>
+            <div className={styles['cart-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={handleContinueShopping}>Continue Shopping</span>
                     {loggedIn
                         ? <span onClick={() => navigate('/dashboard')}>My Account</span>
@@ -159,11 +160,11 @@ function Cart() {
                 </div>
             </div>
 
-            <div className="cart-main">
+            <div className={styles['cart-main']}>
                 <h2>Shopping Cart</h2>
 
                 {!loggedIn && cartItems.length > 0 && (
-                    <div className="guest-banner" style={{
+                    <div className={styles['guest-banner']} style={{
                         background: '#fff3cd',
                         border: '1px solid #ffc107',
                         borderRadius: '6px',
@@ -178,64 +179,64 @@ function Cart() {
                 )}
 
                 {error && (
-                    <div className="cart-error">
+                    <div className={styles['cart-error']}>
                         <p>{error}</p>
                         <button onClick={fetchCart}>Retry</button>
                     </div>
                 )}
 
                 {cartItems.length === 0 && !error ? (
-                    <div className="empty-cart">
-                        <div className="empty-cart-icon">🛒</div>
+                    <div className={styles['empty-cart']}>
+                        <div className={styles['empty-cart-icon']}>🛒</div>
                         <h3>Your cart is empty</h3>
                         <p>Looks like you haven't added any items to your cart yet.</p>
-                        <button onClick={handleContinueShopping} className="shop-now-btn">
+                        <button onClick={handleContinueShopping} className={styles['shop-now-btn']}>
                             Start Shopping
                         </button>
                     </div>
                 ) : (
-                    <div className="cart-content">
-                        <div className="cart-items-section">
+                    <div className={styles['cart-content']}>
+                        <div className={styles['cart-items-section']}>
                             {Object.values(groupedItems).map((group, idx) => (
-                                <div key={idx} className="vendor-group">
-                                    <div className="items-list">
-                                        <div className="items-header">
-                                            <span className="col-product">Product</span>
-                                            <span className="col-price">Price</span>
-                                            <span className="col-quantity">Quantity</span>
-                                            <span className="col-total">Total</span>
-                                            <span className="col-action"></span>
+                                <div key={idx} className={styles['vendor-group']}>
+                                    <div className={styles['items-list']}>
+                                        <div className={styles['items-header']}>
+                                            <span className={styles['col-product']}>Product</span>
+                                            <span className={styles['col-price']}>Price</span>
+                                            <span className={styles['col-quantity']}>Quantity</span>
+                                            <span className={styles['col-total']}>Total</span>
+                                            <span className={styles['col-action']}></span>
                                         </div>
                                         {group.items.map(item => (
-                                            <div key={item.cartId} className="cart-item">
-                                                <div className="item-product">
+                                            <div key={item.cartId} className={styles['cart-item']}>
+                                                <div className={styles['item-product']}>
                                                     <div
-                                                        className="item-image"
+                                                        className={styles['item-image']}
                                                         onClick={() => navigate(`/product/${item.productId}`)}
                                                     >
                                                         {item.imageUrl ? (
                                                             <img src={item.imageUrl} alt={item.productName} />
                                                         ) : (
-                                                            <div className="no-image">No Image</div>
+                                                            <div className={styles['no-image']}>No Image</div>
                                                         )}
                                                     </div>
-                                                    <div className="item-details">
+                                                    <div className={styles['item-details']}>
                                                         <h4
-                                                            className="item-name"
+                                                            className={styles['item-name']}
                                                             onClick={() => navigate(`/product/${item.productId}`)}
                                                         >
                                                             {item.productName}
                                                         </h4>
                                                         {item.categoryName && (
-                                                            <p className="item-category">{item.categoryName}</p>
+                                                            <p className={styles['item-category']}>{item.categoryName}</p>
                                                         )}
                                                     </div>
                                                 </div>
-                                                <div className="item-price">
+                                                <div className={styles['item-price']}>
                                                     ${item.price.toFixed(2)}
                                                 </div>
-                                                <div className="item-quantity">
-                                                    <div className="quantity-controls">
+                                                <div className={styles['item-quantity']}>
+                                                    <div className={styles['quantity-controls']}>
                                                         <button
                                                             onClick={() => handleUpdateQuantity(item.cartId, item.quantity - 1)}
                                                             disabled={updating}
@@ -251,15 +252,15 @@ function Cart() {
                                                         </button>
                                                     </div>
                                                     {item.stockQuantity && item.quantity >= item.stockQuantity && (
-                                                        <span className="stock-warning">Max stock reached</span>
+                                                        <span className={styles['stock-warning']}>Max stock reached</span>
                                                     )}
                                                 </div>
-                                                <div className="item-total">
+                                                <div className={styles['item-total']}>
                                                     ${item.itemTotal.toFixed(2)}
                                                 </div>
-                                                <div className="item-action">
+                                                <div className={styles['item-action']}>
                                                     <button
-                                                        className="remove-btn"
+                                                        className={styles['remove-btn']}
                                                         onClick={() => handleRemoveItem(item.cartId)}
                                                         disabled={updating}
                                                     >
@@ -273,41 +274,41 @@ function Cart() {
                             ))}
 
                             {cartItems.length > 0 && (
-                                <div className="clear-cart-section">
-                                    <button onClick={handleClearCart} className="clear-cart-btn" disabled={updating}>
+                                <div className={styles['clear-cart-section']}>
+                                    <button onClick={handleClearCart} className={styles['clear-cart-btn']} disabled={updating}>
                                         Clear Cart
                                     </button>
                                 </div>
                             )}
                         </div>
 
-                        <div className="order-summary">
+                        <div className={styles['order-summary']}>
                             <h3>Order Summary</h3>
-                            <div className="summary-row">
+                            <div className={styles['summary-row']}>
                                 <span>Subtotal ({cartSummary.itemCount} items)</span>
                                 <span>${cartSummary.subtotal.toFixed(2)}</span>
                             </div>
-                            <div className="summary-row">
+                            <div className={styles['summary-row']}>
                                 <span>Shipping</span>
                                 <span>${cartSummary.shipping.toFixed(2)}</span>
                             </div>
-                            <div className="summary-row">
+                            <div className={styles['summary-row']}>
                                 <span>Tax (10%)</span>
                                 <span>${cartSummary.tax.toFixed(2)}</span>
                             </div>
-                            <div className="summary-row total">
+                            <div className={styles['summary-row'] + ' ' + styles['total']}>
                                 <span>Total</span>
                                 <span>${cartSummary.total.toFixed(2)}</span>
                             </div>
                             <button
-                                className="checkout-btn"
+                                className={styles['checkout-btn']}
                                 onClick={handleProceedToCheckout}
                                 disabled={updating || cartItems.length === 0}
                             >
                                 {loggedIn ? 'Proceed to Checkout' : 'Log in to Checkout'}
                             </button>
                             <button
-                                className="continue-shopping-btn"
+                                className={styles['continue-shopping-btn']}
                                 onClick={handleContinueShopping}
                             >
                                 Continue Shopping

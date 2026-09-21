@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './OrderHistory.css';
+import styles from './OrderHistory.module.css';
 
 function OrderHistory() {
     const navigate = useNavigate();
@@ -111,17 +111,17 @@ function OrderHistory() {
 
     if (loading) {
         return (
-            <div className="order-history-container">
-                <div className="order-history-header">
+            <div className={styles['order-history-container']}>
+                <div className={styles['order-history-header']}>
                     <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/products')}>Continue Shopping</span>
                         <span onClick={() => navigate('/cart')}>Cart 🛒</span>
                         <span onClick={() => navigate('/dashboard')}>My Account</span>
                     </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading your orders...</p>
                 </div>
             </div>
@@ -131,54 +131,54 @@ function OrderHistory() {
     const filteredOrders = getFilteredOrders();
 
     return (
-        <div className="order-history-container">
+        <div className={styles['order-history-container']}>
             {/* Header */}
-            <div className="order-history-header">
+            <div className={styles['order-history-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/products')}>Continue Shopping</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
                     <span onClick={() => navigate('/dashboard')}>My Account</span>
                 </div>
             </div>
 
-            <div className="order-history-main">
+            <div className={styles['order-history-main']}>
                 <h2>My Orders</h2>
 
                 {/* Filter Tabs */}
-                <div className="filter-tabs">
+                <div className={styles['filter-tabs']}>
                     <button
-                        className={`filter-tab ${filterStatus === 'all' ? 'active' : ''}`}
+                        className={`${styles['filter-tab']} ${filterStatus === 'all' ? styles['active'] : ''}`}
                         onClick={() => setFilterStatus('all')}
                     >
                         All Orders
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'pending' ? 'active' : ''}`}
+                        className={`${styles['filter-tab']} ${filterStatus === 'pending' ? styles['active'] : ''}`}
                         onClick={() => setFilterStatus('pending')}
                     >
                         Pending
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'confirmed' ? 'active' : ''}`}
+                        className={`${styles['filter-tab']} ${filterStatus === 'confirmed' ? styles['active'] : ''}`}
                         onClick={() => setFilterStatus('confirmed')}
                     >
                         Confirmed
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'shipped' ? 'active' : ''}`}
+                        className={`${styles['filter-tab']} ${filterStatus === 'shipped' ? styles['active'] : ''}`}
                         onClick={() => setFilterStatus('shipped')}
                     >
                         Shipped
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'delivered' ? 'active' : ''}`}
+                        className={`${styles['filter-tab']} ${filterStatus === 'delivered' ? styles['active'] : ''}`}
                         onClick={() => setFilterStatus('delivered')}
                     >
                         Delivered
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'cancelled' ? 'active' : ''}`}
+                        className={`${styles['filter-tab']} ${filterStatus === 'cancelled' ? styles['active'] : ''}`}
                         onClick={() => setFilterStatus('cancelled')}
                     >
                         Cancelled
@@ -186,81 +186,81 @@ function OrderHistory() {
                 </div>
 
                 {error && (
-                    <div className="order-error">
+                    <div className={styles['order-error']}>
                         <p>{error}</p>
                         <button onClick={fetchOrders}>Try Again</button>
                     </div>
                 )}
 
                 {filteredOrders.length === 0 && !error ? (
-                    <div className="empty-orders">
-                        <div className="empty-orders-icon">📦</div>
+                    <div className={styles['empty-orders']}>
+                        <div className={styles['empty-orders-icon']}>📦</div>
                         <h3>No Orders Found</h3>
                         <p>You haven't placed any orders yet.</p>
-                        <button onClick={() => navigate('/products')} className="shop-now-btn">
+                        <button onClick={() => navigate('/products')} className={styles['shop-now-btn']}>
                             Start Shopping
                         </button>
                     </div>
                 ) : (
-                    <div className="orders-list">
+                    <div className={styles['orders-list']}>
                         {filteredOrders.map(order => (
-                            <div key={order.orderId} className="order-card">
+                            <div key={order.orderId} className={styles['order-card']}>
                                 {/* Order Header */}
-                                <div className="order-header">
-                                    <div className="order-info">
-                                        <span className="order-label">Order #</span>
-                                        <span className="order-number">{order.orderId}</span>
-                                        <span className="order-date">
+                                <div className={styles['order-header']}>
+                                    <div className={styles['order-info']}>
+                                        <span className={styles['order-label']}>Order #</span>
+                                        <span className={styles['order-number']}>{order.orderId}</span>
+                                        <span className={styles['order-date']}>
                                             {new Date(order.orderDate).toLocaleDateString()}
                                         </span>
                                     </div>
-                                    <div className="order-badges">
-                                        <span className={`status-badge ${getStatusBadgeClass(order.orderStatus)}`}>
+                                    <div className={styles['order-badges']}>
+                                        <span className={`${styles['status-badge']} ${styles[getStatusBadgeClass(order.orderStatus)]}`}>
                                             {order.orderStatus}
                                         </span>
-                                        <span className={`payment-badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
+                                        <span className={`${styles['payment-badge']} ${styles[getPaymentBadgeClass(order.paymentStatus)]}`}>
                                             {order.paymentStatus}
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Order Items Preview */}
-                                <div className="order-items-preview">
-                                    <div className="items-count">
+                                <div className={styles['order-items-preview']}>
+                                    <div className={styles['items-count']}>
                                         {order.itemCount} item{order.itemCount !== 1 ? 's' : ''}
                                     </div>
-                                    <div className="items-thumbnails">
+                                    <div className={styles['items-thumbnails']}>
                                         {order.items && order.items.slice(0, 3).map((item, idx) => (
-                                            <div key={idx} className="thumbnail">
+                                            <div key={idx} className={styles['thumbnail']}>
                                                 {item.imageUrl ? (
                                                     <img src={item.imageUrl} alt={item.productName} />
                                                 ) : (
-                                                    <div className="no-image-thumb">No Image</div>
+                                                    <div className={styles['no-image-thumb']}>No Image</div>
                                                 )}
                                             </div>
                                         ))}
                                         {order.items && order.items.length > 3 && (
-                                            <div className="more-items">+{order.items.length - 3}</div>
+                                            <div className={styles['more-items']}>+{order.items.length - 3}</div>
                                         )}
                                     </div>
                                 </div>
 
                                 {/* Order Footer */}
-                                <div className="order-footer">
-                                    <div className="order-total">
+                                <div className={styles['order-footer']}>
+                                    <div className={styles['order-total']}>
                                         <span>Total Amount:</span>
                                         <strong>${order.totalAmount.toFixed(2)}</strong>
                                     </div>
-                                    <div className="order-actions">
+                                    <div className={styles['order-actions']}>
                                         <button
-                                            className="action-btn view-btn"
+                                            className={`${styles['action-btn']} ${styles['view-btn']}`}
                                             onClick={() => handleViewOrder(order.orderId)}
                                         >
                                             View Details
                                         </button>
                                         {order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Delivered' && (
                                             <button
-                                                className="action-btn track-btn"
+                                                className={`${styles['action-btn']} ${styles['track-btn']}`}
                                                 onClick={() => handleTrackOrder(order.orderId)}
                                             >
                                                 Track Order
@@ -268,7 +268,7 @@ function OrderHistory() {
                                         )}
                                         {order.orderStatus === 'Delivered' && (
                                             <button
-                                                className="action-btn reorder-btn"
+                                                className={`${styles['action-btn']} ${styles['reorder-btn']}`}
                                                 onClick={() => handleReorder(order.orderId)}
                                             >
                                                 Reorder
@@ -276,7 +276,7 @@ function OrderHistory() {
                                         )}
                                         {(order.orderStatus === 'Pending' || order.orderStatus === 'Confirmed') && (
                                             <button
-                                                className="action-btn cancel-btn"
+                                                className={`${styles['action-btn']} ${styles['cancel-btn']}`}
                                                 onClick={() => handleCancelOrder(order.orderId)}
                                             >
                                                 Cancel Order

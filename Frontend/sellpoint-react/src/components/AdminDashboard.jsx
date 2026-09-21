@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Dashboard.css';
+import styles from './Dashboard.module.css';
 
 function AdminDashboard() {
     const navigate = useNavigate();
@@ -31,12 +31,14 @@ function AdminDashboard() {
 
     if (loading) {
         return (
-            <div className="dashboard-container">
-                <nav className="dashboard-nav">
+            <div className={styles['dashboard-container']}>
+                <nav className={styles['dashboard-nav']}>
                     <h1>SellPoint Admin</h1>
-                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                    <button onClick={handleLogout} className={styles['logout-btn']}>
+                        Logout
+                    </button>
                 </nav>
-                <div className="dashboard-content">
+                <div className={styles['dashboard-content']}>
                     <p>Loading dashboard...</p>
                 </div>
             </div>
@@ -44,18 +46,20 @@ function AdminDashboard() {
     }
 
     return (
-        <div className="dashboard-container">
-            <nav className="dashboard-nav">
+        <div className={styles['dashboard-container']}>
+            <nav className={styles['dashboard-nav']}>
                 <h1>SellPoint Admin</h1>
-                <button onClick={handleLogout} className="logout-btn">Logout</button>
+                <button onClick={handleLogout} className={styles['logout-btn']}>
+                    Logout
+                </button>
             </nav>
 
-            <div className="dashboard-content">
+            <div className={styles['dashboard-content']}>
                 <h2>Admin Dashboard</h2>
                 <p>Welcome back, {username}!</p>
 
                 {/* Admin Controls */}
-                <div className="dashboard-card">
+                <div className={styles['dashboard-card']}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '20px' }}>
                         <div
                             style={{ padding: '15px', background: '#f7fafc', borderRadius: '5px', cursor: 'pointer' }}

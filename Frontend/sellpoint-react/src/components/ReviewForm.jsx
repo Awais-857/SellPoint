@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
-import './ReviewForm.css';
+import styles from './ReviewForm.module.css';
 
 function ReviewForm() {
     const { id } = useParams(); // productId
@@ -18,8 +18,8 @@ function ReviewForm() {
 
     if (!orderItemId) {
         return (
-            <div className="review-form-container">
-                <div className="review-form-card">
+            <div className={styles['review-form-container']}>
+                <div className={styles['review-form-card']}>
                     <h2>Invalid Request</h2>
                     <p>No order item specified. Please go back and try again.</p>
                     <button onClick={() => navigate(-1)}>Go Back</button>
@@ -58,8 +58,8 @@ function ReviewForm() {
 
     if (success) {
         return (
-            <div className="review-form-container">
-                <div className="review-form-card">
+            <div className={styles['review-form-container']}>
+                <div className={styles['review-form-card']}>
                     <h2>Thank You!</h2>
                     <p>Your review has been submitted and will appear after admin approval.</p>
                     <button onClick={() => navigate(`/product/${id}`)}>Back to Product</button>
@@ -69,17 +69,17 @@ function ReviewForm() {
     }
 
     return (
-        <div className="review-form-container">
-            <div className="review-form-card">
+        <div className={styles['review-form-container']}>
+            <div className={styles['review-form-card']}>
                 <h2>Write a Review</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>Rating *</label>
-                        <div className="star-rating">
+                        <div className={styles['star-rating']}>
                             {[1, 2, 3, 4, 5].map(star => (
                                 <span
                                     key={star}
-                                    className={`star ${star <= rating ? 'selected' : ''}`}
+                                    className={`${styles['star']} ${star <= rating ? styles['selected'] : ''}`}
                                     onClick={() => setRating(star)}
                                 >
                                     ★
@@ -87,7 +87,7 @@ function ReviewForm() {
                             ))}
                         </div>
                     </div>
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>Comment (Optional)</label>
                         <textarea
                             rows="5"
@@ -96,8 +96,8 @@ function ReviewForm() {
                             placeholder="Share your experience with this product..."
                         />
                     </div>
-                    {error && <div className="error-message">{error}</div>}
-                    <div className="form-actions">
+                    {error && <div className={styles['error-message']}>{error}</div>}
+                    <div className={styles['form-actions']}>
                         <button type="button" onClick={() => navigate(-1)}>Cancel</button>
                         <button type="submit" disabled={submitting}>
                             {submitting ? 'Submitting...' : 'Submit Review'}

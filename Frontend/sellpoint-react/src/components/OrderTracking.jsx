@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './OrderTracking.css';
+import styles from './OrderTracking.module.css';
 
 function OrderTracking() {
     const { id } = useParams();
@@ -37,40 +37,40 @@ function OrderTracking() {
         return currentIndex;
     };
 
-    if (loading) return <div className="tracking-loading">Loading tracking info...</div>;
-    if (error || !tracking) return <div className="tracking-error">{error || 'Order not found'}</div>;
+    if (loading) return <div className={styles['tracking-loading']}>Loading tracking info...</div>;
+    if (error || !tracking) return <div className={styles['tracking-error']}>{error || 'Order not found'}</div>;
 
     const statusSteps = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
     const currentStep = getStatusStep(tracking.orderStatus);
 
     return (
-        <div className="tracking-container">
-            <div className="tracking-header">
+        <div className={styles['tracking-container']}>
+            <div className={styles['tracking-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/order-history')}>← Back to Orders</span>
                     <span onClick={() => navigate('/products')}>Continue Shopping</span>
                 </div>
             </div>
 
-            <div className="tracking-main">
+            <div className={styles['tracking-main']}>
                 <h2>Order Tracking</h2>
                 <p>Order #{tracking.orderId}</p>
 
-                <div className="tracking-timeline">
+                <div className={styles['tracking-timeline']}>
                     {statusSteps.map((step, idx) => (
-                        <div key={step} className={`timeline-step ${idx <= currentStep ? 'completed' : ''}`}>
-                            <div className="step-dot"></div>
-                            <div className="step-label">{step}</div>
+                        <div key={step} className={`${styles['timeline-step']} ${idx <= currentStep ? styles['completed'] : ''}`}>
+                            <div className={styles['step-dot']}></div>
+                            <div className={styles['step-label']}>{step}</div>
                             {idx === currentStep && tracking.orderStatus === step && (
-                                <div className="step-active">Current</div>
+                                <div className={styles['step-active']}>Current</div>
                             )}
                         </div>
                     ))}
                 </div>
 
-                <div className="tracking-details">
-                    <div className="detail-card">
+                <div className={styles['tracking-details']}>
+                    <div className={styles['detail-card']}>
                         <h3>Tracking Information</h3>
                         <p><strong>Status:</strong> {tracking.orderStatus}</p>
                         {tracking.trackingNumber && <p><strong>Tracking Number:</strong> {tracking.trackingNumber}</p>}
@@ -80,19 +80,19 @@ function OrderTracking() {
                         )}
                     </div>
 
-                    <div className="detail-card">
+                    <div className={styles['detail-card']}>
                         <h3>Shipping Address</h3>
                         <p>{tracking.shippingAddress}</p>
                     </div>
 
-                    <div className="detail-card">
+                    <div className={styles['detail-card']}>
                         <h3>Order Summary</h3>
                         <p><strong>Total Items:</strong> {tracking.totalItems}</p>
                         <p><strong>Total Amount:</strong> ${tracking.totalAmount.toFixed(2)}</p>
                     </div>
                 </div>
 
-                <div className="tracking-actions">
+                <div className={styles['tracking-actions']}>
                     <button onClick={() => navigate(`/order-detail/${tracking.orderId}`)}>View Full Order Details</button>
                 </div>
             </div>

@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './Auth.css';
+import styles from './Auth.module.css';
 import { mergeGuestCartToServer } from '../services/cartHelper';
 
 function Login() {
@@ -67,15 +67,15 @@ function Login() {
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
+        <div className={styles['auth-container']}>
+            <div className={styles['auth-card']}>
                 <h2>Welcome Back</h2>
                 <p>Login to your SellPoint account</p>
 
-                {error && <div className="error-message">{error}</div>}
+                {error && <div className={styles['error-message']}>{error}</div>}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>Username or Email</label>
                         <input
                             type="text"
@@ -87,7 +87,7 @@ function Login() {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>Password</label>
                         <input
                             type="password"
@@ -104,7 +104,7 @@ function Login() {
                     </button>
                 </form>
 
-                <div className="auth-links">
+                <div className={styles['auth-links']}>
                     {isResetEnabled && (
                         <Link to="/forgot-password">Forgot Password?</Link>
                     )}

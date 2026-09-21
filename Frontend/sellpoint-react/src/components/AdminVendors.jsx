@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './AdminVendors.css';
+import styles from './AdminVendors.module.css';
 
 function AdminVendors() {
     const navigate = useNavigate();
@@ -153,10 +153,10 @@ function AdminVendors() {
 
     if (loading) {
         return (
-            <div className="admin-vendors-container">
-                <div className="admin-vendors-header">
+            <div className={styles['admin-vendors-container']}>
+                <div className={styles['admin-vendors-header']}>
                     <h1 onClick={() => navigate('/admin-dashboard')}>SellPoint Admin</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/admin-dashboard')}>Dashboard</span>
                         <span onClick={() => navigate('/admin/categories')}>Categories</span>
                         <span onClick={() => {
@@ -165,8 +165,8 @@ function AdminVendors() {
                         }}>Logout</span>
                     </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading vendors...</p>
                 </div>
             </div>
@@ -176,11 +176,11 @@ function AdminVendors() {
     const filteredVendors = getFilteredVendors();
 
     return (
-        <div className="admin-vendors-container">
+        <div className={styles['admin-vendors-container']}>
             {/* Header */}
-            <div className="admin-vendors-header">
+            <div className={styles['admin-vendors-header']}>
                 <h1 onClick={() => navigate('/admin-dashboard')}>SellPoint Admin</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/admin-dashboard')}>Dashboard</span>
                     <span onClick={() => navigate('/admin/categories')}>Categories</span>
                     <span onClick={() => {
@@ -190,44 +190,44 @@ function AdminVendors() {
                 </div>
             </div>
 
-            <div className="admin-vendors-main">
-                <div className="page-header">
+            <div className={styles['admin-vendors-main']}>
+                <div className={styles['page-header']}>
                     <h2>Vendor Management</h2>
-                    <div className="stats-summary">
-                        <span className="stat">Total: {vendors.length}</span>
-                        <span className="stat pending">Pending: {vendors.filter(v => v.approvalStatus === 'Pending').length}</span>
-                        <span className="stat approved">Approved: {vendors.filter(v => v.approvalStatus === 'Approved').length}</span>
+                    <div className={styles['stats-summary']}>
+                        <span className={styles['stat']}>Total: {vendors.length}</span>
+                        <span className={styles['stat'] + ' ' + styles['pending']}>Pending: {vendors.filter(v => v.approvalStatus === 'Pending').length}</span>
+                        <span className={styles['stat'] + ' ' + styles['approved']}>Approved: {vendors.filter(v => v.approvalStatus === 'Approved').length}</span>
                     </div>
                 </div>
 
                 {/* Filter Tabs */}
-                <div className="filter-tabs">
+                <div className={styles['filter-tabs']}>
                     <button
-                        className={`filter-tab ${filterStatus === 'all' ? 'active' : ''}`}
+                        className={styles['filter-tab'] + ' ' + (filterStatus === 'all' ? styles['active'] : '')}
                         onClick={() => setFilterStatus('all')}
                     >
                         All Vendors
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'pending' ? 'active' : ''}`}
+                        className={styles['filter-tab'] + ' ' + (filterStatus === 'pending' ? styles['active'] : '')}
                         onClick={() => setFilterStatus('pending')}
                     >
                         Pending Approval
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'approved' ? 'active' : ''}`}
+                        className={styles['filter-tab'] + ' ' + (filterStatus === 'approved' ? styles['active'] : '')}
                         onClick={() => setFilterStatus('approved')}
                     >
                         Approved
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'rejected' ? 'active' : ''}`}
+                        className={styles['filter-tab'] + ' ' + (filterStatus === 'rejected' ? styles['active'] : '')}
                         onClick={() => setFilterStatus('rejected')}
                     >
                         Rejected
                     </button>
                     <button
-                        className={`filter-tab ${filterStatus === 'suspended' ? 'active' : ''}`}
+                        className={styles['filter-tab'] + ' ' + (filterStatus === 'suspended' ? styles['active'] : '')}
                         onClick={() => setFilterStatus('suspended')}
                     >
                         Suspended
@@ -235,21 +235,21 @@ function AdminVendors() {
                 </div>
 
                 {error && (
-                    <div className="error-message">
+                    <div className={styles['error-message']}>
                         <p>{error}</p>
-                        <button onClick={fetchVendors}>Retry</button>
+                        <button onClick={fetchVendors} className={styles['retry-btn']}>Retry</button>
                     </div>
                 )}
 
                 {filteredVendors.length === 0 && !error ? (
-                    <div className="empty-vendors">
-                        <div className="empty-icon">👥</div>
+                    <div className={styles['empty-vendors']}>
+                        <div className={styles['empty-icon']}>👥</div>
                         <h3>No Vendors Found</h3>
                         <p>{filterStatus === 'pending' ? 'No vendors waiting for approval.' : 'No vendors registered yet.'}</p>
                     </div>
                 ) : (
-                    <div className="vendors-table-container">
-                        <table className="vendors-table">
+                    <div className={styles['vendors-table-container']}>
+                        <table className={styles['vendors-table']}>
                             <thead>
                                 <tr>
                                     <th>Business Name</th>
@@ -263,24 +263,24 @@ function AdminVendors() {
                             <tbody>
                                 {filteredVendors.map(vendor => (
                                     <tr key={vendor.userId}>
-                                        <td className="business-name-cell">
-                                            <div className="business-name">{vendor.businessName}</div>
-                                            {vendor.taxId && <div className="tax-id">Tax ID: {vendor.taxId}</div>}
+                                        <td className={styles['business-name-cell']}>
+                                            <div className={styles['business-name']}>{vendor.businessName}</div>
+                                            {vendor.taxId && <div className={styles['tax-id']}>Tax ID: {vendor.taxId}</div>}
                                         </td>
                                         <td>{vendor.ownerName}</td>
                                         <td>{vendor.email}</td>
                                         <td>{formatDate(vendor.registeredDate)}</td>
                                         <td>
-                                            <span className={`status-badge ${getStatusBadgeClass(vendor.approvalStatus)}`}>
+                                            <span className={`${styles['status-badge']} ${styles[getStatusBadgeClass(vendor.approvalStatus)]}`}>
                                                 {vendor.approvalStatus}
                                             </span>
                                             {vendor.isActive === false && vendor.approvalStatus === 'Approved' && (
-                                                <span className="suspended-badge">Suspended</span>
+                                                <span className={styles['suspended-badge']}>Suspended</span>
                                             )}
                                         </td>
-                                        <td className="actions-cell">
+                                        <td className={styles['actions-cell']}>
                                             <button
-                                                className="view-btn"
+                                                className={styles['view-btn']}
                                                 onClick={() => handleViewVendor(vendor)}
                                             >
                                                 View
@@ -288,13 +288,13 @@ function AdminVendors() {
                                             {vendor.approvalStatus === 'Pending' && (
                                                 <>
                                                     <button
-                                                        className="approve-btn"
+                                                        className={styles['approve-btn']}
                                                         onClick={() => handleApproveVendor(vendor)}
                                                     >
                                                         Approve
                                                     </button>
                                                     <button
-                                                        className="reject-btn"
+                                                        className={styles['reject-btn']}
                                                         onClick={() => handleRejectVendor(vendor)}
                                                     >
                                                         Reject
@@ -303,7 +303,7 @@ function AdminVendors() {
                                             )}
                                             {vendor.approvalStatus === 'Approved' && (
                                                 <button
-                                                    className={`suspend-btn ${vendor.isActive === false ? 'activate' : ''}`}
+                                                    className={`${styles['suspend-btn']} ${vendor.isActive === false ? styles['activate'] : ''}`}
                                                     onClick={() => handleSuspendVendor(vendor.userId, vendor.isActive ? 'Active' : 'Suspended')}
                                                 >
                                                     {vendor.isActive === false ? 'Activate' : 'Suspend'}
@@ -320,39 +320,39 @@ function AdminVendors() {
 
             {/* Vendor Detail Modal */}
             {showDetailModal && selectedVendor && (
-                <div className="modal-overlay" onClick={() => setShowDetailModal(false)}>
-                    <div className="modal-content vendor-detail-modal" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
+                <div className={styles['modal-overlay']} onClick={() => setShowDetailModal(false)}>
+                    <div className={styles['modal-content'] + ' ' + styles['vendor-detail-modal']} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles['modal-header']}>
                             <h3>{selectedVendor.businessName}</h3>
-                            <button className="close-btn" onClick={() => setShowDetailModal(false)}>×</button>
+                            <button className={styles['close-btn']} onClick={() => setShowDetailModal(false)}>×</button>
                         </div>
 
-                        <div className="modal-body">
+                        <div className={styles['modal-body']}>
                             {/* Business Information */}
-                            <div className="detail-section">
+                            <div className={styles['detail-section']}>
                                 <h4>Business Information</h4>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Business Name:</span>
                                     <strong>{selectedVendor.businessName}</strong>
                                 </div>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Tax ID:</span>
                                     <strong>{selectedVendor.taxId || 'N/A'}</strong>
                                 </div>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Business Phone:</span>
                                     <strong>{selectedVendor.businessPhone || 'N/A'}</strong>
                                 </div>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Business Email:</span>
                                     <strong>{selectedVendor.businessEmail || 'N/A'}</strong>
                                 </div>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Website:</span>
                                     <strong>{selectedVendor.website || 'N/A'}</strong>
                                 </div>
                                 {selectedVendor.businessDescription && (
-                                    <div className="detail-row">
+                                    <div className={styles['detail-row']}>
                                         <span>Description:</span>
                                         <strong>{selectedVendor.businessDescription}</strong>
                                     </div>
@@ -360,21 +360,21 @@ function AdminVendors() {
                             </div>
 
                             {/* Owner Information */}
-                            <div className="detail-section">
+                            <div className={styles['detail-section']}>
                                 <h4>Owner Information</h4>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Name:</span>
                                     <strong>{selectedVendor.ownerName}</strong>
                                 </div>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Email:</span>
                                     <strong>{selectedVendor.email}</strong>
                                 </div>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Phone:</span>
                                     <strong>{selectedVendor.phoneNumber || 'N/A'}</strong>
                                 </div>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Registered:</span>
                                     <strong>{formatDate(selectedVendor.registeredDate)}</strong>
                                 </div>
@@ -382,13 +382,13 @@ function AdminVendors() {
 
                             {/* Documents */}
                             {selectedVendor.documents && selectedVendor.documents.length > 0 && (
-                                <div className="detail-section">
+                                <div className={styles['detail-section']}>
                                     <h4>Uploaded Documents</h4>
-                                    <div className="documents-list">
+                                    <div className={styles['documents-list']}>
                                         {selectedVendor.documents.map((doc, idx) => (
-                                            <div key={idx} className="document-item">
-                                                <span className="doc-name">📄 {doc.fileName}</span>
-                                                <a href={doc.filePath} target="_blank" rel="noopener noreferrer" className="doc-link">
+                                            <div key={idx} className={styles['document-item']}>
+                                                <span className={styles['doc-name']}>📄 {doc.fileName}</span>
+                                                <a href={doc.filePath} target="_blank" rel="noopener noreferrer" className={styles['doc-link']} >
                                                     View
                                                 </a>
                                             </div>
@@ -398,31 +398,31 @@ function AdminVendors() {
                             )}
 
                             {/* Status Information */}
-                            <div className="detail-section">
+                            <div className={styles['detail-section']}>
                                 <h4>Status Information</h4>
-                                <div className="detail-row">
+                                <div className={styles['detail-row']}>
                                     <span>Approval Status:</span>
-                                    <span className={`status-badge ${getStatusBadgeClass(selectedVendor.approvalStatus)}`}>
+                                    <span className={`${styles['status-badge']} ${styles[getStatusBadgeClass(selectedVendor.approvalStatus)]}`}>
                                         {selectedVendor.approvalStatus}
                                     </span>
                                 </div>
                                 {selectedVendor.approvedDate && (
-                                    <div className="detail-row">
+                                    <div className={styles['detail-row']}>
                                         <span>Approved/Rejected Date:</span>
                                         <strong>{formatDate(selectedVendor.approvedDate)}</strong>
                                     </div>
                                 )}
                                 {selectedVendor.rejectionReason && (
-                                    <div className="detail-row">
+                                    <div className={styles['detail-row']}>
                                         <span>Rejection Reason:</span>
-                                        <strong className="rejection-text">{selectedVendor.rejectionReason}</strong>
+                                        <strong className={styles['rejection-text']}>{selectedVendor.rejectionReason}</strong>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        <div className="modal-actions">
-                            <button className="close-modal-btn" onClick={() => setShowDetailModal(false)}>
+                        <div className={styles['modal-actions']}>
+                            <button className={styles['close-modal-btn']} onClick={() => setShowDetailModal(false)}>
                                 Close
                             </button>
                         </div>
@@ -432,20 +432,20 @@ function AdminVendors() {
 
             {/* Approve/Reject Modal */}
             {showApproveModal && vendorToApprove && (
-                <div className="modal-overlay" onClick={() => setShowApproveModal(false)}>
-                    <div className="modal-content approve-modal" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
+                <div className={styles['modal-overlay']} onClick={() => setShowApproveModal(false)}>
+                    <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles['modal-header']}>
                             <h3>{vendorToApprove.businessName}</h3>
-                            <button className="close-btn" onClick={() => setShowApproveModal(false)}>×</button>
+                            <button className={styles['close-btn']} onClick={() => setShowApproveModal(false)}>×</button>
                         </div>
 
-                        <div className="modal-body">
-                            <p className="confirm-message">
+                        <div className={styles['modal-body']}>
+                            <p className={styles['confirm-message']}>
                                 Are you sure you want to <strong>{vendorToApprove.approvalStatus === 'Pending' ? 'approve' : 'reject'}</strong> this vendor?
                             </p>
 
                             {vendorToApprove.approvalStatus !== 'Pending' && (
-                                <div className="form-group">
+                                <div className={styles['form-group']}>
                                     <label>Rejection Reason:</label>
                                     <textarea
                                         value={rejectionReason}
@@ -457,13 +457,13 @@ function AdminVendors() {
                             )}
                         </div>
 
-                        <div className="modal-actions">
-                            <button className="cancel-modal-btn" onClick={() => setShowApproveModal(false)}>
+                        <div className={styles['modal-actions']}>
+                            <button className={styles['cancel-modal-btn']} onClick={() => setShowApproveModal(false)}>
                                 Cancel
                             </button>
                             {vendorToApprove.approvalStatus === 'Pending' ? (
                                 <button
-                                    className="approve-modal-btn"
+                                    className={styles['approve-modal-btn']}
                                     onClick={() => submitApproval('approve')}
                                     disabled={actionLoading}
                                 >
@@ -471,7 +471,7 @@ function AdminVendors() {
                                 </button>
                             ) : (
                                 <button
-                                    className="reject-modal-btn"
+                                    className={styles['reject-modal-btn']}
                                     onClick={() => submitApproval('reject')}
                                     disabled={actionLoading}
                                 >

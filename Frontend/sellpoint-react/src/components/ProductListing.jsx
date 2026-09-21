@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import ProductCard from './ProductCard';
-import './ProductListing.css';
+import styles from './ProductListing.module.css';
 import { addToCart } from '../services/cartHelper';
 
 function ProductListing() {
@@ -132,25 +132,25 @@ function ProductListing() {
     };
 
     return (
-        <div className="product-listing-container">
+        <div className={styles['product-listing-container']}>
             {/* Header with navigation */}
-            <div className="listing-header">
+            <div className={styles['listing-header']}>
                 <h1>SellPoint</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/dashboard')}>My Dashboard</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
                 </div>
             </div>
 
-            <div className="listing-main">
+            <div className={styles['listing-main']}>
                 {/* Sidebar Filters */}
-                <div className="filters-sidebar">
+                <div className={styles['filters-sidebar']}>
                     <h3>Filters</h3>
 
-                    <div className="filter-section">
+                    <div className={styles['filter-section']}>
                         <h4>Categories</h4>
                         <button
-                            className={`category-filter ${selectedCategory === '' ? 'active' : ''}`}
+                            className={styles['category-filter'] + (selectedCategory === '' ? ` ${styles['active']}` : '')}
                             onClick={() => handleCategoryChange('')}
                         >
                             All Products
@@ -158,7 +158,7 @@ function ProductListing() {
                         {categories.map(cat => (
                             <button
                                 key={cat.categoryId}
-                                className={`category-filter ${selectedCategory === cat.categoryId ? 'active' : ''}`}
+                                className={styles['category-filter'] + (selectedCategory === cat.categoryId ? ` ${styles['active']}` : '')}
                                 onClick={() => handleCategoryChange(cat.categoryId)}
                             >
                                 {cat.categoryName}
@@ -166,9 +166,9 @@ function ProductListing() {
                         ))}
                     </div>
 
-                    <div className="filter-section">
+                    <div className={styles['filter-section']}>
                         <h4>Price Range</h4>
-                        <div className="price-inputs">
+                        <div className={styles['price-inputs']}>
                             <input
                                 type="number"
                                 placeholder="Min"
@@ -183,12 +183,12 @@ function ProductListing() {
                                 onChange={(e) => setMaxPrice(e.target.value)}
                             />
                         </div>
-                        <button onClick={fetchProducts} className="apply-price-btn">
+                        <button onClick={fetchProducts} className={styles['apply-price-btn']}>
                             Apply
                         </button>
                     </div>
 
-                    <div className="filter-section">
+                    <div className={styles['filter-section']}>
                         <h4>Sort By</h4>
                         <select value={`${sortBy}-${sortOrder}`} onChange={handleSortChange}>
                             <option value="CreatedDate-DESC">Newest First</option>
@@ -201,15 +201,15 @@ function ProductListing() {
                         </select>
                     </div>
 
-                    <button onClick={handleClearFilters} className="clear-filters-btn">
+                    <button onClick={handleClearFilters} className={styles['clear-filters-btn']}>
                         Clear All Filters
                     </button>
                 </div>
 
                 {/* Products Grid */}
-                <div className="products-main">
+                <div className={styles['products-main']}>
                     {/* Search Bar */}
-                    <form onSubmit={handleSearch} className="search-bar">
+                    <form onSubmit={handleSearch} className={styles['search-bar']}>
                         <input
                             type="text"
                             placeholder="Search products..."
@@ -220,21 +220,21 @@ function ProductListing() {
                     </form>
 
                     {/* Results count */}
-                    <div className="results-info">
+                    <div className={styles['results-info']}>
                         <p>Showing {products.length} of {totalProducts} products</p>
                     </div>
 
                     {/* Loading State */}
                     {loading && (
-                        <div className="loading-state">
-                            <div className="spinner"></div>
+                        <div className={styles['loading-state']}>
+                            <div className={styles['spinner']}></div>
                             <p>Loading products...</p>
                         </div>
                     )}
 
                     {/* Error State */}
                     {error && !loading && (
-                        <div className="error-state">
+                        <div className={styles['error-state']}>
                             <p>{error}</p>
                             <button onClick={fetchProducts}>Try Again</button>
                         </div>
@@ -244,12 +244,12 @@ function ProductListing() {
                     {!loading && !error && (
                         <>
                             {products.length === 0 ? (
-                                <div className="no-products">
+                                <div className={styles['no-products']}>
                                     <p>No products found.</p>
                                     <button onClick={handleClearFilters}>Clear Filters</button>
                                 </div>
                             ) : (
-                                <div className="products-grid">
+                                <div className={styles['products-grid']}>
                                     {products.map(product => (
                                         <ProductCard
                                             key={product.productId}
@@ -264,7 +264,7 @@ function ProductListing() {
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="pagination">
+                        <div className={styles['pagination']}>
                             <button
                                 onClick={() => goToPage(currentPage - 1)}
                                 disabled={currentPage === 1}
@@ -284,17 +284,19 @@ function ProductListing() {
                                         <button
                                             key={pageNum}
                                             onClick={() => goToPage(pageNum)}
-                                            className={currentPage === pageNum ? 'active' : ''}
+                                            className={styles[currentPage === pageNum ? 'active-page' : 'page-button']}
                                         >
                                             {pageNum}
                                         </button>
                                     );
                                 } else if (pageNum === currentPage - 3 || pageNum === currentPage + 3) {
-                                    return <span key={pageNum}>...</span>;
+                                    return <span key={pageNum} className={styles['ellipsis']}>
+                                        ...
+                                    </span>;
                                 }
                                 return null;
-                            })}
-
+                            })
+}
                             <button
                                 onClick={() => goToPage(currentPage + 1)}
                                 disabled={currentPage === totalPages}

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './Auth.css';
+import styles from './Auth.module.css';
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -111,12 +111,12 @@ if (formData.userType === 'Vendor') {
 
     if (success) {
         return (
-            <div className="auth-container">
-                <div className="auth-card">
+            <div className={styles['auth-container']}>
+                <div className={styles['auth-card']}>
                     <h2>Registration Successful!</h2>
-                    <div className="success-message">{success}</div>
+                    <div className={styles['success-message']}>{success}</div>
                     <p>Redirecting you to login page...</p>
-                    <p className="auth-link">
+                    <p className={styles['auth-link']}>
                         <Link to="/login">Click here if not redirected</Link>
                     </p>
                 </div>
@@ -125,17 +125,17 @@ if (formData.userType === 'Vendor') {
     }
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
+        <div className={styles['auth-container']}>
+            <div className={styles['auth-card']}>
                 <h2>Create Account</h2>
                 <p>Join SellPoint marketplace</p>
 
-                {error && <div className="error-message">{error}</div>}
+                {error && <div className={styles['error-message']}>{error}</div>}
 
                 <form onSubmit={handleSubmit}>
                     {/* Basic Fields */}
-                    <div className="form-row">
-                        <div className="form-group">
+                    <div className={styles['form-row']}>
+                        <div className={styles['form-group']}>
                             <label>First Name *</label>
                             <input
                                 type="text"
@@ -147,7 +147,7 @@ if (formData.userType === 'Vendor') {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className={styles['form-group']}>
                             <label>Last Name *</label>
                             <input
                                 type="text"
@@ -160,7 +160,7 @@ if (formData.userType === 'Vendor') {
                         </div>
                     </div>
 
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>Email *</label>
                         <input
                             type="email"
@@ -172,7 +172,7 @@ if (formData.userType === 'Vendor') {
                         />
                     </div>
 
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>Username *</label>
                         <input
                             type="text"
@@ -185,14 +185,14 @@ if (formData.userType === 'Vendor') {
                     </div>
 
                     {/* User Type Selection */}
-                    <div className="form-group">
+                    <div className={styles['form-group']}>
                         <label>Register as *</label>
                         <select
                             name="userType"
                             value={formData.userType}
                             onChange={handleUserTypeChange}
                             required
-                            className="form-select"
+                            className={styles['form-select']}
                         >
                             <option value="Customer">Customer</option>
                             <option value="Vendor">Vendor</option>
@@ -200,8 +200,8 @@ if (formData.userType === 'Vendor') {
                     </div>
 
                     {/* Optional fields for all */}
-                    <div className="form-row">
-                        <div className="form-group">
+                    <div className={styles['form-row']}>
+                        <div className={styles['form-group']}>
                             <label>Phone Number (Optional)</label>
                             <input
                                 type="tel"
@@ -212,7 +212,7 @@ if (formData.userType === 'Vendor') {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className={styles['form-group']}>
                             <label>Date of Birth (Optional)</label>
                             <input
                                 type="date"
@@ -225,10 +225,10 @@ if (formData.userType === 'Vendor') {
 
                     {/* Vendor Specific Fields */}
                     {formData.userType === 'Vendor' && (
-                        <div className="vendor-fields">
+                        <div className={styles['vendor-fields']}>
                             <h3 style={{ margin: '20px 0 10px', color: '#4a5568' }}>Business Information</h3>
 
-                            <div className="form-group">
+                            <div className={styles['form-group']}>
                                 <label>Business Name *</label>
                                 <input
                                     type="text"
@@ -240,7 +240,7 @@ if (formData.userType === 'Vendor') {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className={styles['form-group']}>
                                 <label>Tax ID / VAT Number *</label>
                                 <input
                                     type="text"
@@ -253,8 +253,8 @@ if (formData.userType === 'Vendor') {
                                 <small>Format: XX-XXXXXXX</small>
                             </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
+                            <div className={styles['form-row']}>
+                                <div className={styles['form-group']}>
                                     <label>Business Phone</label>
                                     <input
                                         type="tel"
@@ -265,7 +265,7 @@ if (formData.userType === 'Vendor') {
                                     />
                                 </div>
 
-                                <div className="form-group">
+                                <div className={styles['form-group']}>
                                     <label>Business Email</label>
                                     <input
                                         type="email"
@@ -277,7 +277,7 @@ if (formData.userType === 'Vendor') {
                                 </div>
                             </div>
 
-                            <div className="form-group">
+                            <div className={styles['form-group']}>
                                 <label>Website (Optional)</label>
                                 <input
                                     type="url"
@@ -288,7 +288,7 @@ if (formData.userType === 'Vendor') {
                                 />
                             </div>
 
-                            <div className="form-group">
+                            <div className={styles['form-group']}>
                                 <label>Business Description</label>
                                 <textarea
                                     name="businessDescription"
@@ -303,11 +303,11 @@ if (formData.userType === 'Vendor') {
 
                     {/* Admin Specific Fields */}
                     {formData.userType === 'Admin' && (
-                        <div className="admin-fields">
+                        <div className={styles['admin-fields']}>
                             <h3 style={{ margin: '20px 0 10px', color: '#4a5568' }}>Administrator Information</h3>
 
-                            <div className="form-row">
-                                <div className="form-group">
+                            <div className={styles['form-row']}>
+                                <div className={styles['form-group']}>
                                     <label>Department</label>
                                     <input
                                         type="text"
@@ -318,7 +318,7 @@ if (formData.userType === 'Vendor') {
                                     />
                                 </div>
 
-                                <div className="form-group">
+                                <div className={styles['form-group']}>
                                     <label>Job Title</label>
                                     <input
                                         type="text"
@@ -330,7 +330,7 @@ if (formData.userType === 'Vendor') {
                                 </div>
                             </div>
 
-                            <div className="info-box" style={{ background: '#fff3cd', borderColor: '#ffc107' }}>
+                            <div className={styles['info-box']} style={{ background: '#fff3cd', borderColor: '#ffc107' }}>
                                 <p style={{ color: '#856404' }}>
                                     <strong>Note:</strong> Admin accounts have full system access. Use responsibly.
                                 </p>
@@ -339,8 +339,8 @@ if (formData.userType === 'Vendor') {
                     )}
 
                     {/* Password Fields */}
-                    <div className="form-row">
-                        <div className="form-group">
+                    <div className={styles['form-row']}>
+                        <div className={styles['form-group']}>
                             <label>Password *</label>
                             <input
                                 type="password"
@@ -353,7 +353,7 @@ if (formData.userType === 'Vendor') {
                             />
                         </div>
 
-                        <div className="form-group">
+                        <div className={styles['form-group']}>
                             <label>Confirm Password *</label>
                             <input
                                 type="password"
@@ -374,7 +374,7 @@ if (formData.userType === 'Vendor') {
                     </button>
                 </form>
 
-                <p className="auth-link">
+                <p className={styles['auth-link']}>
                     Already have an account? <Link to="/login">Login here</Link>
                 </p>
             </div>

@@ -36,3 +36,6 @@ yarn-error.log*
 *.key
 *.crt
 **/secrets.json
+
+# ========== Other ==========
+*.cmd
