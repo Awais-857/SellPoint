@@ -103,11 +103,7 @@ function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
 
           {/* Protected Routes - Login required */}
-          <Route path="/cart" element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          } />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={
             <ProtectedRoute>
               <Checkout />

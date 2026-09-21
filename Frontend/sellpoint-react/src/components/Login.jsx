@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import './Auth.css';
+import { mergeGuestCartToServer } from '../services/cartHelper';
 
 function Login() {
     const isResetEnabled = process.env.REACT_APP_ENABLE_PASSWORD_RESET === 'true';
@@ -39,6 +40,9 @@ function Login() {
             localStorage.setItem('userEmail', response.data.email);
             localStorage.setItem('userId', response.data.userId);
             localStorage.setItem('userType', response.data.userType);
+            
+            // Merge any guest cart items into the user's server cart
+            await mergeGuestCartToServer();
 
             // Redirect based on user type
             switch (response.data.userType) {

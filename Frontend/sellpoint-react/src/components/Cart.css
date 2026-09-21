@@ -136,12 +136,6 @@
     padding-bottom: 20px;
 }
 
-.vendor-group:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
 .vendor-header {
     margin-bottom: 15px;
     padding-bottom: 10px;
@@ -312,8 +306,7 @@
 /* Clear Cart Section */
 .clear-cart-section {
     margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #e2e8f0;
+    padding-top: 0;
     text-align: right;
 }
 
@@ -346,7 +339,7 @@
     color: #333;
 }
 
-.summary-row {
+.cart-container .summary-row {
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
@@ -354,10 +347,13 @@
     font-size: 14px;
 }
 
-.summary-row.total {
+.cart-container .summary-row.total {
     font-size: 18px;
     font-weight: bold;
     color: #333;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
 }
 
 .summary-divider {

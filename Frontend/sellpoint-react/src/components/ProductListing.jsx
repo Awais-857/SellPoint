@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import ProductCard from './ProductCard';
 import './ProductListing.css';
+import { addToCart } from '../services/cartHelper';
 
 function ProductListing() {
     const navigate = useNavigate();
@@ -120,19 +121,10 @@ function ProductListing() {
         }
     };
 
-    const handleAddToCart = async (productId) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            // Redirect to login if not authenticated
-            if (window.confirm('Please login to add items to cart. Go to login page?')) {
-                navigate('/login');
-            }
-            return;
-        }
-
+    const handleAddToCart = async (product) => {
         try {
-            await api.post('/cart/add', { productId, quantity: 1 });
-            alert('Product added to cart!');
+            await addToCart(product, 1);
+            alert(`${product.productName} added to cart!`);
         } catch (err) {
             console.error('Failed to add to cart', err);
             alert('Failed to add to cart. Please try again.');

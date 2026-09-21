@@ -1,7 +1,13 @@
 // src/components/Cart.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import {
+    isLoggedIn,
+    getCart,
+    updateQuantity,
+    removeItem,
+    clearCart
+} from '../services/cartHelper';
 import './Cart.css';
 
 function Cart() {
@@ -18,26 +24,17 @@ function Cart() {
         itemCount: 0
     });
 
-    useEffect(() => {
-        checkAuthAndFetchCart();
-    }, []);
+    const loggedIn = isLoggedIn();
 
-    const checkAuthAndFetchCart = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        await fetchCart();
-    };
+    useEffect(() => {
+        fetchCart();
+    }, []);
 
     const fetchCart = async () => {
         setLoading(true);
         setError('');
-
         try {
-            const response = await api.get('/cart');
-            const items = response.data.items || [];
+            const items = await getCart();
             setCartItems(items);
             calculateSummary(items);
         } catch (err) {
@@ -50,20 +47,12 @@ function Cart() {
 
     const calculateSummary = (items) => {
         const subtotal = items.reduce((sum, item) => sum + item.itemTotal, 0);
-        // Calculate shipping: $5 per unique vendor
         const uniqueVendors = new Set(items.map(item => item.vendorId || item.vendorName));
         const shipping = uniqueVendors.size * 5;
-        const tax = subtotal * 0.10; // 10% tax
+        const tax = subtotal * 0.10;
         const total = subtotal + shipping + tax;
         const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-
-        setCartSummary({
-            subtotal,
-            shipping,
-            tax,
-            total,
-            itemCount
-        });
+        setCartSummary({ subtotal, shipping, tax, total, itemCount });
     };
 
     const handleUpdateQuantity = async (cartId, newQuantity) => {
@@ -71,11 +60,10 @@ function Cart() {
             await handleRemoveItem(cartId);
             return;
         }
-
         setUpdating(true);
         try {
-            await api.put(`/cart/${cartId}`, { quantity: newQuantity });
-            await fetchCart(); // Refresh cart
+            await updateQuantity(cartId, newQuantity);
+            await fetchCart();
         } catch (err) {
             console.error('Failed to update quantity', err);
             alert('Failed to update quantity. Please try again.');
@@ -87,8 +75,8 @@ function Cart() {
     const handleRemoveItem = async (cartId) => {
         setUpdating(true);
         try {
-            await api.delete(`/cart/${cartId}`);
-            await fetchCart(); // Refresh cart
+            await removeItem(cartId);
+            await fetchCart();
         } catch (err) {
             console.error('Failed to remove item', err);
             alert('Failed to remove item. Please try again.');
@@ -98,14 +86,11 @@ function Cart() {
     };
 
     const handleClearCart = async () => {
-        if (!window.confirm('Are you sure you want to clear your entire cart?')) {
-            return;
-        }
-
+        if (!window.confirm('Are you sure you want to clear your entire cart?')) return;
         setUpdating(true);
         try {
-            await api.delete('/cart/clear');
-            await fetchCart(); // Refresh cart
+            await clearCart();
+            await fetchCart();
         } catch (err) {
             console.error('Failed to clear cart', err);
             alert('Failed to clear cart. Please try again.');
@@ -119,14 +104,16 @@ function Cart() {
             alert('Your cart is empty');
             return;
         }
+        if (!loggedIn) {
+            alert('Please log in to proceed with checkout.');
+            navigate('/login', { state: { from: 'checkout' } });
+            return;
+        }
         navigate('/checkout');
     };
 
-    const handleContinueShopping = () => {
-        navigate('/products');
-    };
+    const handleContinueShopping = () => navigate('/products');
 
-    // Group items by vendor for display
     const groupedItems = cartItems.reduce((groups, item) => {
         const vendorKey = item.vendorId || item.vendorName;
         if (!groups[vendorKey]) {
@@ -147,7 +134,9 @@ function Cart() {
                     <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                     <div className="header-links">
                         <span onClick={() => navigate('/products')}>Continue Shopping</span>
-                        <span onClick={() => navigate('/dashboard')}>My Account</span>
+                        {loggedIn
+                            ? <span onClick={() => navigate('/dashboard')}>My Account</span>
+                            : <span onClick={() => navigate('/login')}>Login</span>}
                     </div>
                 </div>
                 <div className="loading-state">
@@ -160,17 +149,33 @@ function Cart() {
 
     return (
         <div className="cart-container">
-            {/* Header */}
             <div className="cart-header">
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                 <div className="header-links">
                     <span onClick={handleContinueShopping}>Continue Shopping</span>
-                    <span onClick={() => navigate('/dashboard')}>My Account</span>
+                    {loggedIn
+                        ? <span onClick={() => navigate('/dashboard')}>My Account</span>
+                        : <span onClick={() => navigate('/login')}>Login</span>}
                 </div>
             </div>
 
             <div className="cart-main">
                 <h2>Shopping Cart</h2>
+
+                {!loggedIn && cartItems.length > 0 && (
+                    <div className="guest-banner" style={{
+                        background: '#fff3cd',
+                        border: '1px solid #ffc107',
+                        borderRadius: '6px',
+                        padding: '12px 16px',
+                        marginBottom: '16px'
+                    }}>
+                        You're browsing as a guest. Your cart will be saved, but you'll need to
+                        <a href="/login" style={{ marginLeft: 4, color: '#856404', fontWeight: 600 }}>
+                            log in to check out
+                        </a>.
+                    </div>
+                )}
 
                 {error && (
                     <div className="cart-error">
@@ -190,13 +195,9 @@ function Cart() {
                     </div>
                 ) : (
                     <div className="cart-content">
-                        {/* Cart Items */}
                         <div className="cart-items-section">
                             {Object.values(groupedItems).map((group, idx) => (
                                 <div key={idx} className="vendor-group">
-                                    <div className="vendor-header">
-                                        <h3>{group.vendorName}</h3>
-                                    </div>
                                     <div className="items-list">
                                         <div className="items-header">
                                             <span className="col-product">Product</span>
@@ -271,7 +272,6 @@ function Cart() {
                                 </div>
                             ))}
 
-                            {/* Clear Cart Button */}
                             {cartItems.length > 0 && (
                                 <div className="clear-cart-section">
                                     <button onClick={handleClearCart} className="clear-cart-btn" disabled={updating}>
@@ -281,7 +281,6 @@ function Cart() {
                             )}
                         </div>
 
-                        {/* Order Summary */}
                         <div className="order-summary">
                             <h3>Order Summary</h3>
                             <div className="summary-row">
@@ -296,7 +295,6 @@ function Cart() {
                                 <span>Tax (10%)</span>
                                 <span>${cartSummary.tax.toFixed(2)}</span>
                             </div>
-                            <div className="summary-divider"></div>
                             <div className="summary-row total">
                                 <span>Total</span>
                                 <span>${cartSummary.total.toFixed(2)}</span>
@@ -306,7 +304,7 @@ function Cart() {
                                 onClick={handleProceedToCheckout}
                                 disabled={updating || cartItems.length === 0}
                             >
-                                Proceed to Checkout
+                                {loggedIn ? 'Proceed to Checkout' : 'Log in to Checkout'}
                             </button>
                             <button
                                 className="continue-shopping-btn"

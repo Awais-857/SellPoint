@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import './ProductDetail.css';
+import { addToCart } from '../services/cartHelper';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -85,15 +86,9 @@ function ProductDetail() {
     };
 
     const handleAddToCart = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-
         setAddingToCart(true);
         try {
-            await api.post('/cart/add', { productId: product.productId, quantity });
+            await addToCart(product, quantity);
             alert(`${quantity} × ${product.productName} added to cart!`);
         } catch (err) {
             console.error('Failed to add to cart', err);
@@ -105,7 +100,12 @@ function ProductDetail() {
 
     const handleBuyNow = async () => {
         await handleAddToCart();
-        navigate('/cart');
+        if (!localStorage.getItem('token')) {
+            // Guest → send them to login, then they can go to cart
+            navigate('/login', { state: { from: 'checkout' } });
+        } else {
+            navigate('/cart');
+        }
     };
 
     const discountedPrice = product?.price * (1 - (product?.discountPercent || 0) / 100);
