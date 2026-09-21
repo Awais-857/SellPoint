@@ -1,6 +1,7 @@
 // src/App.js
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ServerWakeUpBanner from './components/ServerWakeUpBanner';
 import Register from './components/Register';
 import Login from './components/Login';
 import ForgotPassword from './components/ForgotPassword';
@@ -65,6 +66,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
+        <ServerWakeUpBanner />
         <Routes>
           {/* Public Routes - No login required, redirect if already logged in */}
           <Route path="/login" element={
