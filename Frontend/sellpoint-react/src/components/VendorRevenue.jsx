@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './VendorRevenue.css';
+import styles from './VendorRevenue.module.css';
 
 function VendorRevenue() {
     const navigate = useNavigate();
@@ -89,10 +89,10 @@ function VendorRevenue() {
 
     if (loading) {
         return (
-            <div className="vendor-revenue-container">
-                <div className="vendor-revenue-header">
+            <div className={styles['vendor-revenue-container']}>
+                <div className={styles['vendor-revenue-header']}>
                     <h1 onClick={() => navigate('/dashboard')}>SellPoint Vendor</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/vendor-dashboard')}>Dashboard</span>
                         <span onClick={() => navigate('/vendor/products')}>Products</span>
                         <span onClick={() => navigate('/vendor/orders')}>Orders</span>
@@ -102,8 +102,8 @@ function VendorRevenue() {
                         }}>Logout</span>
                     </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading revenue data...</p>
                 </div>
             </div>
@@ -111,11 +111,11 @@ function VendorRevenue() {
     }
 
     return (
-        <div className="vendor-revenue-container">
+        <div className={styles['vendor-revenue-container']}>
             {/* Header */}
-            <div className="vendor-revenue-header">
+            <div className={styles['vendor-revenue-header']}>
                 <h1 onClick={() => navigate('/dashboard')}>SellPoint Vendor</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/vendor-dashboard')}>Dashboard</span>
                     <span onClick={() => navigate('/vendor/products')}>Products</span>
                     <span onClick={() => navigate('/vendor/orders')}>Orders</span>
@@ -126,18 +126,18 @@ function VendorRevenue() {
                 </div>
             </div>
 
-            <div className="vendor-revenue-main">
-                <div className="page-header">
+            <div className={styles['vendor-revenue-main']}>
+                <div className={styles['page-header']}>
                     <h2>Revenue Dashboard</h2>
-                    <div className="period-selector">
+                    <div className={styles['period-selector']}>
                         <button
-                            className={`period-btn ${selectedPeriod === 'monthly' ? 'active' : ''}`}
+                            className={styles['period-btn'] + (selectedPeriod === 'monthly' ? ' ' + styles['active'] : '')}
                             onClick={() => setSelectedPeriod('monthly')}
                         >
                             Monthly
                         </button>
                         <button
-                            className={`period-btn ${selectedPeriod === 'yearly' ? 'active' : ''}`}
+                            className={styles['period-btn'] + (selectedPeriod === 'yearly' ? ' ' + styles['active'] : '')}
                             onClick={() => setSelectedPeriod('yearly')}
                         >
                             Yearly
@@ -146,74 +146,74 @@ function VendorRevenue() {
                 </div>
 
                 {error && (
-                    <div className="error-message">
+                    <div className={styles['error-message']}>
                         <p>{error}</p>
                         <button onClick={fetchRevenueData}>Retry</button>
                     </div>
                 )}
 
                 {/* Stats Cards */}
-                <div className="stats-grid">
-                    <div className="stat-card">
-                        <div className="stat-icon">💰</div>
-                        <div className="stat-info">
-                            <span className="stat-label">Total Sales (All Time)</span>
-                            <span className="stat-value">{formatCurrency(revenueData.totalSales)}</span>
+                <div className={styles['stats-grid']}>
+                    <div className={styles['stat-card']}>
+                        <div className={styles['stat-icon']}>💰</div>
+                        <div className={styles['stat-info']}>
+                            <span className={styles['stat-label']}>Total Sales (All Time)</span>
+                            <span className={styles['stat-value']}>{formatCurrency(revenueData.totalSales)}</span>
                         </div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-icon">📅</div>
-                        <div className="stat-info">
-                            <span className="stat-label">This Month</span>
-                            <span className="stat-value">{formatCurrency(revenueData.monthlySales)}</span>
+                    <div className={styles['stat-card']}>
+                        <div className={styles['stat-icon']}>📅</div>
+                        <div className={styles['stat-info']}>
+                            <span className={styles['stat-label']}>This Month</span>
+                            <span className={styles['stat-value']}>{formatCurrency(revenueData.monthlySales)}</span>
                         </div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-icon">⏳</div>
-                        <div className="stat-info">
-                            <span className="stat-label">Pending Payments</span>
-                            <span className="stat-value pending">{formatCurrency(revenueData.pendingPayments)}</span>
+                    <div className={styles['stat-card']}>
+                        <div className={styles['stat-icon']}>⏳</div>
+                        <div className={styles['stat-info']}>
+                            <span className={styles['stat-label']}>Pending Payments</span>
+                            <span className={styles['stat-value'] + ' ' + styles['pending']}>{formatCurrency(revenueData.pendingPayments)}</span>
                         </div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-icon">📦</div>
-                        <div className="stat-info">
-                            <span className="stat-label">Total Orders</span>
-                            <span className="stat-value">{revenueData.totalOrders}</span>
+                    <div className={styles['stat-card']}>
+                        <div className={styles['stat-icon']}>📦</div>
+                        <div className={styles['stat-info']}>
+                            <span className={styles['stat-label']}>Total Orders</span>
+                            <span className={styles['stat-value']}>{revenueData.totalOrders}</span>
                         </div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-icon">⭐</div>
-                        <div className="stat-info">
-                            <span className="stat-label">Average Order Value</span>
-                            <span className="stat-value">{formatCurrency(revenueData.averageOrderValue)}</span>
+                    <div className={styles['stat-card']}>
+                        <div className={styles['stat-icon']}>⭐</div>
+                        <div className={styles['stat-info']}>
+                            <span className={styles['stat-label']}>Average Order Value</span>
+                            <span className={styles['stat-value']}>{formatCurrency(revenueData.averageOrderValue)}</span>
                         </div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-icon">🚚</div>
-                        <div className="stat-info">
-                            <span className="stat-label">Pending / Shipped</span>
-                            <span className="stat-value">{revenueData.pendingOrders} / {revenueData.shippedOrders}</span>
+                    <div className={styles['stat-card']}>
+                        <div className={styles['stat-icon']}>🚚</div>
+                        <div className={styles['stat-info']}>
+                            <span className={styles['stat-label']}>Pending / Shipped</span>
+                            <span className={styles['stat-value']}>{revenueData.pendingOrders} / {revenueData.shippedOrders}</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Revenue Chart */}
-                <div className="chart-card">
+                <div className={styles['chart-card']}>
                     <h3>Revenue Overview ({selectedPeriod === 'monthly' ? 'Last 6 Months' : 'Last 5 Years'})</h3>
                     {monthlyRevenue.length === 0 ? (
-                        <div className="no-chart-data">
+                        <div className={styles['no-chart-data']}>
                             <p>No revenue data available for the selected period.</p>
                         </div>
                     ) : (
-                        <div className="chart-container">
-                            <div className="chart-bars">
+                        <div className={styles['chart-container']}>
+                            <div className={styles['chart-bars']}>
                                 {monthlyRevenue.map((item, index) => (
-                                    <div key={index} className="chart-bar-wrapper">
-                                        <div className="chart-bar" style={{ height: getBarHeight(item.totalRevenue) }}>
-                                            <span className="bar-value">{formatCurrency(item.totalRevenue)}</span>
+                                    <div key={index} className={styles['chart-bar-wrapper']}>
+                                        <div className={styles['chart-bar']} style={{ height: getBarHeight(item.totalRevenue) }}>
+                                            <span className={styles['bar-value']}>{formatCurrency(item.totalRevenue)}</span>
                                         </div>
-                                        <div className="bar-label">{item.label}</div>
+                                        <div className={styles['bar-label']}>{item.label}</div>
                                     </div>
                                 ))}
                             </div>
@@ -222,15 +222,15 @@ function VendorRevenue() {
                 </div>
 
                 {/* Recent Transactions */}
-                <div className="transactions-card">
+                <div className={styles['transactions-card']}>
                     <h3>Recent Transactions</h3>
                     {recentTransactions.length === 0 ? (
-                        <div className="no-transactions">
+                        <div className={styles['no-transactions']}>
                             <p>No transactions yet.</p>
                         </div>
                     ) : (
-                        <div className="transactions-table-container">
-                            <table className="transactions-table">
+                        <div className={styles['transactions-table-container']}>
+                            <table className={styles['transactions-table']}>
                                 <thead>
                                     <tr>
                                         <th>Order ID</th>
@@ -247,14 +247,14 @@ function VendorRevenue() {
                                             <td>#{transaction.orderId}</td>
                                             <td>{transaction.customerName}</td>
                                             <td>{formatDate(transaction.orderDate)}</td>
-                                            <td className="amount-cell">{formatCurrency(transaction.totalAmount)}</td>
+                                            <td className={styles['amount-cell']}>{formatCurrency(transaction.totalAmount)}</td>
                                             <td>
-                                                <span className={`order-status ${transaction.orderStatus?.toLowerCase()}`}>
+                                                <span className={`${styles['order-status']} ${styles[transaction.orderStatus?.toLowerCase()]}`}>
                                                     {transaction.orderStatus}
                                                 </span>
                                             </td>
                                             <td>
-                                                <span className={`payment-status ${transaction.paymentStatus?.toLowerCase()}`}>
+                                                <span className={`${styles['payment-status']} ${styles[transaction.paymentStatus?.toLowerCase()]}`}>
                                                     {transaction.paymentStatus}
                                                 </span>
                                             </td>
@@ -267,16 +267,16 @@ function VendorRevenue() {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="quick-actions">
+                <div className={styles['quick-actions']}>
                     <h3>Quick Actions</h3>
-                    <div className="action-buttons">
-                        <button onClick={() => navigate('/vendor/orders')} className="action-btn">
+                    <div className={styles['action-buttons']}>
+                        <button onClick={() => navigate('/vendor/orders')} className={styles['action-btn']}>
                             View All Orders
                         </button>
-                        <button onClick={() => navigate('/vendor/products')} className="action-btn">
+                        <button onClick={() => navigate('/vendor/products')} className={styles['action-btn']}>
                             Manage Products
                         </button>
-                        <button onClick={() => window.print()} className="action-btn">
+                        <button onClick={() => window.print()} className={styles['action-btn']}>
                             Print Report
                         </button>
                     </div>

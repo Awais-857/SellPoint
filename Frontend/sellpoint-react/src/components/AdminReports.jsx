@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './AdminReports.css';
+import styles from './AdminReports.module.css';
 
 function AdminReports() {
     const navigate = useNavigate();
@@ -162,10 +162,10 @@ function AdminReports() {
 
     if (loading && reportData.length === 0) {
         return (
-            <div className="admin-reports-container">
-                <div className="admin-reports-header">
+            <div className={styles['admin-reports-container']}>
+                <div className={styles['admin-reports-header']}>
                     <h1 onClick={() => navigate('/admin-dashboard')}>SellPoint Admin</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/admin-dashboard')}>Dashboard</span>
                         <span onClick={() => navigate('/admin/vendors')}>Vendors</span>
                         <span onClick={() => navigate('/admin/categories')}>Categories</span>
@@ -175,8 +175,8 @@ function AdminReports() {
                         }}>Logout</span>
                     </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading reports...</p>
                 </div>
             </div>
@@ -184,11 +184,11 @@ function AdminReports() {
     }
 
     return (
-        <div className="admin-reports-container">
+        <div className={styles['admin-reports-container']}>
             {/* Header */}
-            <div className="admin-reports-header">
+            <div className={styles['admin-reports-header']}>
                 <h1 onClick={() => navigate('/admin-dashboard')}>SellPoint Admin</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/admin-dashboard')}>Dashboard</span>
                     <span onClick={() => navigate('/admin/vendors')}>Vendors</span>
                     <span onClick={() => navigate('/admin/categories')}>Categories</span>
@@ -199,101 +199,101 @@ function AdminReports() {
                 </div>
             </div>
 
-            <div className="admin-reports-main">
-                <div className="page-header">
+            <div className={styles['admin-reports-main']}>
+                <div className={styles['page-header']}>
                     <h2>Sales Reports & Analytics</h2>
-                    <div className="report-actions">
-                        <button onClick={handleExportCSV} className="export-btn">📊 Export CSV</button>
-                        <button onClick={handlePrintReport} className="print-btn">🖨️ Print Report</button>
+                    <div className={styles['report-actions']}>
+                        <button onClick={handleExportCSV} className={styles['export-btn']}>📊 Export CSV</button>
+                        <button onClick={handlePrintReport} className={styles['print-btn']}>🖨️ Print Report</button>
                     </div>
                 </div>
 
                 {error && (
-                    <div className="error-message">
+                    <div className={styles['error-message']}>
                         <p>{error}</p>
                         <button onClick={fetchReports}>Retry</button>
                     </div>
                 )}
 
                 {/* Dashboard Stats Cards */}
-                <div className="dashboard-stats-grid">
-                    <div className="stats-card">
-                        <div className="stats-icon">👥</div>
-                        <div className="stats-info">
-                            <span className="stats-value">{dashboardStats.totalCustomers}</span>
-                            <span className="stats-label">Total Customers</span>
+                <div className={styles['dashboard-stats-grid']}>
+                    <div className={styles['stats-card']}>
+                        <div className={styles['stats-icon']}>👥</div>
+                        <div className={styles['stats-info']}>
+                            <span className={styles['stats-value']}>{dashboardStats.totalCustomers}</span>
+                            <span className={styles['stats-label']}>Total Customers</span>
                         </div>
                     </div>
-                    <div className="stats-card">
-                        <div className="stats-icon">🏪</div>
-                        <div className="stats-info">
-                            <span className="stats-value">{dashboardStats.totalVendors}</span>
-                            <span className="stats-label">Total Vendors</span>
+                    <div className={styles['stats-card']}>
+                        <div className={styles['stats-icon']}>🏪</div>
+                        <div className={styles['stats-info']}>
+                            <span className={styles['stats-value']}>{dashboardStats.totalVendors}</span>
+                            <span className={styles['stats-label']}>Total Vendors</span>
                         </div>
                     </div>
-                    <div className="stats-card">
-                        <div className="stats-icon">📦</div>
-                        <div className="stats-info">
-                            <span className="stats-value">{dashboardStats.totalProducts}</span>
-                            <span className="stats-label">Total Products</span>
+                    <div className={styles['stats-card']}>
+                        <div className={styles['stats-icon']}>📦</div>
+                        <div className={styles['stats-info']}>
+                            <span className={styles['stats-value']}>{dashboardStats.totalProducts}</span>
+                            <span className={styles['stats-label']}>Total Products</span>
                         </div>
                     </div>
-                    <div className="stats-card">
-                        <div className="stats-icon">💰</div>
-                        <div className="stats-info">
-                            <span className="stats-value">{formatCurrency(dashboardStats.todayRevenue)}</span>
-                            <span className="stats-label">Today's Revenue</span>
+                    <div className={styles['stats-card']}>
+                        <div className={styles['stats-icon']}>💰</div>
+                        <div className={styles['stats-info']}>
+                            <span className={styles['stats-value']}>{formatCurrency(dashboardStats.todayRevenue)}</span>
+                            <span className={styles['stats-label']}>Today's Revenue</span>
                         </div>
                     </div>
-                    <div className="stats-card">
-                        <div className="stats-icon">📋</div>
-                        <div className="stats-info">
-                            <span className="stats-value">{dashboardStats.todayOrders}</span>
-                            <span className="stats-label">Today's Orders</span>
+                    <div className={styles['stats-card']}>
+                        <div className={styles['stats-icon']}>📋</div>
+                        <div className={styles['stats-info']}>
+                            <span className={styles['stats-value']}>{dashboardStats.todayOrders}</span>
+                            <span className={styles['stats-label']}>Today's Orders</span>
                         </div>
                     </div>
-                    <div className="stats-card">
-                        <div className="stats-icon">⏳</div>
-                        <div className="stats-info">
-                            <span className="stats-value">{dashboardStats.pendingOrders}</span>
-                            <span className="stats-label">Pending Orders</span>
+                    <div className={styles['stats-card']}>
+                        <div className={styles['stats-icon']}>⏳</div>
+                        <div className={styles['stats-info']}>
+                            <span className={styles['stats-value']}>{dashboardStats.pendingOrders}</span>
+                            <span className={styles['stats-label']}>Pending Orders</span>
                         </div>
                     </div>
-                    <div className="stats-card">
-                        <div className="stats-icon">👥</div>
-                        <div className="stats-info">
-                            <span className="stats-value">{dashboardStats.pendingVendors}</span>
-                            <span className="stats-label">Pending Vendors</span>
+                    <div className={styles['stats-card']}>
+                        <div className={styles['stats-icon']}>👥</div>
+                        <div className={styles['stats-info']}>
+                            <span className={styles['stats-value']}>{dashboardStats.pendingVendors}</span>
+                            <span className={styles['stats-label']}>Pending Vendors</span>
                         </div>
                     </div>
-                    <div className="stats-card">
-                        <div className="stats-icon">⭐</div>
-                        <div className="stats-info">
-                            <span className="stats-value">{dashboardStats.pendingReviews}</span>
-                            <span className="stats-label">Pending Reviews</span>
+                    <div className={styles['stats-card']}>
+                        <div className={styles['stats-icon']}>⭐</div>
+                        <div className={styles['stats-info']}>
+                            <span className={styles['stats-value']}>{dashboardStats.pendingReviews}</span>
+                            <span className={styles['stats-label']}>Pending Reviews</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Report Filters */}
-                <div className="report-filters">
-                    <div className="filter-group">
+                <div className={styles['report-filters']}>
+                    <div className={styles['filter-group']}>
                         <label>Report Type</label>
-                        <div className="type-buttons">
+                        <div className={styles['type-buttons']}>
                             <button
-                                className={`type-btn ${reportType === 'daily' ? 'active' : ''}`}
+                                className={styles['type-btn'] + ' ' + (reportType === 'daily' ? styles['active'] : '')}
                                 onClick={() => setReportType('daily')}
                             >
                                 Daily (Last 30 Days)
                             </button>
                             <button
-                                className={`type-btn ${reportType === 'weekly' ? 'active' : ''}`}
+                                className={styles['type-btn'] + ' ' + (reportType === 'weekly' ? styles['active'] : '')}
                                 onClick={() => setReportType('weekly')}
                             >
                                 Weekly (Last 12 Weeks)
                             </button>
                             <button
-                                className={`type-btn ${reportType === 'monthly' ? 'active' : ''}`}
+                                className={styles['type-btn'] + ' ' + (reportType === 'monthly' ? styles['active'] : '')}
                                 onClick={() => setReportType('monthly')}
                             >
                                 Monthly (Last 12 Months)
@@ -301,9 +301,9 @@ function AdminReports() {
                         </div>
                     </div>
 
-                    <div className="filter-group date-range">
+                    <div className={styles['filter-group'] + ' ' + styles['date-range']}>
                         <label>Custom Date Range</label>
-                        <div className="date-inputs">
+                        <div className={styles['date-inputs']}>
                             <input
                                 type="date"
                                 value={dateRange.fromDate}
@@ -320,21 +320,21 @@ function AdminReports() {
                 </div>
 
                 {/* Sales Chart */}
-                <div className="chart-card">
+                <div className={styles['chart-card']}>
                     <h3>Sales Overview</h3>
                     {reportData.length === 0 ? (
-                        <div className="no-data">
+                        <div className={styles['no-data']}>
                             <p>No sales data available for the selected period.</p>
                         </div>
                     ) : (
-                        <div className="chart-container">
-                            <div className="chart-bars">
+                        <div className={styles['chart-container']}>
+                            <div className={styles['chart-bars']}>
                                 {reportData.map((item, index) => (
-                                    <div key={index} className="chart-bar-wrapper">
-                                        <div className="chart-bar" style={{ height: getBarHeight(item.totalRevenue) }}>
-                                            <span className="bar-value">{formatCurrency(item.totalRevenue)}</span>
+                                    <div key={index} className={styles['chart-bar-wrapper']}>
+                                        <div className={styles['chart-bar']} style={{ height: getBarHeight(item.totalRevenue) }}>
+                                            <span className={styles['bar-value']}>{formatCurrency(item.totalRevenue)}</span>
                                         </div>
-                                        <div className="bar-label">{item.period}</div>
+                                        <div className={styles['bar-label']}>{item.period}</div>
                                     </div>
                                 ))}
                             </div>
@@ -343,10 +343,10 @@ function AdminReports() {
                 </div>
 
                 {/* Sales Data Table */}
-                <div className="data-table-card">
+                <div className={styles['data-table-card']}>
                     <h3>Sales Data</h3>
-                    <div className="table-container">
-                        <table className="reports-table">
+                    <div className={styles['table-container']}>
+                        <table className={styles['reports-table']}>
                             <thead>
                                 <tr>
                                     <th>Period</th>
@@ -362,9 +362,9 @@ function AdminReports() {
                             <tbody>
                                 {reportData.map((row, index) => (
                                     <tr key={index}>
-                                        <td className="period-cell">{row.period}</td>
+                                        <td className={styles['period-cell']}>{row.period}</td>
                                         <td>{row.totalOrders}</td>
-                                        <td className="revenue-cell">{formatCurrency(row.totalRevenue)}</td>
+                                        <td className={styles['revenue-cell']}>{formatCurrency(row.totalRevenue)}</td>
                                         <td>{formatCurrency(row.totalSubTotal)}</td>
                                         <td>{formatCurrency(row.totalShipping)}</td>
                                         <td>{formatCurrency(row.totalTax)}</td>
@@ -374,7 +374,7 @@ function AdminReports() {
                                 ))}
                             </tbody>
                             <tfoot>
-                                <tr className="total-row">
+                                <tr className={styles['total-row']}>
                                     <td><strong>Total</strong></td>
                                     <td><strong>{reportData.reduce((sum, r) => sum + r.totalOrders, 0)}</strong></td>
                                     <td><strong>{formatCurrency(reportData.reduce((sum, r) => sum + r.totalRevenue, 0))}</strong></td>
@@ -390,24 +390,24 @@ function AdminReports() {
                 </div>
 
                 {/* Two Column Layout for Top Vendors & Products */}
-                <div className="two-column-grid">
+                <div className={styles['two-column-grid']}>
                     {/* Top Vendors */}
-                    <div className="top-card">
+                    <div className={styles['top-card']}>
                         <h3>🏆 Top Performing Vendors</h3>
                         {topVendors.length === 0 ? (
-                            <div className="no-data-small">
+                            <div className={styles['no-data-small']}>
                                 <p>No vendor data available</p>
                             </div>
                         ) : (
-                            <div className="top-list">
+                            <div className={styles['top-list']}>
                                 {topVendors.map((vendor, index) => (
-                                    <div key={index} className="top-item">
-                                        <div className="top-rank">#{index + 1}</div>
-                                        <div className="top-info">
-                                            <div className="top-name">{vendor.businessName}</div>
-                                            <div className="top-meta">{vendor.totalOrders} orders</div>
+                                    <div key={index} className={styles['top-item']}>
+                                        <div className={styles['top-rank']}>#{index + 1}</div>
+                                        <div className={styles['top-info']}>
+                                            <div className={styles['top-name']}>{vendor.businessName}</div>
+                                            <div className={styles['top-meta']}>{vendor.totalOrders} orders</div>
                                         </div>
-                                        <div className="top-revenue">{formatCurrency(vendor.totalRevenue)}</div>
+                                        <div className={styles['top-revenue']}>{formatCurrency(vendor.totalRevenue)}</div>
                                     </div>
                                 ))}
                             </div>
@@ -415,22 +415,22 @@ function AdminReports() {
                     </div>
 
                     {/* Top Products */}
-                    <div className="top-card">
+                    <div className={styles['top-card']}>
                         <h3>⭐ Best Selling Products</h3>
                         {topProducts.length === 0 ? (
-                            <div className="no-data-small">
+                            <div className={styles['no-data-small']}>
                                 <p>No product data available</p>
                             </div>
                         ) : (
-                            <div className="top-list">
+                            <div className={styles['top-list']}>
                                 {topProducts.map((product, index) => (
-                                    <div key={index} className="top-item">
-                                        <div className="top-rank">#{index + 1}</div>
-                                        <div className="top-info">
-                                            <div className="top-name">{product.productName}</div>
-                                            <div className="top-meta">{product.totalQuantitySold} units sold</div>
+                                    <div key={index} className={styles['top-item']}>
+                                        <div className={styles['top-rank']}>#{index + 1}</div>
+                                        <div className={styles['top-info']}>
+                                            <div className={styles['top-name']}>{product.productName}</div>
+                                            <div className={styles['top-meta']}>{product.totalQuantitySold} units sold</div>
                                         </div>
-                                        <div className="top-revenue">{formatCurrency(product.totalRevenue)}</div>
+                                        <div className={styles['top-revenue']}>{formatCurrency(product.totalRevenue)}</div>
                                     </div>
                                 ))}
                             </div>
@@ -439,25 +439,25 @@ function AdminReports() {
                 </div>
 
                 {/* Summary Insights */}
-                <div className="insights-card">
+                <div className={styles['insights-card']}>
                     <h3>📈 Key Insights</h3>
-                    <div className="insights-grid">
-                        <div className="insight-item">
-                            <span className="insight-icon">📊</span>
+                    <div className={styles['insights-grid']}>
+                        <div className={styles['insight-item']}>
+                            <span className={styles['insight-icon']}>📊</span>
                             <div>
                                 <strong>Total Revenue</strong>
                                 <p>{formatCurrency(reportData.reduce((sum, r) => sum + r.totalRevenue, 0))}</p>
                             </div>
                         </div>
-                        <div className="insight-item">
-                            <span className="insight-icon">📦</span>
+                        <div className={styles['insight-item']}>
+                            <span className={styles['insight-icon']}>📦</span>
                             <div>
                                 <strong>Total Orders</strong>
                                 <p>{reportData.reduce((sum, r) => sum + r.totalOrders, 0)}</p>
                             </div>
                         </div>
-                        <div className="insight-item">
-                            <span className="insight-icon">⭐</span>
+                        <div className={styles['insight-item']}>
+                            <span className={styles['insight-icon']}>⭐</span>
                             <div>
                                 <strong>Best Day</strong>
                                 <p>
@@ -467,8 +467,8 @@ function AdminReports() {
                                 </p>
                             </div>
                         </div>
-                        <div className="insight-item">
-                            <span className="insight-icon">💰</span>
+                        <div className={styles['insight-item']}>
+                            <span className={styles['insight-icon']}>💰</span>
                             <div>
                                 <strong>Avg Order Value</strong>
                                 <p>{formatCurrency(reportData.reduce((sum, r) => sum + r.averageOrderValue, 0) / (reportData.length || 1))}</p>

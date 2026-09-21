@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './ProductDetail.css';
+import styles from './ProductDetail.module.css';
 import { addToCart } from '../services/cartHelper';
 
 function ProductDetail() {
@@ -114,9 +114,9 @@ function ProductDetail() {
 
     if (loading) {
         return (
-            <div className="product-detail-container">
-                <div className="loading-state">
-                    <div className="spinner"></div>
+            <div className={styles['product-detail-container']}>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading product details...</p>
                 </div>
             </div>
@@ -125,8 +125,8 @@ function ProductDetail() {
 
     if (error || !product) {
         return (
-            <div className="product-detail-container">
-                <div className="error-state">
+            <div className={styles['product-detail-container']}>
+                <div className={styles['error-state']}>
                     <p>{error || 'Product not found'}</p>
                     <button onClick={() => navigate('/products')}>Back to Shop</button>
                 </div>
@@ -135,11 +135,11 @@ function ProductDetail() {
     }
 
     return (
-        <div className="product-detail-container">
+        <div className={styles['product-detail-container']}>
             {/* Header */}
-            <div className="detail-header">
+            <div className={styles['detail-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/products')}>Continue Shopping</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
                     <span onClick={() => navigate('/dashboard')}>My Account</span>
@@ -147,83 +147,83 @@ function ProductDetail() {
             </div>
 
             {/* Breadcrumb */}
-            <div className="breadcrumb">
+            <div className={styles['breadcrumb']}>
                 <span onClick={() => navigate('/products')}>Home</span>
                 <span>&gt;</span>
                 <span onClick={() => navigate(`/products?category=${product.categoryId}`)}>
                     {product.categoryName}
                 </span>
                 <span>&gt;</span>
-                <span className="current">{product.productName}</span>
+                <span className={styles['current']}>{product.productName}</span>
             </div>
 
             {/* Product Main Info */}
-            <div className="product-main">
+            <div className={styles['product-main']}>
                 {/* Product Images */}
-                <div className="product-gallery">
-                    <div className="main-image">
+                <div className={styles['product-gallery']}>
+                    <div className={styles['main-image']}>
                         {product.imageUrl ? (
                             <img src={product.imageUrl} alt={product.productName} />
                         ) : (
-                            <div className="no-image-large">No Image Available</div>
+                            <div className={styles['no-image-large']}>No Image Available</div>
                         )}
                         {hasDiscount && (
-                            <span className="discount-badge-large">-{product.discountPercent}%</span>
+                            <span className={styles['discount-badge-large']}>-{product.discountPercent}%</span>
                         )}
                     </div>
                 </div>
 
                 {/* Product Details */}
-                <div className="product-info">
-                    <h1 className="product-title">{product.productName}</h1>
+                <div className={styles['product-info']}>
+                    <h1 className={styles['product-title']}>{product.productName}</h1>
 
-                    <div className="product-meta">
-                        <span className="vendor-name">
+                    <div className={styles['product-meta']}>
+                        <span className={styles['vendor-name']}>
                             Sold by: <strong>{product.businessName}</strong>
                         </span>
-                        <div className="product-rating-large">
+                        <div className={styles['product-rating-large']}>
                             {'★'.repeat(Math.floor(product.averageRating || 0))}
                             {'☆'.repeat(5 - Math.floor(product.averageRating || 0))}
                             <span>({product.reviewCount || 0} reviews)</span>
                         </div>
                     </div>
 
-                    <div className="product-price-section">
+                    <div className={styles['product-price-section']}>
                         {hasDiscount ? (
                             <>
-                                <span className="original-price-large">${product.price.toFixed(2)}</span>
-                                <span className="discounted-price-large">${discountedPrice.toFixed(2)}</span>
-                                <span className="savings">You save: ${savings.toFixed(2)}</span>
+                                <span className={styles['original-price-large']}>${product.price.toFixed(2)}</span>
+                                <span className={styles['discounted-price-large']}>${discountedPrice.toFixed(2)}</span>
+                                <span className={styles['savings']}>You save: ${savings.toFixed(2)}</span>
                             </>
                         ) : (
-                            <span className="price-large">${product.price.toFixed(2)}</span>
+                            <span className={styles['price-large']}>${product.price.toFixed(2)}</span>
                         )}
                     </div>
 
-                    <div className="product-stock">
+                    <div className={styles['product-stock']}>
                         {product.stockQuantity > 0 ? (
-                            <span className="in-stock">✓ In Stock ({product.stockQuantity} available)</span>
+                            <span className={styles['in-stock']}>✓ In Stock ({product.stockQuantity} available)</span>
                         ) : (
-                            <span className="out-of-stock">✗ Out of Stock</span>
+                            <span className={styles['out-of-stock']}>✗ Out of Stock</span>
                         )}
                     </div>
 
                     {product.sku && (
-                        <div className="product-sku">
+                        <div className={styles['product-sku']}>
                             SKU: {product.sku}
                         </div>
                     )}
 
-                    <div className="product-description">
+                    <div className={styles['product-description']}>
                         <h3>Description</h3>
                         <p>{product.description || 'No description available.'}</p>
                     </div>
 
                     {product.stockQuantity > 0 && (
-                        <div className="purchase-section">
-                            <div className="quantity-selector">
+                        <div className={styles['purchase-section']}>
+                            <div className={styles['quantity-selector']}>
                                 <label>Quantity:</label>
-                                <div className="quantity-controls">
+                                <div className={styles['quantity-controls']}>
                                     <button onClick={decrementQuantity} disabled={quantity <= 1}>-</button>
                                     <input
                                         type="number"
@@ -236,16 +236,16 @@ function ProductDetail() {
                                 </div>
                             </div>
 
-                            <div className="action-buttons">
+                            <div className={styles['action-buttons']}>
                                 <button
-                                    className="add-to-cart-btn-large"
+                                    className={styles['add-to-cart-btn-large']}
                                     onClick={handleAddToCart}
                                     disabled={addingToCart}
                                 >
                                     {addingToCart ? 'Adding...' : 'Add to Cart'}
                                 </button>
                                 <button
-                                    className="buy-now-btn"
+                                    className={styles['buy-now-btn']}
                                     onClick={handleBuyNow}
                                 >
                                     Buy Now
@@ -257,25 +257,25 @@ function ProductDetail() {
             </div>
 
             {/* Reviews Section */}
-            <div className="reviews-section">
+            <div className={styles['reviews-section']}>
                 <h2>Customer Reviews</h2>
                 {reviews.length === 0 ? (
-                    <p className="no-reviews">No reviews yet. Be the first to review this product!</p>
+                    <p className={styles['no-reviews']}>No reviews yet. Be the first to review this product!</p>
                 ) : (
-                    <div className="reviews-list">
+                    <div className={styles['reviews-list']}>
                         {reviews.map(review => (
-                            <div key={review.reviewId} className="review-card">
-                                <div className="review-header">
-                                    <span className="reviewer-name">{review.customerName}</span>
-                                    <div className="review-rating">
+                            <div key={review.reviewId} className={styles['review-card']}>
+                                <div className={styles['review-header']}>
+                                    <span className={styles['reviewer-name']}>{review.customerName}</span>
+                                    <div className={styles['review-rating']}>
                                         {'★'.repeat(review.rating)}
                                         {'☆'.repeat(5 - review.rating)}
                                     </div>
-                                    <span className="review-date">
+                                    <span className={styles['review-date']}>
                                         {new Date(review.createdDate).toLocaleDateString()}
                                     </span>
                                 </div>
-                                <p className="review-comment">{review.comment}</p>
+                                <p className={styles['review-comment']}>{review.comment}</p>
                             </div>
                         ))}
                     </div>
@@ -284,24 +284,24 @@ function ProductDetail() {
 
             {/* Related Products */}
             {relatedProducts.length > 0 && (
-                <div className="related-products">
+                <div className={styles['related-products']}>
                     <h2>You May Also Like</h2>
-                    <div className="related-grid">
+                    <div className={styles['related-grid']}>
                         {relatedProducts.map(related => (
                             <div
                                 key={related.productId}
-                                className="related-card"
+                                className={styles['related-card']}
                                 onClick={() => navigate(`/product/${related.productId}`)}
                             >
-                                <div className="related-image">
+                                <div className={styles['related-image']}>
                                     {related.imageUrl ? (
                                         <img src={related.imageUrl} alt={related.productName} />
                                     ) : (
-                                        <div className="no-image-small">No Image</div>
+                                        <div className={styles['no-image-small']}>No Image</div>
                                     )}
                                 </div>
                                 <h4>{related.productName}</h4>
-                                <p className="related-price">${related.price.toFixed(2)}</p>
+                                <p className={styles['related-price']}>${related.price.toFixed(2)}</p>
                             </div>
                         ))}
                     </div>

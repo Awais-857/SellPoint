@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './Dashboard.css';
+import styles from './Dashboard.module.css';
 
 function VendorDashboard() {
     const navigate = useNavigate();
@@ -46,12 +46,12 @@ function VendorDashboard() {
 
     if (loading) {
         return (
-            <div className="dashboard-container">
-                <nav className="dashboard-nav">
+            <div className={styles['dashboard-container']}>
+                <nav className={styles['dashboard-nav']}>
                     <h1>SellPoint Vendor</h1>
-                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                    <button onClick={handleLogout} className={styles['logout-btn']}>Logout</button>
                 </nav>
-                <div className="dashboard-content">
+                <div className={styles['dashboard-content']}>
                     <p>Loading profile...</p>
                 </div>
             </div>
@@ -61,23 +61,23 @@ function VendorDashboard() {
     // Show pending approval message if vendor not approved
     if (profile && profile.approvalStatus !== 'Approved') {
         return (
-            <div className="dashboard-container">
-                <nav className="dashboard-nav">
+            <div className={styles['dashboard-container']}>
+                <nav className={styles['dashboard-nav']}>
                     <h1>SellPoint Vendor</h1>
-                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                    <button onClick={handleLogout} className={styles['logout-btn']}>Logout</button>
                 </nav>
 
-                <div className="dashboard-content">
+                <div className={styles['dashboard-content']}>
                     <h2>Welcome, {username}!</h2>
 
-                    <div className="dashboard-card" style={{ background: '#fef3c7', border: '1px solid #fbbf24' }}>
+                    <div className={styles['dashboard-card']} style={{ background: '#fef3c7', border: '1px solid #fbbf24' }}>
                         <h3 style={{ color: '#92400e' }}>⏳ Account Pending Approval</h3>
                         <p>Your vendor application is currently under review.</p>
                         <p>You will receive an email once your account is approved.</p>
                         <p>Status: <strong>{profile?.approvalStatus || 'Pending'}</strong></p>
                     </div>
 
-                    <div className="info-card">
+                    <div className={styles['info-card']}>
                         <h3>Application Details</h3>
                         <p><strong>Business Name:</strong> {profile?.businessName}</p>
                         <p><strong>Tax ID:</strong> {profile?.taxID}</p>
@@ -91,17 +91,17 @@ function VendorDashboard() {
 
     // Regular vendor dashboard for approved vendors
     return (
-        <div className="dashboard-container">
-            <nav className="dashboard-nav">
+        <div className={styles['dashboard-container']}>
+            <nav className={styles['dashboard-nav']}>
                 <h1>SellPoint Vendor</h1>
-                <button onClick={handleLogout} className="logout-btn">Logout</button>
+                <button onClick={handleLogout} className={styles['logout-btn']}>Logout</button>
             </nav>
 
-            <div className="dashboard-content">
+            <div className={styles['dashboard-content']}>
                 <h2>Vendor Dashboard</h2>
                 <p>Welcome back, {username}!</p>
 
-                <div className="dashboard-card">
+                <div className={styles['dashboard-card']}>
                     <h3>Store Management</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '20px' }}>
                         <div
@@ -128,7 +128,7 @@ function VendorDashboard() {
                     </div>
                 </div>
 
-                <div className="info-card">
+                <div className={styles['info-card']}>
                     <h3>Business Information</h3>
                     <p><strong>Business Name:</strong> {profile?.businessName}</p>
                     <p><strong>Tax ID:</strong> {profile?.taxID}</p>

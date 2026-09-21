@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './AdminReviews.css';
+import styles from './AdminReviews.module.css';
 
 function AdminReviews() {
     const navigate = useNavigate();
@@ -44,13 +44,13 @@ function AdminReviews() {
     }
 };
 
-    if (loading) return <div className="loading">Loading pending reviews...</div>;
+    if (loading) return <div className={styles['loading']}>Loading pending reviews...</div>;
 
     return (
-        <div className="admin-reviews-container">
-            <div className="admin-reviews-header">
+        <div className={styles['admin-reviews-container']}>
+            <div className={styles['admin-reviews-header']}>
                 <h1 onClick={() => navigate('/admin-dashboard')}>SellPoint Admin</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/admin-dashboard')}>Dashboard</span>
                     <span onClick={() => navigate('/admin/vendors')}>Vendors</span>
                     <span onClick={() => navigate('/admin/categories')}>Categories</span>
@@ -58,23 +58,23 @@ function AdminReviews() {
                     <span onClick={() => { localStorage.clear(); navigate('/login'); }}>Logout</span>
                 </div>
             </div>
-            <div className="admin-reviews-main">
+            <div className={styles['admin-reviews-main']}>
                 <h2>Pending Reviews</h2>
-                {error && <div className="error">{error}</div>}
+                {error && <div className={styles['error']}>{error}</div>}
                 {reviews.length === 0 ? (
-                    <div className="no-reviews">No pending reviews.</div>
+                    <div className={styles['no-reviews']}>No pending reviews.</div>
                 ) : (
-                    <div className="reviews-list">
+                    <div className={styles['reviews-list']}>
                         {reviews.map(review => (
-                            <div key={review.reviewId} className="review-card">
-                                <div className="review-header">
-                                    <span className="product-name">{review.productName}</span>
-                                    <span className="rating">{'★'.repeat(review.rating)}</span>
-                                    <span className="customer">{review.customerName}</span>
-                                    <span className="date">{new Date(review.createdDate).toLocaleDateString()}</span>
+                            <div key={review.reviewId} className={styles['review-card']}>
+                                <div className={styles['review-header']}>
+                                    <span className={styles['product-name']}>{review.productName}</span>
+                                    <span className={styles['rating']}>{'★'.repeat(review.rating)}</span>
+                                    <span className={styles['customer']}>{review.customerName}</span>
+                                    <span className={styles['date']}>{new Date(review.createdDate).toLocaleDateString()}</span>
                                 </div>
-                                <div className="review-comment">{review.comment || 'No comment'}</div>
-                                <button onClick={() => handleApprove(review.reviewId)} className="approve-btn">Approve</button>
+                                <div className={styles['review-comment']}>{review.comment || 'No comment'}</div>
+                                <button onClick={() => handleApprove(review.reviewId)} className={styles['approve-btn']}>Approve</button>
                             </div>
                         ))}
                     </div>

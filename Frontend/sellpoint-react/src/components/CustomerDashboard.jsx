@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './Dashboard.css';
+import styles from './Dashboard.module.css';
 
 function CustomerDashboard() {
     const navigate = useNavigate();
@@ -69,12 +69,12 @@ function CustomerDashboard() {
 
     if (loading) {
         return (
-            <div className="dashboard-container">
-                <nav className="dashboard-nav">
+            <div className={styles['dashboard-container']}>
+                <nav className={styles['dashboard-nav']}>
                     <h1>SellPoint</h1>
-                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                    <button onClick={handleLogout} className={styles['logout-btn']}>Logout</button>
                 </nav>
-                <div className="dashboard-content">
+                <div className={styles['dashboard-content']}>
                     <p>Loading dashboard...</p>
                 </div>
             </div>
@@ -82,42 +82,42 @@ function CustomerDashboard() {
     }
 
     return (
-        <div className="dashboard-container">
-            <nav className="dashboard-nav">
+        <div className={styles['dashboard-container']}>
+            <nav className={styles['dashboard-nav']}>
                 <h1>SellPoint</h1>
-                <div className="nav-links">
+                <div className={styles['nav-links']}>
                     <span onClick={() => navigate('/products')} style={{ marginRight: '15px', cursor: 'pointer' }}>Shop</span>
                     <span onClick={() => navigate('/cart')} style={{ marginRight: '15px', cursor: 'pointer' }}>Cart 🛒</span>
-                    <button onClick={handleLogout} className="logout-btn">Logout</button>
+                    <button onClick={handleLogout} className={styles['logout-btn']}>Logout</button>
                 </div>
             </nav>
 
-            <div className="dashboard-content">
+            <div className={styles['dashboard-content']}>
                 <h2>Welcome back, {username}!</h2>
                 <p>{email}</p>
 
                 {/* Statistics Cards */}
-                <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px', marginTop: '20px' }}>
-                    <div className="stat-card" style={{ background: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                <div className={styles['stats-grid']} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px', marginTop: '20px' }}>
+                    <div className={styles['stat-card']} style={{ background: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                         <h3 style={{ fontSize: '32px', color: '#667eea', margin: '0' }}>{stats.totalOrders}</h3>
                         <p style={{ color: '#718096', margin: '5px 0 0' }}>Total Orders</p>
                     </div>
-                    <div className="stat-card" style={{ background: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                    <div className={styles['stat-card']} style={{ background: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                         <h3 style={{ fontSize: '32px', color: '#ed8936', margin: '0' }}>{stats.pendingOrders}</h3>
                         <p style={{ color: '#718096', margin: '5px 0 0' }}>Pending Orders</p>
                     </div>
-                    <div className="stat-card" style={{ background: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                    <div className={styles['stat-card']} style={{ background: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                         <h3 style={{ fontSize: '32px', color: '#48bb78', margin: '0' }}>{stats.deliveredOrders}</h3>
                         <p style={{ color: '#718096', margin: '5px 0 0' }}>Delivered Orders</p>
                     </div>
-                    <div className="stat-card" style={{ background: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                    <div className={styles['stat-card']} style={{ background: 'white', padding: '20px', borderRadius: '10px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                         <h3 style={{ fontSize: '32px', color: '#667eea', margin: '0' }}>${stats.totalSpent.toFixed(2)}</h3>
                         <p style={{ color: '#718096', margin: '5px 0 0' }}>Total Spent</p>
                     </div>
                 </div>
 
                 {/* Quick Actions */}
-                <div className="dashboard-card" style={{ marginBottom: '25px' }}>
+                <div className={styles['dashboard-card']} style={{ marginBottom: '25px' }}>
                     <h3>Quick Actions</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginTop: '15px' }}>
                         <button
@@ -143,7 +143,7 @@ function CustomerDashboard() {
 
                 {/* Recent Orders */}
                 {recentOrders.length > 0 && (
-                    <div className="dashboard-card">
+                    <div className={styles['dashboard-card']}>
                         <h3>Recent Orders</h3>
                         <div style={{ overflowX: 'auto' }}>
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -162,7 +162,7 @@ function CustomerDashboard() {
                                             <td style={{ padding: '10px' }}>#{order.orderId}</td>
                                             <td style={{ padding: '10px' }}>{new Date(order.orderDate).toLocaleDateString()}</td>
                                             <td style={{ padding: '10px' }}>
-                                                <span className={`status-badge ${order.orderStatus?.toLowerCase()}`}>
+                                                <span className={styles['status-badge'] + ' ' + styles[order.orderStatus?.toLowerCase()]}>
                                                     {order.orderStatus}
                                                 </span>
                                             </td>
@@ -193,7 +193,7 @@ function CustomerDashboard() {
 
                 {/* Empty State */}
                 {recentOrders.length === 0 && (
-                    <div className="dashboard-card" style={{ textAlign: 'center', padding: '40px' }}>
+                    <div className={styles['dashboard-card']} style={{ textAlign: 'center', padding: '40px' }}>
                         <div style={{ fontSize: '60px', marginBottom: '15px' }}>🛒</div>
                         <h3>No Orders Yet</h3>
                         <p>Start shopping to see your orders here!</p>
@@ -206,36 +206,6 @@ function CustomerDashboard() {
                     </div>
                 )}
             </div>
-
-            <style jsx>{`
-                .status-badge {
-                    display: inline-block;
-                    padding: 4px 12px;
-                    border-radius: 20px;
-                    font-size: 12px;
-                    font-weight: 500;
-                }
-                .status-badge.delivered {
-                    background: #c6f6d5;
-                    color: #22543d;
-                }
-                .status-badge.shipped {
-                    background: #bee3f8;
-                    color: #2c5282;
-                }
-                .status-badge.pending {
-                    background: #fef3c7;
-                    color: #92400e;
-                }
-                .status-badge.confirmed {
-                    background: #fed7e2;
-                    color: #97266d;
-                }
-                .status-badge.cancelled {
-                    background: #fed7d7;
-                    color: #c53030;
-                }
-            `}</style>
         </div>
     );
 }

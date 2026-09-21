@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './AdminDisputes.css';
+import styles from './AdminDisputes.module.css';
 
 function AdminDisputes() {
     const navigate = useNavigate();
@@ -49,13 +49,13 @@ function AdminDisputes() {
         }
     };
 
-    if (loading) return <div className="loading">Loading disputes...</div>;
+    if (loading) return <div className={styles['loading']}>Loading disputes...</div>;
 
     return (
-        <div className="admin-disputes-container">
-            <div className="admin-disputes-header">
+        <div className={styles['admin-disputes-container']}>
+            <div className={styles['admin-disputes-header']}>
                 <h1 onClick={() => navigate('/admin-dashboard')}>SellPoint Admin</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/admin-dashboard')}>Dashboard</span>
                     <span onClick={() => navigate('/admin/vendors')}>Vendors</span>
                     <span onClick={() => navigate('/admin/categories')}>Categories</span>
@@ -63,15 +63,15 @@ function AdminDisputes() {
                     <span onClick={() => { localStorage.clear(); navigate('/login'); }}>Logout</span>
                 </div>
             </div>
-            <div className="admin-disputes-main">
+            <div className={styles['admin-disputes-main']}>
                 <h2>Dispute Resolution</h2>
-                <div className="filter-tabs">
-                    <button className={`filter-tab ${filterStatus === 'all' ? 'active' : ''}`} onClick={() => setFilterStatus('all')}>All</button>
-                    <button className={`filter-tab ${filterStatus === 'Pending' ? 'active' : ''}`} onClick={() => setFilterStatus('Pending')}>Pending</button>
-                    <button className={`filter-tab ${filterStatus === 'Resolved' ? 'active' : ''}`} onClick={() => setFilterStatus('Resolved')}>Resolved</button>
+                <div className={styles['filter-tabs']}>
+                    <button className={`${styles['filter-tab']} ${filterStatus === 'all' ? styles['active'] : ''}`} onClick={() => setFilterStatus('all')}>All</button>
+                    <button className={`${styles['filter-tab']} ${filterStatus === 'Pending' ? styles['active'] : ''}`} onClick={() => setFilterStatus('Pending')}>Pending</button>
+                    <button className={`${styles['filter-tab']} ${filterStatus === 'Resolved' ? styles['active'] : ''}`} onClick={() => setFilterStatus('Resolved')}>Resolved</button>
                 </div>
-                <div className="disputes-table-container">
-                    <table className="disputes-table">
+                <div className={styles['disputes-table-container']}>
+                    <table className={styles['disputes-table']}>
                         <thead><tr><th>Dispute ID</th><th>Order</th><th>Raised By</th><th>Reason</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
                         <tbody>
                             {disputes.map(d => (
@@ -91,16 +91,16 @@ function AdminDisputes() {
             </div>
 
             {selectedDispute && (
-                <div className="modal-overlay" onClick={() => setSelectedDispute(null)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header"><h3>Resolve Dispute #{selectedDispute.disputeId}</h3><button className="close-btn" onClick={() => setSelectedDispute(null)}>×</button></div>
-                        <div className="modal-body">
+                <div className={styles['modal-overlay']} onClick={() => setSelectedDispute(null)}>
+                    <div className={styles['modal-content']} onClick={e => e.stopPropagation()}>
+                        <div className={styles['modal-header']}><h3>Resolve Dispute #{selectedDispute.disputeId}</h3><button className={styles['close-btn']} onClick={() => setSelectedDispute(null)}>×</button></div>
+                        <div className={styles['modal-body']}>
                             <p><strong>Order:</strong> #{selectedDispute.orderId}</p>
                             <p><strong>Reason:</strong> {selectedDispute.reason}</p>
-                            <div className="form-group"><label>Admin Notes:</label><textarea rows="3" value={adminNotes} onChange={e => setAdminNotes(e.target.value)} placeholder="Enter resolution notes..." /></div>
-                            <div className="form-group"><label>Action:</label><select value={action} onChange={e => setAction(e.target.value)}><option value="Resolve">Mark as Resolved</option><option value="CancelOrder">Cancel Order</option><option value="Refund">Refund Order</option></select></div>
+                            <div className={styles['form-group']}><label>Admin Notes:</label><textarea rows="3" value={adminNotes} onChange={e => setAdminNotes(e.target.value)} placeholder="Enter resolution notes..." /></div>
+                            <div className={styles['form-group']}><label>Action:</label><select value={action} onChange={e => setAction(e.target.value)}><option value="Resolve">Mark as Resolved</option><option value="CancelOrder">Cancel Order</option><option value="Refund">Refund Order</option></select></div>
                         </div>
-                        <div className="modal-actions"><button onClick={() => handleResolve(selectedDispute.disputeId)}>Submit Resolution</button><button onClick={() => setSelectedDispute(null)}>Cancel</button></div>
+                        <div className={styles['modal-actions']}><button onClick={() => handleResolve(selectedDispute.disputeId)}>Submit Resolution</button><button onClick={() => setSelectedDispute(null)}>Cancel</button></div>
                     </div>
                 </div>
             )}

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './OrderDetail.css';
+import styles from './OrderDetail.module.css';
 
 function OrderDetail() {
     const { id } = useParams();
@@ -146,16 +146,16 @@ function OrderDetail() {
 
     if (loading) {
         return (
-            <div className="order-detail-container">
-                <div className="order-detail-header">
+            <div className={styles['order-detail-container']}>
+                <div className={styles['order-detail-header']}>
                     <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/order-history')}>← Back to Orders</span>
                         <span onClick={() => navigate('/products')}>Continue Shopping</span>
                     </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading order details...</p>
                 </div>
             </div>
@@ -164,14 +164,14 @@ function OrderDetail() {
 
     if (error || !order) {
         return (
-            <div className="order-detail-container">
-                <div className="order-detail-header">
+            <div className={styles['order-detail-container']}>
+                <div className={styles['order-detail-header']}>
                     <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/order-history')}>← Back to Orders</span>
                     </div>
                 </div>
-                <div className="error-state">
+                <div className={styles['error-state']}>
                     <p>{error || 'Order not found'}</p>
                     <button onClick={() => navigate('/order-history')}>Back to Orders</button>
                 </div>
@@ -180,50 +180,50 @@ function OrderDetail() {
     }
 
     return (
-        <div className="order-detail-container">
+        <div className={styles['order-detail-container']}>
             {/* Header */}
-            <div className="order-detail-header">
+            <div className={styles['order-detail-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/order-history')}>← Back to Orders</span>
                     <span onClick={() => navigate('/products')}>Continue Shopping</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
                 </div>
             </div>
 
-            <div className="order-detail-main">
+            <div className={styles['order-detail-main']}>
                 {/* Page Title */}
-                <div className="page-title">
+                <div className={styles['page-title']}>
                     <h2>Order Details</h2>
                     <p>Order #{order.orderId}</p>
                 </div>
 
                 {/* Order Status Timeline */}
-                <div className="status-timeline">
-                    <div className={`timeline-step ${order.orderStatus === 'Pending' || order.orderStatus === 'Confirmed' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : ''}`}>
-                        <div className="step-dot"></div>
-                        <div className="step-content">
+                <div className={styles['status-timeline']}>
+                    <div className={`${styles['timeline-step']} ${order.orderStatus === 'Pending' || order.orderStatus === 'Confirmed' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? styles['completed'] : ''}`}>
+                        <div className={styles['step-dot']}></div>
+                        <div className={styles['step-content']}>
                             <strong>Order Placed</strong>
                             <span>{new Date(order.orderDate).toLocaleDateString()}</span>
                         </div>
                     </div>
-                    <div className={`timeline-step ${order.orderStatus === 'Confirmed' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : ''}`}>
-                        <div className="step-dot"></div>
-                        <div className="step-content">
+                    <div className={`${styles['timeline-step']} ${order.orderStatus === 'Confirmed' || order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? styles['completed'] : ''}`}>
+                        <div className={styles['step-dot']}></div>
+                        <div className={styles['step-content']}>
                             <strong>Order Confirmed</strong>
                             <span>{order.confirmedDate ? new Date(order.confirmedDate).toLocaleDateString() : 'Pending'}</span>
                         </div>
                     </div>
-                    <div className={`timeline-step ${order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? 'completed' : ''}`}>
-                        <div className="step-dot"></div>
-                        <div className="step-content">
+                    <div className={`${styles['timeline-step']} ${order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered' ? styles['completed'] : ''}`}>
+                        <div className={styles['step-dot']}></div>
+                        <div className={styles['step-content']}>
                             <strong>Shipped</strong>
                             <span>{order.shippedDate ? new Date(order.shippedDate).toLocaleDateString() : 'Pending'}</span>
                         </div>
                     </div>
-                    <div className={`timeline-step ${order.orderStatus === 'Delivered' ? 'completed' : ''}`}>
-                        <div className="step-dot"></div>
-                        <div className="step-content">
+                    <div className={`${styles['timeline-step']} ${order.orderStatus === 'Delivered' ? styles['completed'] : ''}`}>
+                        <div className={styles['step-dot']}></div>
+                        <div className={styles['step-content']}>
                             <strong>Delivered</strong>
                             <span>{order.deliveredDate ? new Date(order.deliveredDate).toLocaleDateString() : 'Pending'}</span>
                         </div>
@@ -231,47 +231,47 @@ function OrderDetail() {
                 </div>
 
                 {/* Order Info Cards */}
-                <div className="info-grid">
-                    <div className="info-card">
+                <div className={styles['info-grid']}>
+                    <div className={styles['info-card']}>
                         <h3>Order Information</h3>
-                        <div className="info-row">
+                        <div className={styles['info-row']}>
                             <span>Order Date:</span>
                             <strong>{new Date(order.orderDate).toLocaleString()}</strong>
                         </div>
-                        <div className="info-row">
+                        <div className={styles['info-row']}>
                             <span>Order Status:</span>
-                            <span className={`status-badge ${getStatusBadgeClass(order.orderStatus)}`}>
+                            <span className={`${styles['status-badge']} ${styles[getStatusBadgeClass(order.orderStatus)]}`}>
                                 {order.orderStatus}
                             </span>
                         </div>
-                        <div className="info-row">
+                        <div className={styles['info-row']}>
                             <span>Payment Status:</span>
-                            <span className={`payment-badge ${getPaymentBadgeClass(order.paymentStatus)}`}>
+                            <span className={`${styles['payment-badge']} ${styles[getPaymentBadgeClass(order.paymentStatus)]}`}>
                                 {order.paymentStatus}
                             </span>
                         </div>
-                        <div className="info-row">
+                        <div className={styles['info-row']}>
                             <span>Payment Method:</span>
                             <strong>{order.paymentMethod}</strong>
                         </div>
                         {order.trackingNumber && (
-                            <div className="info-row">
+                            <div className={styles['info-row']}>
                                 <span>Tracking Number:</span>
                                 <strong>{order.trackingNumber}</strong>
                             </div>
                         )}
                     </div>
 
-                    <div className="info-card">
+                    <div className={styles['info-card']}>
                         <h3>Shipping Address</h3>
-                        <div className="address-details">
+                        <div className={styles['address-details']}>
                             <p>{order.addressLine1}</p>
                             {order.addressLine2 && <p>{order.addressLine2}</p>}
                             <p>{order.city}, {order.state} {order.zipCode}</p>
                             <p>{order.country}</p>
                         </div>
                         {order.estimatedDeliveryDate && (
-                            <div className="delivery-estimate">
+                            <div className={styles['delivery-estimate']}>
                                 <span>📅 Estimated Delivery:</span>
                                 <strong>{new Date(order.estimatedDeliveryDate).toLocaleDateString()}</strong>
                             </div>
@@ -280,60 +280,60 @@ function OrderDetail() {
                 </div>
 
                 {/* Order Items */}
-                <div className="items-section">
+                <div className={styles['items-section']}>
                     <h3>Order Items</h3>
-                    <div className="items-table">
-                        <div className="items-header">
-                            <span className="col-product">Product</span>
-                            <span className="col-price">Price</span>
-                            <span className="col-quantity">Quantity</span>
-                            <span className="col-total">Total</span>
-                            <span className="col-status">Status</span>
-                            <span className="col-action">Action</span>
+                    <div className={styles['items-table']}>
+                        <div className={styles['items-header']}>
+                            <span className={styles['col-product']}>Product</span>
+                            <span className={styles['col-price']}>Price</span>
+                            <span className={styles['col-quantity']}>Quantity</span>
+                            <span className={styles['col-total']}>Total</span>
+                            <span className={styles['col-status']}>Status</span>
+                            <span className={styles['col-action']}>Action</span>
                         </div>
-                        <div className="items-body">
+                        <div className={styles['items-body']}>
                             {orderItems.map(item => (
-                                <div key={item.orderItemId} className="order-item-row">
-                                    <div className="col-product">
+                                <div key={item.orderItemId} className={styles['order-item-row']}>
+                                    <div className={styles['col-product']}>
                                         <div
-                                            className="item-image"
+                                            className={styles['item-image']}
                                             onClick={() => navigate(`/product/${item.productId}`)}
                                         >
                                             {item.imageUrl ? (
                                                 <img src={item.imageUrl} alt={item.productName} />
                                             ) : (
-                                                <div className="no-image-small">No Image</div>
+                                                <div className={styles['no-image-small']}>No Image</div>
                                             )}
                                         </div>
-                                        <div className="item-info">
+                                        <div className={styles['item-info']}>
                                             <div
-                                                className="item-name"
+                                                className={styles['item-name']}
                                                 onClick={() => navigate(`/product/${item.productId}`)}
                                             >
                                                 {item.productName}
                                             </div>
-                                            <div className="item-vendor">Sold by: {item.vendorName}</div>
-                                            {item.sku && <div className="item-sku">SKU: {item.sku}</div>}
+                                            <div className={styles['item-vendor']}>Sold by: {item.vendorName}</div>
+                                            {item.sku && <div className={styles['item-sku']}>SKU: {item.sku}</div>}
                                         </div>
                                     </div>
-                                    <div className="col-price">
+                                    <div className={styles['col-price']}>
                                         ${item.unitPrice.toFixed(2)}
                                     </div>
-                                    <div className="col-quantity">
+                                    <div className={styles['col-quantity']}>
                                         {item.quantity}
                                     </div>
-                                    <div className="col-total">
+                                    <div className={styles['col-total']}>
                                         ${item.totalPrice.toFixed(2)}
                                     </div>
-                                    <div className="col-status">
-                                        <span className={`item-status ${getItemStatusBadge(item.itemStatus)}`}>
+                                    <div className={styles['col-status']}>
+                                        <span className={`${styles['item-status']} ${styles[getItemStatusBadge(item.itemStatus)]}`}>
                                             {item.itemStatus}
                                         </span>
                                     </div>
-                                    <div className="col-action">
+                                    <div className={styles['col-action']}>
                                         {item.itemStatus?.toLowerCase() === 'delivered' && (
                                             <button
-                                                className="review-btn"
+                                                className={styles['review-btn']}
                                                 onClick={() => handleWriteReview(item.productId, item.orderItemId)}
                                             >
                                                 Write Review
@@ -347,29 +347,29 @@ function OrderDetail() {
                 </div>
 
                 {/* Order Summary */}
-                <div className="summary-section">
-                    <div className="summary-card">
+                <div className={styles['summary-section']}>
+                    <div className={styles['summary-card']}>
                         <h3>Order Summary</h3>
-                        <div className="summary-row">
+                        <div className={styles['summary-row']}>
                             <span>Subtotal</span>
                             <span>${order.subTotal.toFixed(2)}</span>
                         </div>
-                        <div className="summary-row">
+                        <div className={styles['summary-row']}>
                             <span>Shipping</span>
                             <span>${order.shippingCost.toFixed(2)}</span>
                         </div>
-                        <div className="summary-row">
+                        <div className={styles['summary-row']}>
                             <span>Tax (10%)</span>
                             <span>${order.taxAmount.toFixed(2)}</span>
                         </div>
                         {order.discountAmount > 0 && (
-                            <div className="summary-row discount">
+                            <div className={`${styles['summary-row']} ${styles['discount']}`}>
                                 <span>Discount</span>
                                 <span>-${order.discountAmount.toFixed(2)}</span>
                             </div>
                         )}
-                        <div className="summary-divider"></div>
-                        <div className="summary-row total">
+                        <div className={styles['summary-divider']}></div>
+                        <div className={`${styles['summary-row']} ${styles['total']}`}>
                             <span>Total Amount</span>
                             <span>${order.totalAmount.toFixed(2)}</span>
                         </div>
@@ -377,32 +377,34 @@ function OrderDetail() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="action-buttons-section">
+                <div className={styles['action-buttons-section']}>
                     {(order.orderStatus === 'Pending' || order.orderStatus === 'Confirmed') && (
                         <button
                             onClick={handleCancelOrder}
-                            className="cancel-order-btn"
+                            className={styles['cancel-order-btn']}
                             disabled={cancelling}
                         >
                             {cancelling ? 'Cancelling...' : 'Cancel Order'}
                         </button>
                     )}
                     {order.orderStatus === 'Shipped' && (
-                        <button onClick={handleTrackOrder} className="track-btn">
+                        <button onClick={handleTrackOrder} className={styles['track-btn']}>
                             Track Order
                         </button>
                     )}
                     {order.orderStatus === 'Delivered' && (
-                        <button onClick={handleReorder} className="reorder-btn">
+                        <button onClick={handleReorder} className={styles['reorder-btn']}>
                             Reorder
                         </button>
                     )}
                     {(order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Delivered') && (
-                        <button className="dispute-btn" onClick={() => setShowDisputeForm(true)}>Raise Dispute</button>
+                        <button className={styles['dispute-btn']} onClick={() => setShowDisputeForm(true)}>
+                            Raise Dispute
+                        </button>
                     )}
 
                     {showDisputeForm && (
-                        <div className="dispute-form">
+                        <div className={styles['dispute-form']}>
                             <textarea placeholder="Explain your issue..." value={disputeReason} onChange={e => setDisputeReason(e.target.value)} />
                             <button onClick={handleRaiseDispute}>Submit Dispute</button>
                             <button onClick={() => setShowDisputeForm(false)}>Cancel</button>
@@ -411,10 +413,10 @@ function OrderDetail() {
                 </div>
 
                 {/* Help Section */}
-                <div className="help-section">
+                <div className={styles['help-section']}>
                     <h4>Need Help With Your Order?</h4>
                     <p>If you have any questions or issues with your order, please contact our support team.</p>
-                    <div className="help-contacts">
+                    <div className={styles['help-contacts']}>
                         <span>📧 support@sellpoint.com</span>
                         <span>📞 +1 (555) 123-4567</span>
                     </div>

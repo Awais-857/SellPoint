@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import './Auth.css';
+import styles from './Auth.module.css';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
@@ -44,18 +44,18 @@ function ForgotPassword() {
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-card">
+        <div className={styles['auth-container']}>
+            <div className={styles['auth-card']}>
                 <h2>Reset Password</h2>
 
                 {!submitted ? (
                     <>
                         <p>Enter your email address and we'll send you a link to reset your password.</p>
 
-                        {error && <div className="error-message">{error}</div>}
+                        {error && <div className={styles['error-message']}>{error}</div>}
 
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group">
+                            <div className={styles['form-group']}>
                                 <label>Email Address</label>
                                 <input
                                     type="email"
@@ -72,7 +72,7 @@ function ForgotPassword() {
                         </form>
                     </>
                 ) : (
-                    <div className="success-message">
+                    <div className={styles['success-message']}>
                         <p>{message}</p>
                         <p>Check your email and click the link to reset your password.</p>
 
@@ -109,7 +109,7 @@ function ForgotPassword() {
                     </div>
                 )}
 
-                <p className="auth-link">
+                <p className={styles['auth-link']}>
                     <Link to="/login">Back to Login</Link>
                 </p>
             </div>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import './VendorProducts.css';
+import styles from './VendorProducts.module.css';
 
 function VendorProducts() {
     const navigate = useNavigate();
@@ -190,10 +190,10 @@ function VendorProducts() {
 
     if (loading) {
         return (
-            <div className="vendor-products-container">
-                <div className="vendor-products-header">
+            <div className={styles['vendor-products-container']}>
+                <div className={styles['vendor-products-header']}>
                     <h1 onClick={() => navigate('/dashboard')}>SellPoint Vendor</h1>
-                    <div className="header-links">
+                    <div className={styles['header-links']}>
                         <span onClick={() => navigate('/vendor-dashboard')}>Dashboard</span>
                         <span onClick={() => navigate('/vendor/orders')}>Orders</span>
                         <span onClick={() => {
@@ -202,8 +202,8 @@ function VendorProducts() {
                         }}>Logout</span>
                     </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
+                <div className={styles['loading-state']}>
+                    <div className={styles['spinner']}></div>
                     <p>Loading products...</p>
                 </div>
             </div>
@@ -211,11 +211,11 @@ function VendorProducts() {
     }
 
     return (
-        <div className="vendor-products-container">
+        <div className={styles['vendor-products-container']}>
             {/* Header */}
-            <div className="vendor-products-header">
+            <div className={styles['vendor-products-header']}>
                 <h1 onClick={() => navigate('/dashboard')}>SellPoint Vendor</h1>
-                <div className="header-links">
+                <div className={styles['header-links']}>
                     <span onClick={() => navigate('/vendor-dashboard')}>Dashboard</span>
                     <span onClick={() => navigate('/vendor/orders')}>Orders</span>
                     <span onClick={() => {
@@ -225,33 +225,33 @@ function VendorProducts() {
                 </div>
             </div>
 
-            <div className="vendor-products-main">
-                <div className="page-header">
+            <div className={styles['vendor-products-main']}>
+                <div className={styles['page-header']}>
                     <h2>Product Management</h2>
-                    <button className="add-product-btn" onClick={handleOpenAddModal}>
+                    <button className={styles['add-product-btn']} onClick={handleOpenAddModal}>
                         + Add New Product
                     </button>
                 </div>
 
                 {error && (
-                    <div className="error-message">
+                    <div className={styles['error-message']}>
                         <p>{error}</p>
                         <button onClick={fetchProducts}>Retry</button>
                     </div>
                 )}
 
                 {products.length === 0 && !error ? (
-                    <div className="empty-products">
-                        <div className="empty-icon">📦</div>
+                    <div className={styles['empty-products']}>
+                        <div className={styles['empty-icon']}>📦</div>
                         <h3>No Products Yet</h3>
                         <p>Start adding products to your store.</p>
-                        <button onClick={handleOpenAddModal} className="add-first-btn">
+                        <button onClick={handleOpenAddModal} className={styles['add-first-btn']}>
                             Add Your First Product
                         </button>
                     </div>
                 ) : (
-                    <div className="products-table-container">
-                        <table className="products-table">
+                    <div className={styles['products-table-container']}>
+                        <table className={styles['products-table']}>
                             <thead>
                                 <tr>
                                     <th>Image</th>
@@ -267,57 +267,57 @@ function VendorProducts() {
                             <tbody>
                                 {products.map(product => (
                                     <tr key={product.productId}>
-                                        <td className="product-image-cell">
+                                        <td className={styles['product-image-cell']}>
                                             {product.imageUrl ? (
                                                 <img
                                                     src={product.imageUrl}
                                                     alt={product.productName}
-                                                    className="product-thumbnail"
+                                                    className={styles['product-thumbnail']}
                                                     onClick={() => navigate(`/product/${product.productId}`)}
                                                 />
                                             ) : (
-                                                <div className="no-thumbnail">No Image</div>
+                                                <div className={styles['no-thumbnail']}>No Image</div>
                                             )}
                                         </td>
-                                        <td className="product-name-cell">
-                                            <div className="product-name">{product.productName}</div>
-                                            <div className="product-sku">SKU: {product.sku || 'N/A'}</div>
+                                        <td className={styles['product-name-cell']}>
+                                            <div className={styles['product-name']}>{product.productName}</div>
+                                            <div className={styles['product-sku']}>SKU: {product.sku || 'N/A'}</div>
                                         </td>
                                         <td>{product.categoryName}</td>
-                                        <td className="price-cell">${formatPrice(product.price)}</td>
+                                        <td className={styles['price-cell']}>${formatPrice(product.price)}</td>
                                         <td className={`stock-cell ${product.stockQuantity <= 5 ? 'low-stock' : ''}`}>
                                             {product.stockQuantity}
                                             {product.stockQuantity <= 5 && product.stockQuantity > 0 && (
-                                                <span className="low-stock-badge">Low Stock</span>
+                                                <span className={styles['low-stock-badge']}>Low Stock</span>
                                             )}
                                             {product.stockQuantity === 0 && (
-                                                <span className="out-of-stock-badge">Out of Stock</span>
+                                                <span className={styles['out-of-stock-badge']}>Out of Stock</span>
                                             )}
                                         </td>
                                         <td>
                                             {product.discountPercent > 0 ? (
-                                                <span className="discount-badge">-{product.discountPercent}%</span>
+                                                <span className={styles['discount-badge']}>-{product.discountPercent}%</span>
                                             ) : (
-                                                <span className="no-discount">—</span>
+                                                <span className={styles['no-discount']}>—</span>
                                             )}
                                         </td>
                                         <td>
                                             <button
-                                                className={`status-toggle ${product.isActive ? 'active' : 'inactive'}`}
+                                                className={styles['status-toggle'] + ' ' + (product.isActive ? styles['active'] : styles['inactive'])}
                                                 onClick={() => handleToggleStatus(product.productId, product.isActive)}
                                             >
                                                 {product.isActive ? 'Active' : 'Inactive'}
                                             </button>
                                         </td>
-                                        <td className="actions-cell">
+                                        <td className={styles['actions-cell']}>
                                             <button
-                                                className="edit-btn"
+                                                className={styles['edit-btn']}
                                                 onClick={() => handleOpenEditModal(product)}
                                             >
                                                 Edit
                                             </button>
                                             <button
-                                                className="delete-btn"
+                                                className={styles['delete-btn']}
                                                 onClick={() => handleDeleteProduct(product.productId)}
                                             >
                                                 Delete
@@ -333,14 +333,14 @@ function VendorProducts() {
 
             {/* Add/Edit Product Modal */}
             {showModal && (
-                <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
+                <div className={styles['modal-overlay']} onClick={() => setShowModal(false)}>
+                    <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles['modal-header']}>
                             <h3>{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
-                            <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
+                            <button className={styles['close-btn']} onClick={() => setShowModal(false)}>×</button>
                         </div>
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group">
+                            <div className={styles['form-group']}>
                                 <label>Product Name *</label>
                                 <input
                                     type="text"
@@ -352,8 +352,8 @@ function VendorProducts() {
                                 />
                             </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
+                            <div className={styles['form-row']}>
+                                <div className={styles['form-group']}>
                                     <label>Category *</label>
                                     <select
                                         name="categoryId"
@@ -378,7 +378,7 @@ function VendorProducts() {
                                         </small>
                                     )}
                                 </div>
-                                <div className="form-group">
+                                <div className={styles['form-group']}>
                                     <label>SKU (Optional)</label>
                                     <input
                                         type="text"
@@ -390,7 +390,7 @@ function VendorProducts() {
                                 </div>
                             </div>
 
-                            <div className="form-group">
+                            <div className={styles['form-group']}>
                                 <label>Description</label>
                                 <textarea
                                     name="description"
@@ -401,8 +401,8 @@ function VendorProducts() {
                                 />
                             </div>
 
-                            <div className="form-row">
-                                <div className="form-group">
+                            <div className={styles['form-row']}>
+                                <div className={styles['form-group']}>
                                     <label>Price ($) *</label>
                                     <input
                                         type="number"
@@ -415,7 +415,7 @@ function VendorProducts() {
                                         placeholder="0.00"
                                     />
                                 </div>
-                                <div className="form-group">
+                                <div className={styles['form-group']}>
                                     <label>Stock Quantity *</label>
                                     <input
                                         type="number"
@@ -427,7 +427,7 @@ function VendorProducts() {
                                         placeholder="0"
                                     />
                                 </div>
-                                <div className="form-group">
+                                <div className={styles['form-group']}>
                                     <label>Discount (%)</label>
                                     <input
                                         type="number"
@@ -442,7 +442,7 @@ function VendorProducts() {
                                 </div>
                             </div>
 
-                            <div className="form-group">
+                            <div className={styles['form-group']}>
                                 <label>Image URL (Optional)</label>
                                 <input
                                     type="text"
@@ -454,11 +454,11 @@ function VendorProducts() {
                                 <small>Enter a valid image URL or leave empty for no image</small>
                             </div>
 
-                            <div className="modal-actions">
-                                <button type="button" className="cancel-modal-btn" onClick={() => setShowModal(false)}>
+                            <div className={styles['modal-actions']}>
+                                <button type="button" className={styles['cancel-modal-btn']} onClick={() => setShowModal(false)}>
                                     Cancel
                                 </button>
-                                <button type="submit" className="submit-modal-btn" disabled={submitting}>
+                                <button type="submit" className={styles['submit-modal-btn']} disabled={submitting}>
                                     {submitting ? 'Saving...' : (editingProduct ? 'Update Product' : 'Add Product')}
                                 </button>
                             </div>
@@ -469,21 +469,21 @@ function VendorProducts() {
 
             {/* Delete Confirmation Modal */}
             {deleteConfirm && (
-                <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
-                    <div className="modal-content delete-modal" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
+                <div className={styles['modal-overlay']} onClick={() => setDeleteConfirm(null)}>
+                    <div className={styles['modal-content']} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles['modal-header']}>
                             <h3>Delete Product</h3>
-                            <button className="close-btn" onClick={() => setDeleteConfirm(null)}>×</button>
+                            <button className={styles['close-btn']} onClick={() => setDeleteConfirm(null)}>×</button>
                         </div>
-                        <div className="delete-confirm-content">
+                        <div className={styles['delete-confirm-content']}>
                             <p>Are you sure you want to delete this product?</p>
-                            <p className="delete-warning">This action cannot be undone.</p>
+                            <p className={styles['delete-warning']}>This action cannot be undone.</p>
                         </div>
-                        <div className="modal-actions">
-                            <button className="cancel-modal-btn" onClick={() => setDeleteConfirm(null)}>
+                        <div className={styles['modal-actions']}>
+                            <button className={styles['cancel-modal-btn']} onClick={() => setDeleteConfirm(null)}>
                                 Cancel
                             </button>
-                            <button className="delete-confirm-btn" onClick={confirmDelete}>
+                            <button className={styles['delete-confirm-btn']} onClick={confirmDelete}>
                                 Delete
                             </button>
                         </div>
