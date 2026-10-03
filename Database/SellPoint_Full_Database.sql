@@ -1818,8 +1818,6 @@ BEGIN
 END;
 GO
 
-PRINT 'Order flow and dispute management tables/procedures added successfully.';
-
 -- =============================================
 -- END OF SCRIPT
 -- =============================================
