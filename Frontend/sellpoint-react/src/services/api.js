@@ -1,8 +1,12 @@
 // src/services/api.js
 import axios from 'axios';
+import { API_BASE_URL, IS_DEMO_MODE } from '../config/appConfig';
 
+// The API client is retained for the existing full-stack application.
+// In Demo Mode, its request interceptor rejects every request before Axios
+// can send anything to a backend.
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5274/api'
+    baseURL: API_BASE_URL || undefined
 });
 
 // ---------- Slow-request tracking ----------
@@ -27,6 +31,12 @@ const clearSlowIfIdle = () => {
 // ---------- Request interceptor ----------
 api.interceptors.request.use(
     config => {
+        if (IS_DEMO_MODE) {
+            return Promise.reject(
+                new Error('Backend requests are disabled in Demo Mode.')
+            );
+        }
+
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -46,8 +56,11 @@ api.interceptors.response.use(
         return response;
     },
     error => {
-        activeRequests = Math.max(0, activeRequests - 1);
-        clearSlowIfIdle();
+        // A Demo Mode request is rejected before activeRequests is incremented.
+        if (!IS_DEMO_MODE) {
+            activeRequests = Math.max(0, activeRequests - 1);
+            clearSlowIfIdle();
+        }
         return Promise.reject(error);
     }
 );
