@@ -52,7 +52,8 @@ export function DemoVendorDashboard() {
   return (
     <main className="demo-vendor-page"><VendorHeader active="dashboard" />
       <section className="demo-vendor-content">
-        <div className="demo-vendor-welcome"><div><p className="demo-vendor-eyebrow">VENDOR WORKSPACE</p><h1>Welcome, {vendor.ownerName}</h1><p>{vendor.businessName} · <span className="demo-vendor-approved">{vendor.status}</span></p></div><span className="demo-vendor-avatar">🏪</span></div>
+        <div className="demo-vendor-welcome"><div><p className="demo-vendor-eyebrow">VENDOR WORKSPACE</p><h1>Welcome, {vendor.ownerName}</h1><p>{vendor.businessName} · <span className="demo-vendor-approved">{vendor.status}{vendor.status === 'Approved' && !vendor.isActive ? ' (Suspended)' : ''}</span></p></div><span className="demo-vendor-avatar">🏪</span></div>
+        {(vendor.status !== 'Approved' || !vendor.isActive) && <div className="demo-vendor-alert" role="status">{vendor.status === 'Pending' ? 'Your vendor application is awaiting admin approval. Public listings and product management are unavailable.' : vendor.status === 'Rejected' ? (vendor.rejectionReason || 'Your vendor application was rejected. Public listings and product management are unavailable.') : 'This vendor account is suspended. Its public store and product listings are hidden.'}</div>}
         <div className="demo-vendor-stats">
           <article><span>Total products</span><strong>{products.length}</strong><small>{activeProducts} active listings</small></article>
           <article><span>Orders</span><strong>{orders.length}</strong><small>Orders containing your products</small></article>
