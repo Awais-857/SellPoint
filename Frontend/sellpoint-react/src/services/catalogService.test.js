@@ -19,25 +19,25 @@ const demoState = {
   products: [
     {
       productId: 1, productName: 'Wireless Headphones', categoryId: 1, vendorId: 101,
-      price: 80, isActive: true, createdAt: '2026-01-02',
+      price: 80, stockQuantity: 5, isActive: true, createdAt: '2026-01-02',
       description: 'Bluetooth audio', businessName: 'Nova Tech',
       categoryName: 'Electronics'
     },
     {
       productId: 2, productName: 'Smart Watch', categoryId: 1, vendorId: 101,
-      price: 120, isActive: true, createdAt: '2026-01-03',
+      price: 120, stockQuantity: 0, isActive: true, createdAt: '2026-01-03',
       description: 'Wearable technology', businessName: 'Nova Tech',
       categoryName: 'Electronics'
     },
     {
       productId: 3, productName: 'Desk Lamp', categoryId: 2, vendorId: 102,
-      price: 35, isActive: true, createdAt: '2026-01-01',
+      price: 35, stockQuantity: 8, isActive: true, createdAt: '2026-01-01',
       description: 'Home lighting', businessName: 'Urban Home',
       categoryName: 'Home'
     },
     {
       productId: 4, productName: 'Hidden Product', categoryId: 2, vendorId: 102,
-      price: 15, isActive: false, createdAt: '2026-01-04',
+      price: 15, stockQuantity: 0, isActive: false, createdAt: '2026-01-04',
       description: 'Not listed', businessName: 'Urban Home',
       categoryName: 'Home'
     },
