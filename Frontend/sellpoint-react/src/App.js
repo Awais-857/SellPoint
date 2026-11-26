@@ -33,6 +33,7 @@ import { IS_DEMO_MODE } from './config/appConfig';
 import { DemoProvider, useDemo } from './demo/DemoProvider';
 import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
 import { DemoCheckout, DemoOrderConfirmation, DemoOrderHistory, DemoOrderDetail, DemoOrderTracking } from './demo/DemoCustomerPages';
+import { DemoVendorDashboard, DemoVendorProducts, DemoVendorOrders, DemoVendorRevenue } from './demo/DemoVendorPages';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
@@ -75,6 +76,15 @@ function DemoCustomerRoute({ children }) {
   return children;
 }
 
+function DemoVendorRoute({ children }) {
+  const { session } = useDemo();
+
+  if (!session) return <Navigate to="/demo" replace />;
+  if (session.role !== 'Vendor') return <Navigate to="/demo/workspace" replace />;
+
+  return children;
+}
+
 function App() {
   if (IS_DEMO_MODE) {
     return (
@@ -92,6 +102,10 @@ function App() {
               <Route path="/order-history" element={<DemoCustomerRoute><DemoOrderHistory /></DemoCustomerRoute>} />
               <Route path="/order-detail/:id" element={<DemoCustomerRoute><DemoOrderDetail /></DemoCustomerRoute>} />
               <Route path="/order-tracking/:id" element={<DemoCustomerRoute><DemoOrderTracking /></DemoCustomerRoute>} />
+              <Route path="/vendor-dashboard" element={<DemoVendorRoute><DemoVendorDashboard /></DemoVendorRoute>} />
+              <Route path="/vendor/products" element={<DemoVendorRoute><DemoVendorProducts /></DemoVendorRoute>} />
+              <Route path="/vendor/orders" element={<DemoVendorRoute><DemoVendorOrders /></DemoVendorRoute>} />
+              <Route path="/vendor/revenue" element={<DemoVendorRoute><DemoVendorRevenue /></DemoVendorRoute>} />
               <Route path="/" element={<Navigate to="/demo" replace />} />
               <Route path="*" element={<Navigate to="/demo" replace />} />
             </Routes>

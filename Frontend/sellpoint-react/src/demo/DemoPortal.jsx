@@ -78,8 +78,8 @@ export function DemoWorkspace() {
         </header>
 
         <div className="demo-notice">
-          <strong>Demo Foundation is active.</strong>
-          <span>Your session and sample data are isolated from the live API, database, and real user accounts. Feature areas will become available as their demo modules are implemented.</span>
+          <strong>SellPoint Demo is active.</strong>
+          <span>Your session and sample data are isolated from the live API, database, and real user accounts. Changes in this workspace are temporary and can be reset.</span>
         </div>
 
         {session.role === 'Customer' && (
@@ -87,6 +87,14 @@ export function DemoWorkspace() {
             <button className="demo-secondary-button" onClick={() => navigate('/products')}>Browse sample products</button>
             <button className="demo-secondary-button" onClick={() => navigate('/cart')}>Shopping cart</button>
             <button className="demo-secondary-button" onClick={() => navigate('/order-history')}>My demo orders</button>
+          </div>
+        )}
+        {session.role === 'Vendor' && (
+          <div className="demo-customer-actions">
+            <button className="demo-secondary-button" onClick={() => navigate('/vendor-dashboard')}>Vendor dashboard</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/vendor/products')}>Manage products</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/vendor/orders')}>Manage orders</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/vendor/revenue')}>Revenue overview</button>
           </div>
         )}
 
