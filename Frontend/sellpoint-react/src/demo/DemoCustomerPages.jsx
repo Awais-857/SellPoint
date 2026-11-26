@@ -121,8 +121,8 @@ export function DemoOrderConfirmation() {
     <main className="demo-shop-page"><DemoHeader />
       <section className="demo-shop-content demo-confirmation">
         <div className="demo-success-mark">✓</div>
-        <p className="demo-shop-eyebrow">DEMO ORDER CONFIRMED</p>
-        <h1>Your order has been placed!</h1>
+        <p className="demo-shop-eyebrow">{order.paymentStatus === 'Failed' ? 'PAYMENT RESULT' : 'DEMO ORDER CONFIRMED'}</p>
+        <h1>{order.paymentStatus === 'Failed' ? 'Payment failed; your order was cancelled.' : 'Your order has been placed!'}</h1>
         <p className="demo-shop-muted">This order exists only in this browser's demo data. No real payment or shipment was created.</p>
         <div className="demo-shop-card demo-confirmation-card">
           <div><span>Order number</span><strong>#{order.orderId}</strong></div>
