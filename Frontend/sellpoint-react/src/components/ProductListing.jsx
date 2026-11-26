@@ -1,7 +1,7 @@
 // src/components/ProductListing.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import api from '../services/api';
+import { catalogService } from '../services/catalogService';
 import ProductCard from './ProductCard';
 import styles from './ProductListing.module.css';
 import { addToCart } from '../services/cartHelper';
@@ -50,8 +50,8 @@ function ProductListing() {
 
     const fetchCategories = async () => {
         try {
-            const response = await api.get('/categories');
-            setCategories(response.data);
+            const categoriesData = await catalogService.getCategories();
+            setCategories(categoriesData);
         } catch (err) {
             console.error('Failed to fetch categories', err);
         }
@@ -62,22 +62,20 @@ function ProductListing() {
         setError('');
 
         try {
-            const response = await api.get('/products', {
-                params: {
-                    categoryId: selectedCategory || undefined,
-                    searchTerm: searchTerm || undefined,
-                    minPrice: minPrice ? parseFloat(minPrice) : undefined,
-                    maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-                    sortBy: sortBy,
-                    sortOrder: sortOrder,
-                    pageNumber: currentPage,
-                    pageSize: pageSize
-                }
+            const result = await catalogService.listProducts({
+                categoryId: selectedCategory || undefined,
+                searchTerm: searchTerm || undefined,
+                minPrice: minPrice ? parseFloat(minPrice) : undefined,
+                maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+                sortBy,
+                sortOrder,
+                pageNumber: currentPage,
+                pageSize
             });
 
-            setProducts(response.data.products || []);
-            setTotalPages(response.data.totalPages || 1);
-            setTotalProducts(response.data.totalCount || 0);
+            setProducts(result.products || []);
+            setTotalPages(result.totalPages || 1);
+            setTotalProducts(result.totalCount || 0);
         } catch (err) {
             console.error('Failed to fetch products', err);
             setError('Failed to load products. Please try again.');
