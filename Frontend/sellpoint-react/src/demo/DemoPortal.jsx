@@ -82,6 +82,12 @@ export function DemoWorkspace() {
           <span>Your session and sample data are isolated from the live API, database, and real user accounts. Feature areas will become available as their demo modules are implemented.</span>
         </div>
 
+        {session.role === 'Customer' && (
+          <button className="demo-secondary-button" onClick={() => navigate('/products')}>
+            Browse sample products
+          </button>
+        )}
+
         <h2>Sample marketplace data</h2>
         <div className="demo-stats-grid">
           {counts.map(([label, count]) => (
