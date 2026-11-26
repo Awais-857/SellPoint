@@ -194,7 +194,7 @@ function ProductDetail() {
 
                     <div className={styles['product-meta']}>
                         <span className={styles['vendor-name']}>
-                            Sold by: <strong>{product.businessName}</strong>
+                            Sold by: <strong>{IS_DEMO_MODE ? <button type="button" className="demo-product-store-link" onClick={() => navigate('/store/' + product.vendorId)}>{product.businessName}</button> : product.businessName}</strong>
                         </span>
                         <div className={styles['product-rating-large']}>
                             {'★'.repeat(Math.floor(product.averageRating || 0))}
