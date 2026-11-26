@@ -123,6 +123,7 @@ export function DemoWorkspace() {
             <button className="demo-secondary-button" onClick={() => navigate('/vendor-dashboard')}>Vendor dashboard</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/products')}>Manage products</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/orders')}>Manage orders</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/vendor/reviews')}>Product reviews</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/revenue')}>Revenue overview</button>
           </div>
         )}
