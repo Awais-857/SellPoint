@@ -267,3 +267,28 @@
 }
 
 .demo-customer-actions{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 8px}
+
+
+.demo-vendor-choice {
+  margin-top: 22px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid #dbe5f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+.demo-vendor-choice h2 { margin: 0; color: #172b4d; font-size: 18px; }
+.demo-vendor-choice p { margin: 0 0 4px; color: #64748b; font-size: 13px; line-height: 1.5; }
+.demo-vendor-choice label { color: #334155; font-size: 13px; font-weight: 650; }
+.demo-vendor-choice select {
+  width: min(100%, 420px);
+  padding: 11px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+}
