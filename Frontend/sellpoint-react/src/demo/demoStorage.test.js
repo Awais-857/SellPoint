@@ -22,7 +22,7 @@ describe('demoStorage', () => {
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
 
     expect(state.products.length).toBeGreaterThan(0);
-    expect(stored.version).toBe(7);
+    expect(stored.version).toBe(8);
     expect(stored.data.products).toHaveLength(state.products.length);
   });
 
@@ -42,12 +42,31 @@ describe('demoStorage', () => {
   test('migrates existing version 6 demo data without discarding visitor changes', () => {
     const existing = getDemoState();
     existing.products[0].productName = 'Visitor custom product name';
-    window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 6, data: existing }));
+    window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 7, data: existing }));
     const migrated = getDemoState();
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
     expect(migrated.products[0].productName).toBe('Visitor custom product name');
-    expect(migrated.notifications).toEqual([]);
-    expect(stored.version).toBe(7);
+    expect(migrated.notifications).toEqual(existing.notifications);
+    expect(migrated.payments.length).toBe(migrated.orders.length);
+    expect(stored.version).toBe(8);
+  });
+
+  test('migrates existing v7 notifications and visitor changes while adding payment records', () => {
+    const existing = getDemoState();
+    existing.notifications = [{ notificationId: 1, recipientRole: 'Customer', recipientId: 301, title: 'Existing notification' }];
+    existing.products[0].productName = 'Saved visitor edit';
+    window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 7, data: existing }));
+    const migrated = getDemoState();
+    expect(migrated.products[0].productName).toBe('Saved visitor edit');
+    expect(migrated.notifications).toEqual(existing.notifications);
+    expect(migrated.payments.length).toBe(migrated.orders.length);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(8);
+  });
+
+  test('seed data includes payment records for existing orders', () => {
+    const state = getDemoState();
+    expect(state.payments).toHaveLength(state.orders.length);
+    expect(state.payments.every(payment => state.orders.some(order => order.orderId === payment.orderId))).toBe(true);
   });
 
   test('seed data includes pending and rejected product submissions', () => {
