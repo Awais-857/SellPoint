@@ -147,6 +147,10 @@ describe('demoCatalogService', () => {
     const afterApproval = await demoCatalogService.getProductById(1);
     expect(afterApproval.averageRating).toBe(4.3);
     expect(afterApproval.reviewCount).toBe(3);
+    getDemoState.mockReturnValue({ ...demoState, reviews: [...demoState.reviews, { ...pendingReview, status: 'Removed' }] });
+    const afterRemoval = await demoCatalogService.getProductById(1);
+    expect(afterRemoval.averageRating).toBe(4);
+    expect(afterRemoval.reviewCount).toBe(2);
   });
 
   test('does not return inactive or missing products', async () => {
