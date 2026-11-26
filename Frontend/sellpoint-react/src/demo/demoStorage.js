@@ -32,6 +32,26 @@ const isValidDemoState = (data) => {
   return Boolean(data) && collectionNames.every(name => Array.isArray(data[name]));
 };
 
+
+const createLegacyDemoPayments = data => (data.orders || []).map((order, index) => {
+  const refunds = (data.returnRequests || [])
+    .filter(request => Number(request.orderId) === Number(order.orderId) && request.refundStatus === 'Simulated refund recorded')
+    .map(request => ({ refundId: Number(request.returnId), reference: `return-${request.returnId}`, amount: Number(request.refundAmount || 0), status: 'Simulated', createdAt: request.refundedAt || request.createdAt }));
+  const refundedAmount = Number(refunds.reduce((sum, refund) => sum + refund.amount, 0).toFixed(2));
+  const amount = Number(order.totalAmount || 0);
+  const fullyRefunded = order.paymentStatus === 'Refunded' || (amount > 0 && refundedAmount >= amount);
+  const status = fullyRefunded ? 'Refunded' : refundedAmount > 0 ? 'Partially Refunded' :
+    order.paymentStatus === 'Paid' ? 'Paid' : order.paymentStatus === 'Failed' ? 'Failed' : 'Pending';
+  return {
+    paymentId: 20001 + index, orderId: order.orderId, customerId: order.customerId,
+    amount, currency: 'USD', method: order.paymentMethod || 'Cash on delivery', status,
+    refundedAmount: fullyRefunded && refundedAmount === 0 ? amount : refundedAmount,
+    refundStatus: fullyRefunded ? 'Refunded' : refundedAmount > 0 ? 'Partially refunded' : 'Not refunded',
+    refunds, transactions: [], createdAt: order.orderDate,
+    paidAt: ['Paid', 'Refunded', 'Partially Refunded'].includes(status) ? order.orderDate : null
+  };
+});
+
 export const getDemoState = () => {
   const stored = readJson(DEMO_STATE_STORAGE_KEY);
   if (stored && stored.version === DEMO_STATE_VERSION && isValidDemoState(stored.data)) return stored.data;
@@ -41,21 +61,7 @@ export const getDemoState = () => {
     const migrated = {
       ...stored.data,
       notifications: Array.isArray(stored.data.notifications) ? stored.data.notifications : [],
-      payments: (stored.data.payments || []).length ? stored.data.payments : (stored.data.orders || []).map((order, index) => ({
-        paymentId: 20001 + index,
-        orderId: order.orderId,
-        customerId: order.customerId,
-        amount: Number(order.totalAmount || 0),
-        currency: 'USD',
-        method: order.paymentMethod || 'Cash on delivery',
-        status: order.paymentStatus === 'Refunded' ? 'Refunded' : order.paymentStatus === 'Paid' ? 'Paid' : order.paymentStatus === 'Failed' ? 'Failed' : 'Pending',
-        refundedAmount: order.paymentStatus === 'Refunded' ? Number(order.totalAmount || 0) : 0,
-        refundStatus: order.paymentStatus === 'Refunded' ? 'Refunded' : 'Not refunded',
-        refunds: [],
-        transactions: [],
-        createdAt: order.orderDate,
-        paidAt: order.paymentStatus === 'Paid' || order.paymentStatus === 'Refunded' ? order.orderDate : null
-      }))
+      payments: (stored.data.payments || []).length ? stored.data.payments : createLegacyDemoPayments(stored.data)
     };
     if (isValidDemoState(migrated)) {
       saveDemoState(migrated);
