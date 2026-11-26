@@ -1,4 +1,5 @@
 import { isPublicDemoProduct } from '../services/catalogService';
+import { createDemoPayment } from './demoPaymentService';
 
 export const DEMO_CART_KEY = 'sellpoint_demo_cart_v1';
 
@@ -91,12 +92,15 @@ export const buildDemoOrder = (demoState, session, cartItems, address, paymentMe
     items: orderItems
   };
 
+  const payment = createDemoPayment(order, demoState.payments || [], date);
   return {
     order,
+    payment,
     nextState: {
       ...demoState,
       products,
-      orders: [order, ...demoState.orders]
+      orders: [order, ...demoState.orders],
+      payments: [payment, ...(demoState.payments || [])]
     }
   };
 };
@@ -122,9 +126,13 @@ export const cancelDemoOrder = (demoState, orderId, customerId) => {
       ? { ...product, variants, stockQuantity: variants.reduce((sum, item) => sum + Number(item.stockQuantity || 0), 0) }
       : { ...product, stockQuantity: Number(product.stockQuantity || 0) + plainQuantity };
   });
+  const payments = (demoState.payments || []).map(payment => Number(payment.orderId) === Number(order.orderId) && payment.status === 'Pending'
+    ? { ...payment, status: 'Cancelled', updatedAt: new Date().toISOString() }
+    : payment);
   return {
     ...demoState,
     products,
+    payments,
     orders: demoState.orders.map(item => item.orderId === order.orderId ? cancelledOrder : item)
   };
 };
