@@ -29,7 +29,7 @@ const normalizeFilters = (filters = {}) => ({
 // A product is public only when its listing is active and its vendor is both
 // approved and active. Keep this rule in one place for lists and detail pages.
 export const isPublicDemoProduct = (state, product) => {
-  if (!product || !product.isActive) return false;
+  if (!product || !product.isActive || (product.moderationStatus || 'Approved') !== 'Approved') return false;
   const vendor = state.vendors.find(item => item.vendorId === product.vendorId);
   return Boolean(vendor && vendor.status === 'Approved' && vendor.isActive);
 };
