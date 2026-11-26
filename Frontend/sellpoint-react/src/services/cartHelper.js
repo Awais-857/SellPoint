@@ -1,6 +1,8 @@
 // src/services/cartHelper.js
 import api from './api';
 import { IS_DEMO_MODE } from '../config/appConfig';
+import { isPublicDemoProduct } from './catalogService';
+import { getDemoState } from '../demo/demoStorage';
 
 const GUEST_CART_KEY = IS_DEMO_MODE ? 'sellpoint_demo_cart_v1' : 'guestCart';
 
@@ -67,7 +69,7 @@ export const getCart = async () => {
 export const addToCart = async (product, quantity = 1, selectedVariant = null) => {
     let variant = selectedVariant;
     if (IS_DEMO_MODE) {
-        if (!product || !product.isActive) {
+        if (!product || !isPublicDemoProduct(getDemoState(), product)) {
             throw new Error('This product is currently unavailable.');
         }
         if (Array.isArray(product.variants) && product.variants.length) {
