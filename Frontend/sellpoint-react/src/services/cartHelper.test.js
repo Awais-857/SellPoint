@@ -21,6 +21,11 @@ describe('cartHelper Demo variant support', () => {
     expect(items[1]).toMatchObject({ cartId: '10:102', variantId: 102, variantName: 'White', price: 100, quantity: 1, stockQuantity: 3, itemTotal: 90 });
   });
 
+  test('blocks adding products from suspended vendors or unapproved listings', async () => {
+    await expect(addToCart({ ...product, vendorId: 105 }, 1, product.variants[0])).rejects.toThrow(/currently unavailable/);
+    await expect(addToCart({ ...product, moderationStatus: 'Pending' }, 1, product.variants[0])).rejects.toThrow(/currently unavailable/);
+  });
+
   test('validates variant selection and per-variant stock', async () => {
     await expect(addToCart(product, 1)).rejects.toThrow(/select a product option/);
     await expect(addToCart(product, 3, product.variants[0])).rejects.toThrow(/Only 2 unit/);
