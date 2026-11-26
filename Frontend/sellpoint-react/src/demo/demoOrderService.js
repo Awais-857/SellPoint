@@ -110,7 +110,7 @@ export const cancelDemoOrder = (demoState, orderId, customerId) => {
   if (!order) throw new Error('Order not found.');
   if (!['Pending', 'Confirmed'].includes(order.orderStatus)) throw new Error('Only pending or confirmed orders can be cancelled.');
 
-  const cancelledOrder = { ...order, orderStatus: 'Cancelled', paymentStatus: order.paymentStatus === 'Paid' ? 'Refunded' : order.paymentStatus };
+  const cancelledOrder = { ...order, orderStatus: 'Cancelled', paymentStatus: ['Paid', 'Partially Refunded'].includes(order.paymentStatus) ? 'Refunded' : order.paymentStatus };
   const products = demoState.products.map(product => {
     const cancelledItems = (order.items || []).filter(item => item.productId === product.productId);
     if (!cancelledItems.length) return product;
