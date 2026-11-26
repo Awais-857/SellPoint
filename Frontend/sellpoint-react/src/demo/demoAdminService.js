@@ -1,7 +1,10 @@
 const money = value => Number(Number(value || 0).toFixed(2));
 
 export const getAdminOverview = state => {
-  const activeProducts = state.products.filter(item => item.isActive && (item.moderationStatus || 'Approved') === 'Approved');
+  const activeProducts = state.products.filter(item => {
+    const vendor = state.vendors.find(entry => entry.vendorId === item.vendorId);
+    return item.isActive && (item.moderationStatus || 'Approved') === 'Approved' && vendor?.status === 'Approved' && vendor.isActive;
+  });
   const pendingProducts = state.products.filter(item => (item.moderationStatus || 'Approved') === 'Pending');
   const pendingVendors = state.vendors.filter(item => item.status === 'Pending');
   const pendingReviews = state.reviews.filter(item => item.status === 'Pending');
