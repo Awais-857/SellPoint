@@ -24,12 +24,16 @@ const writeGuestCart = (items) => {
     window.dispatchEvent(new Event('cartUpdated'));
 };
 
-const toGuestItem = (product, quantity) => {
+const toGuestItem = (product, quantity, variant = null) => {
     const discount = product.discountPercent || 0;
-    const unitPrice = product.price * (1 - discount / 100);
+    const basePrice = Number(variant?.price ?? product.price);
+    const unitPrice = basePrice * (1 - discount / 100);
     return {
-        cartId: product.productId,               // guests use productId as identifier
+        cartId: variant ? `${product.productId}:${variant.variantId}` : product.productId,
         productId: product.productId,
+        variantId: variant?.variantId ?? null,
+        variantName: variant?.variantName ?? null,
+        variantOptions: variant?.options ?? null,
         productName: product.productName,
         price: basePrice,
         discountPercent: discount,
