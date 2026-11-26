@@ -1,6 +1,9 @@
-name: PR Build Check
+name: PR and Portfolio Demo Checks
 
 on:
+  push:
+    branches:
+      - portfolio-demo
   pull_request:
     branches:
       - main
@@ -16,8 +19,30 @@ jobs:
         with:
           dotnet-version: '10.x'
 
-      - name: Restore dependencies
+      - name: Restore backend dependencies
         run: dotnet restore ./Backend/SellPoint.API/SellPoint.API.csproj
 
-      - name: Build
+      - name: Build backend
         run: dotnet build ./Backend/SellPoint.API/SellPoint.API.csproj --configuration Release --no-restore
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: Frontend/sellpoint-react/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: Frontend/sellpoint-react
+        run: npm ci
+
+      - name: Run frontend tests
+        working-directory: Frontend/sellpoint-react
+        run: npm test -- --watchAll=false --runInBand
+
+      - name: Build frontend
+        working-directory: Frontend/sellpoint-react
+        env:
+          REACT_APP_DATA_MODE: demo
+          DISABLE_ESLINT_PLUGIN: 'true'
+        run: npm run build
