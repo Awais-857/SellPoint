@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useDemo } from './DemoProvider';
 import './demo.css';
@@ -10,13 +10,24 @@ const roles = [
 ];
 
 export function DemoPortal() {
-  const { session, beginSession } = useDemo();
+  const { session, demoState, beginSession } = useDemo();
+  const [choosingVendor, setChoosingVendor] = useState(false);
+  const [selectedVendorId, setSelectedVendorId] = useState('101');
   const navigate = useNavigate();
 
   if (session) return <Navigate to="/demo/workspace" replace />;
 
   const chooseRole = (role) => {
+    if (role === 'Vendor') {
+      setChoosingVendor(true);
+      return;
+    }
     beginSession(role);
+    navigate('/demo/workspace');
+  };
+
+  const enterVendorDemo = () => {
+    beginSession('Vendor', Number(selectedVendorId));
     navigate('/demo/workspace');
   };
 
@@ -37,6 +48,21 @@ export function DemoPortal() {
             </button>
           ))}
         </div>
+        {choosingVendor && (
+          <div className="demo-vendor-choice">
+            <h2>Choose a demo vendor account</h2>
+            <p>Explore different application and store states. Vendor access is simulated for this portfolio preview.</p>
+            <label htmlFor="demo-vendor-select">Vendor account</label>
+            <select id="demo-vendor-select" value={selectedVendorId} onChange={event => setSelectedVendorId(event.target.value)}>
+              {demoState.vendors.map(vendor => (
+                <option key={vendor.vendorId} value={vendor.vendorId}>
+                  {vendor.businessName} — {vendor.status}{vendor.status === 'Approved' && !vendor.isActive ? ' (Suspended)' : ''}
+                </option>
+              ))}
+            </select>
+            <button className="demo-secondary-button" onClick={enterVendorDemo}>Continue to vendor workspace</button>
+          </div>
+        )}
         <p className="demo-footnote">Demo changes are stored only in this browser and can be reset at any time.</p>
       </section>
     </main>
