@@ -84,6 +84,16 @@ const products = productTemplates.map((item, index) => ({
   ][index % 5],
   moderationStatus: index === 3 ? 'Pending' : index === 4 ? 'Rejected' : 'Approved',
   moderationReason: index === 4 ? 'Please add clearer product photos and a more complete description.' : null,
+  variants: index === 0 ? [
+    { variantId: 10011, variantName: 'Black', options: { Color: 'Black' }, price: 89.99, stockQuantity: 7 },
+    { variantId: 10012, variantName: 'White', options: { Color: 'White' }, price: 94.99, stockQuantity: 5 }
+  ] : index === 1 ? [
+    { variantId: 10021, variantName: 'Black / 42mm', options: { Color: 'Black', Size: '42mm' }, price: 129, stockQuantity: 3 },
+    { variantId: 10022, variantName: 'Silver / 46mm', options: { Color: 'Silver', Size: '46mm' }, price: 139, stockQuantity: 5 }
+  ] : index === 5 ? [
+    { variantId: 10061, variantName: 'Warm White', options: { Light: 'Warm White' }, price: 32, stockQuantity: 12 },
+    { variantId: 10062, variantName: 'Cool White', options: { Light: 'Cool White' }, price: 34, stockQuantity: 8 }
+  ] : [],
   isActive: index !== 9 && index !== 27 && index !== 3 && index !== 4,
   createdAt: '2026-03-15'
 }));
