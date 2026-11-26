@@ -5,6 +5,16 @@ import { isPublicDemoProduct } from './catalogService';
 import { getDemoState } from '../demo/demoStorage';
 
 const GUEST_CART_KEY = IS_DEMO_MODE ? 'sellpoint_demo_cart_v1' : 'guestCart';
+const DEMO_CART_VERSION_KEY = 'sellpoint_demo_cart_version_v1';
+const DEMO_CART_VERSION = '2';
+
+const ensureDemoCartVersion = () => {
+    if (!IS_DEMO_MODE) return;
+    if (localStorage.getItem(DEMO_CART_VERSION_KEY) !== DEMO_CART_VERSION) {
+        localStorage.removeItem(GUEST_CART_KEY);
+        localStorage.setItem(DEMO_CART_VERSION_KEY, DEMO_CART_VERSION);
+    }
+};
 
 // Demo sessions never use the real JWT or server cart, even if this browser
 // also contains credentials from a separate full-stack session.
@@ -13,6 +23,7 @@ export const isLoggedIn = () => !IS_DEMO_MODE && !!localStorage.getItem('token')
 // ---------- Guest storage helpers ----------
 const readGuestCart = () => {
     try {
+        ensureDemoCartVersion();
         const raw = localStorage.getItem(GUEST_CART_KEY);
         return raw ? JSON.parse(raw) : [];
     } catch {
@@ -21,6 +32,7 @@ const readGuestCart = () => {
 };
 
 const writeGuestCart = (items) => {
+    ensureDemoCartVersion();
     localStorage.setItem(GUEST_CART_KEY, JSON.stringify(items));
     // Notify any listener (e.g. header badge, cart page)
     window.dispatchEvent(new Event('cartUpdated'));
