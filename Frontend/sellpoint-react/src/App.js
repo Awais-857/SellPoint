@@ -34,7 +34,7 @@ import { DemoProvider, useDemo } from './demo/DemoProvider';
 import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
 import { DemoCheckout, DemoOrderConfirmation, DemoOrderHistory, DemoOrderDetail, DemoOrderTracking } from './demo/DemoCustomerPages';
 import { DemoVendorDashboard, DemoVendorProducts, DemoVendorOrders, DemoVendorRevenue } from './demo/DemoVendorPages';
-import { DemoAdminDashboard, DemoAdminVendors, DemoAdminCategories, DemoAdminOrders, DemoAdminDisputes, DemoAdminReviews, DemoAdminReports } from './demo/DemoAdminPages';
+import { DemoAdminDashboard, DemoAdminVendors, DemoAdminProducts, DemoAdminCategories, DemoAdminOrders, DemoAdminDisputes, DemoAdminReviews, DemoAdminReports } from './demo/DemoAdminPages';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
@@ -118,6 +118,7 @@ function App() {
               <Route path="/vendor/revenue" element={<DemoVendorRoute><DemoVendorRevenue /></DemoVendorRoute>} />
               <Route path="/admin-dashboard" element={<DemoAdminRoute><DemoAdminDashboard /></DemoAdminRoute>} />
               <Route path="/admin/vendors" element={<DemoAdminRoute><DemoAdminVendors /></DemoAdminRoute>} />
+              <Route path="/admin/products" element={<DemoAdminRoute><DemoAdminProducts /></DemoAdminRoute>} />
               <Route path="/admin/categories" element={<DemoAdminRoute><DemoAdminCategories /></DemoAdminRoute>} />
               <Route path="/admin/orders" element={<DemoAdminRoute><DemoAdminOrders /></DemoAdminRoute>} />
               <Route path="/admin/disputes" element={<DemoAdminRoute><DemoAdminDisputes /></DemoAdminRoute>} />
