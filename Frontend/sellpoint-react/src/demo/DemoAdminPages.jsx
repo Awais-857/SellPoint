@@ -209,7 +209,7 @@ export function DemoAdminPayments() {
         {payments.flatMap(payment => (payment.refunds || []).map(refund => <tr key={refund.refundId}><td>{refund.reference}</td><td>#{payment.paymentId}</td><td>#{payment.orderId}</td><td>{money(refund.amount)}</td><td>{refund.status}</td><td>{dateLabel(refund.createdAt)}</td></tr>))}
       </tbody></table></div> : <p>No simulated refunds have been recorded yet.</p>}
     </section>
-    <p className="demo-shop-muted">Cash-on-delivery records remain Pending until collection is recorded outside this demonstration. This demo does not connect to a courier, bank, card processor or payment gateway.</p>
+    <p className="demo-shop-muted">Cash-on-delivery records remain Pending until an administrator records the simulated collection here. This demo does not connect to a courier, bank, card processor or payment gateway.</p>
   </AdminPage>;
 }
 
