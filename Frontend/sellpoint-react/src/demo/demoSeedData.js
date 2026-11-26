@@ -28,6 +28,13 @@ const customers = [
   { userId: 304, name: 'Zain Abbas', email: 'zain@example.demo', city: 'Karachi' }
 ];
 
+const addresses = [
+  { addressId: 6001, customerId: 301, label: 'Home', recipientName: 'Mariam Shah', phone: '0300-1234567', addressLine1: '12 Model Town', addressLine2: '', city: 'Lahore', state: 'Punjab', zipCode: '54700', country: 'Pakistan', isDefault: true },
+  { addressId: 6002, customerId: 302, label: 'Home', recipientName: 'Daniyal Khan', phone: '0301-2345678', addressLine1: '25 Gulgasht Colony', addressLine2: '', city: 'Multan', state: 'Punjab', zipCode: '66000', country: 'Pakistan', isDefault: true },
+  { addressId: 6003, customerId: 303, label: 'Home', recipientName: 'Hira Malik', phone: '0302-3456789', addressLine1: '8 F-7 Markaz', addressLine2: '', city: 'Islamabad', state: 'ICT', zipCode: '44000', country: 'Pakistan', isDefault: true },
+  { addressId: 6004, customerId: 304, label: 'Home', recipientName: 'Zain Abbas', phone: '0303-4567890', addressLine1: '19 Clifton Block 5', addressLine2: '', city: 'Karachi', state: 'Sindh', zipCode: '75600', country: 'Pakistan', isDefault: true }
+];
+
 const productTemplates = [
   ['Wireless Headphones', 1, 101, 89.99, 12, 'Electronics'],
   ['Smart Watch', 1, 101, 129.00, 8, 'Electronics'],
@@ -169,6 +176,7 @@ export const DEMO_SEED_DATA = {
   categories,
   vendors,
   customers,
+  addresses,
   products,
   orders,
   reviews,
