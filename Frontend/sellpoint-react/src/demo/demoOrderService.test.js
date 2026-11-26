@@ -24,6 +24,12 @@ describe('demoOrderService', () => {
     expect(result.nextState.payments[0]).toMatchObject({ orderId: result.order.orderId, amount: 203, status: 'Pending' });
   });
 
+  test('starts simulated card orders with a pending payment record', () => {
+    const result = buildDemoOrder(state, session, cart, address, 'DemoCard', new Date('2026-11-26T10:00:00Z'));
+    expect(result.order.paymentStatus).toBe('Pending');
+    expect(result.payment).toMatchObject({ method: 'Demo Card (no charge)', status: 'Pending', amount: 203 });
+  });
+
   test('deducts and restores the stock of the selected variant only', () => {
     const variantProduct = { ...product, stockQuantity: 5, variants: [
       { variantId: 11, variantName: 'Black', price: 100, stockQuantity: 3 },
