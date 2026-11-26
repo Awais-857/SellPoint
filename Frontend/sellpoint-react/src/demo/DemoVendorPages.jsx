@@ -28,6 +28,7 @@ function VendorHeader({ active }) {
         <button className={active === 'products' ? 'active' : ''} onClick={() => navigate('/vendor/products')}>Products</button>
         <button className={active === 'orders' ? 'active' : ''} onClick={() => navigate('/vendor/orders')}>Orders</button>
         <button className={active === 'reviews' ? 'active' : ''} onClick={() => navigate('/vendor/reviews')}>Reviews</button>
+        <button className={active === 'returns' ? 'active' : ''} onClick={() => navigate('/vendor/returns')}>Returns</button>
         <button className={active === 'revenue' ? 'active' : ''} onClick={() => navigate('/vendor/revenue')}>Revenue</button>
         <button onClick={() => navigate('/demo/workspace')}>Workspace</button>
         <button onClick={leave}>Switch role</button>
