@@ -67,6 +67,43 @@ export const saveVendorProduct = (state, vendorId, formData, productId = null) =
   };
 };
 
+export const updateVendorVariantStock = (state, vendorId, productId, stockUpdates) => {
+  const vendor = state.vendors.find(item => item.vendorId === vendorId);
+  if (!vendor || vendor.status !== 'Approved' || !vendor.isActive) {
+    throw new Error('This demo vendor account is not approved for inventory management.');
+  }
+
+  const product = state.products.find(item => item.productId === Number(productId) && item.vendorId === vendorId);
+  if (!product) throw new Error('Product not found in this vendor store.');
+  if (getProductModerationStatus(product) !== 'Approved') {
+    throw new Error('Only approved products can have their inventory updated.');
+  }
+  if (!Array.isArray(product.variants) || product.variants.length === 0) {
+    throw new Error('This product does not have configurable options.');
+  }
+  if (!stockUpdates || typeof stockUpdates !== 'object' || Array.isArray(stockUpdates)) {
+    throw new Error('Provide stock quantities for the product options.');
+  }
+
+  const variants = product.variants.map(variant => {
+    const rawValue = stockUpdates[variant.variantId];
+    if (rawValue === undefined) return variant;
+    const quantity = Number(rawValue);
+    if (!Number.isInteger(quantity) || quantity < 0) {
+      throw new Error(`Stock for ${variant.variantName} must be a whole number of zero or more.`);
+    }
+    return { ...variant, stockQuantity: quantity };
+  });
+  const stockQuantity = variants.reduce((sum, variant) => sum + Number(variant.stockQuantity || 0), 0);
+
+  return {
+    ...state,
+    products: state.products.map(item => item.productId === product.productId
+      ? { ...item, variants, stockQuantity }
+      : item)
+  };
+};
+
 export const deleteVendorProduct = (state, vendorId, productId) => {
   const product = state.products.find(item => item.productId === Number(productId) && item.vendorId === vendorId);
   if (!product) throw new Error('Product not found in this vendor store.');
