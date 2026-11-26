@@ -236,6 +236,7 @@ function Cart() {
                                                         {item.categoryName && (
                                                             <p className={styles['item-category']}>{item.categoryName}</p>
                                                         )}
+                                                        {item.variantName && <p className={styles['item-category']}>Option: {item.variantName}</p>}
                                                     </div>
                                                 </div>
                                                 <div className={styles['item-price']}>
