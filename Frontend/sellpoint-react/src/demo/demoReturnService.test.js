@@ -25,6 +25,13 @@ describe('demoReturnService', () => {
   test('allows delivered item within 30 days', () => {
     expect(getReturnEligibility(fixture(), 5017, 8201, 301, now).eligible).toBe(true);
   });
+  test('keeps the 30-day boundary and rejects after it', () => {
+    const state = fixture();
+    state.orders[0].items[0].deliveredAt = '2026-10-28T10:00:00.000Z';
+    expect(getReturnEligibility(state, 5017, 8201, 301, now).eligible).toBe(true);
+    state.orders[0].items[0].deliveredAt = '2026-10-28T09:59:59.000Z';
+    expect(getReturnEligibility(state, 5017, 8201, 301, now).eligible).toBe(false);
+  });
   test('rejects undelivered and expired items', () => {
     const state = fixture();
     state.orders[0].items[0].itemStatus = 'Shipped';
