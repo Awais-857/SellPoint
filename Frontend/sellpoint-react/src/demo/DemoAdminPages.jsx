@@ -53,7 +53,8 @@ export function DemoAdminDashboard() {
     ['Orders','Monitor all marketplace orders','/admin/orders','📦'],
     ['Disputes','Review and record dispute decisions','/admin/disputes','⚖️'],
     ['Reviews','Moderate customer product reviews','/admin/reviews','⭐'],
-    ['Reports','Explore marketplace sales and trends','/admin/reports','📊']
+    ['Reports','Explore marketplace sales and trends','/admin/reports','📊'],
+    ['Returns','Review escalated customer return requests','/admin/returns','↩️']
   ];
   return <AdminPage active="dashboard" eyebrow="MARKETPLACE CONTROL CENTRE" title="Admin dashboard" description="A marketplace-wide overview using fictional SellPoint demo data.">
     <StatCards items={[
