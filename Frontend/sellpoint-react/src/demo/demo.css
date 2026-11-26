@@ -265,3 +265,5 @@
     padding: 13px;
   }
 }
+
+.demo-customer-actions{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 8px}

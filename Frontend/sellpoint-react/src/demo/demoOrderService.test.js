@@ -26,12 +26,12 @@ describe('demoOrderService', () => {
   });
 
   test("cancels a customer's pending order and restores stock", () => {
-    const order = { orderId: 5001, customerId: 301, orderStatus: 'Pending', paymentStatus: 'Pending' };
+    const order = { orderId: 5001, customerId: 301, orderStatus: 'Pending', paymentStatus: 'Pending', items: [{ productId: 1, quantity: 2 }] };
     const cancelled = cancelDemoOrder({ ...state, orders: [order], products: [{ ...product, stockQuantity: 3 }] }, 5001, 301);
     expect(cancelled.orders[0].orderStatus).toBe('Cancelled');
-    expect(cancelled.products[0].stockQuantity).toBe(3);
+    expect(cancelled.products[0].stockQuantity).toBe(5);
     expect(() => cancelDemoOrder({ ...state, orders: [order] }, 5001, 302)).toThrow(/not found/);
-    expect(() => cancelDemoOrder({ ...state, orders: [{ ...order, orderStatus: 'Shipped' }] }, 5001, 301)).toThrow(/cannot be cancelled/);
+    expect(() => cancelDemoOrder({ ...state, orders: [{ ...order, orderStatus: 'Shipped' }] }, 5001, 301)).toThrow(/Only pending or confirmed orders can be cancelled/);
   });
 
   test('adds a dispute for an order owned by the customer', () => {

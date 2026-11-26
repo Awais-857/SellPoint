@@ -94,16 +94,19 @@ function ProductDetail() {
         try {
             await addToCart(product, quantity);
             alert(`${quantity} × ${product.productName} added to cart!`);
+            return true;
         } catch (err) {
             console.error('Failed to add to cart', err);
-            alert('Failed to add to cart. Please try again.');
+            alert(err.message || 'Failed to add to cart. Please try again.');
+            return false;
         } finally {
             setAddingToCart(false);
         }
     };
 
     const handleBuyNow = async () => {
-        await handleAddToCart();
+        const added = await handleAddToCart();
+        if (!added) return;
         if (IS_DEMO_MODE) {
             navigate('/cart');
         } else if (!localStorage.getItem('token')) {
