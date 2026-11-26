@@ -46,7 +46,7 @@ export const getPublicDemoStore = (state, vendorId) => {
 };
 
 export const getPublicDemoStoreProducts = (state, vendorId, filters = {}) => {
-  if (!getPublicDemoStore(state, vendorId)) return [];
+  if (!getPublicDemoStore(state, vendorId)) return { products: [], totalCount: 0, totalPages: 1, categories: [] };
   const search = text(filters.search).toLowerCase();
   const categoryId = filters.categoryId ? Number(filters.categoryId) : null;
   const storeProducts = (state.products || []).filter(product =>
