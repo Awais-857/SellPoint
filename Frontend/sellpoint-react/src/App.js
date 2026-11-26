@@ -35,6 +35,7 @@ import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
 import { DemoWishlistPage } from './demo/DemoWishlistPages';
 import { DemoCustomerProfilePage, DemoCustomerAddressesPage } from './demo/DemoCustomerAccountPages';
 import { DemoCustomerReviewsPage, DemoReviewForm, DemoVendorReviewsPage } from './demo/DemoReviewPages';
+import { DemoCustomerReturns, DemoVendorReturns, DemoAdminReturns } from './demo/DemoReturnPages';
 import { DemoCheckout, DemoOrderConfirmation, DemoOrderHistory, DemoOrderDetail, DemoOrderTracking } from './demo/DemoCustomerPages';
 import { DemoVendorDashboard, DemoVendorProducts, DemoVendorOrders, DemoVendorRevenue } from './demo/DemoVendorPages';
 import { DemoAdminDashboard, DemoAdminVendors, DemoAdminProducts, DemoAdminCategories, DemoAdminOrders, DemoAdminDisputes, DemoAdminReviews, DemoAdminReports } from './demo/DemoAdminPages';
@@ -114,6 +115,7 @@ function App() {
               <Route path="/customer/profile" element={<DemoCustomerRoute><DemoCustomerProfilePage /></DemoCustomerRoute>} />
               <Route path="/customer/addresses" element={<DemoCustomerRoute><DemoCustomerAddressesPage /></DemoCustomerRoute>} />
               <Route path="/customer/reviews" element={<DemoCustomerRoute><DemoCustomerReviewsPage /></DemoCustomerRoute>} />
+              <Route path="/customer/returns" element={<DemoCustomerRoute><DemoCustomerReturns /></DemoCustomerRoute>} />
               <Route path="/product/:id/review" element={<DemoCustomerRoute><DemoReviewForm /></DemoCustomerRoute>} />
               <Route path="/checkout" element={<DemoCustomerRoute><DemoCheckout /></DemoCustomerRoute>} />
               <Route path="/order-confirmation/:id" element={<DemoCustomerRoute><DemoOrderConfirmation /></DemoCustomerRoute>} />
@@ -124,6 +126,7 @@ function App() {
               <Route path="/vendor/products" element={<DemoVendorRoute><DemoVendorProducts /></DemoVendorRoute>} />
               <Route path="/vendor/orders" element={<DemoVendorRoute><DemoVendorOrders /></DemoVendorRoute>} />
               <Route path="/vendor/reviews" element={<DemoVendorRoute><DemoVendorReviewsPage /></DemoVendorRoute>} />
+              <Route path="/vendor/returns" element={<DemoVendorRoute><DemoVendorReturns /></DemoVendorRoute>} />
               <Route path="/vendor/revenue" element={<DemoVendorRoute><DemoVendorRevenue /></DemoVendorRoute>} />
               <Route path="/admin-dashboard" element={<DemoAdminRoute><DemoAdminDashboard /></DemoAdminRoute>} />
               <Route path="/admin/vendors" element={<DemoAdminRoute><DemoAdminVendors /></DemoAdminRoute>} />
@@ -132,6 +135,7 @@ function App() {
               <Route path="/admin/orders" element={<DemoAdminRoute><DemoAdminOrders /></DemoAdminRoute>} />
               <Route path="/admin/disputes" element={<DemoAdminRoute><DemoAdminDisputes /></DemoAdminRoute>} />
               <Route path="/admin/reviews" element={<DemoAdminRoute><DemoAdminReviews /></DemoAdminRoute>} />
+              <Route path="/admin/returns" element={<DemoAdminRoute><DemoAdminReturns /></DemoAdminRoute>} />
               <Route path="/admin/reports" element={<DemoAdminRoute><DemoAdminReports /></DemoAdminRoute>} />
               <Route path="/" element={<Navigate to="/demo" replace />} />
               <Route path="*" element={<Navigate to="/demo" replace />} />
