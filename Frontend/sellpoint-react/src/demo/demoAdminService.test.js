@@ -64,10 +64,15 @@ describe('demoAdminService', () => {
     expect(() => updateAdminDispute(state, 9001, 'Resolved', '  ')).toThrow(/admin note/);
   });
 
-  test('moderates reviews', () => {
+  test('approves, rejects and removes reviews from public display', () => {
     const pending = state.reviews.find(r => r.status === 'Pending');
-    const updated = moderateAdminReview(state, pending.reviewId, 'Rejected');
-    expect(updated.reviews.find(r => r.reviewId === pending.reviewId).status).toBe('Rejected');
+    const approved = moderateAdminReview(state, pending.reviewId, 'Approved');
+    expect(approved.reviews.find(r => r.reviewId === pending.reviewId).status).toBe('Approved');
+    const rejected = moderateAdminReview(state, pending.reviewId, 'Rejected', 'Please remove personal information.');
+    expect(rejected.reviews.find(r => r.reviewId === pending.reviewId)).toMatchObject({ status: 'Rejected', moderationReason: 'Please remove personal information.' });
+    const removed = moderateAdminReview(approved, pending.reviewId, 'Removed');
+    expect(removed.reviews.find(r => r.reviewId === pending.reviewId).status).toBe('Removed');
+    expect(() => moderateAdminReview(approved, pending.reviewId, 'Rejected')).toThrow(/Only pending/);
   });
 
   test('creates date-grouped reports and top product/vendor summaries', () => {
