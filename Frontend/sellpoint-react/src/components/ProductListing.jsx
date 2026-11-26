@@ -128,6 +128,10 @@ function ProductListing() {
     };
 
     const handleAddToCart = async (product) => {
+        if (IS_DEMO_MODE && Array.isArray(product.variants) && product.variants.length) {
+            navigate(`/product/${product.productId}`);
+            return;
+        }
         try {
             await addToCart(product, 1);
             alert(`${product.productName} added to cart!`);
