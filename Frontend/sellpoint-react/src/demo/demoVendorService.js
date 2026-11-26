@@ -2,8 +2,12 @@ const VENDOR_ORDER_STATUSES = ['Pending', 'Processing', 'Shipped', 'Delivered'];
 
 const roundMoney = value => Number(Number(value || 0).toFixed(2));
 
+export const getProductModerationStatus = product => product.moderationStatus || 'Approved';
+
 export const getVendorProducts = (state, vendorId) =>
-  state.products.filter(product => product.vendorId === vendorId);
+  state.products
+    .filter(product => product.vendorId === vendorId)
+    .map(product => ({ ...product, moderationStatus: getProductModerationStatus(product) }));
 
 export const saveVendorProduct = (state, vendorId, formData, productId = null) => {
   const vendor = state.vendors.find(item => item.vendorId === vendorId);
@@ -40,9 +44,12 @@ export const saveVendorProduct = (state, vendorId, formData, productId = null) =
   if (productId !== null) {
     const existing = state.products.find(item => item.productId === Number(productId) && item.vendorId === vendorId);
     if (!existing) throw new Error('Product not found in this vendor store.');
+    const moderationStatus = getProductModerationStatus(existing) === 'Rejected' ? 'Pending' : getProductModerationStatus(existing);
     return {
       ...state,
-      products: state.products.map(item => item.productId === existing.productId ? { ...item, ...productData } : item)
+      products: state.products.map(item => item.productId === existing.productId
+        ? { ...item, ...productData, moderationStatus, isActive: moderationStatus === 'Approved' ? item.isActive : false, moderationReason: null }
+        : item)
     };
   }
 
@@ -52,7 +59,9 @@ export const saveVendorProduct = (state, vendorId, formData, productId = null) =
     products: [...state.products, {
       productId: nextId,
       ...productData,
-      isActive: true,
+      moderationStatus: 'Pending',
+      moderationReason: null,
+      isActive: false,
       createdAt: new Date().toISOString()
     }]
   };
@@ -70,6 +79,7 @@ export const deleteVendorProduct = (state, vendorId, productId) => {
 export const toggleVendorProduct = (state, vendorId, productId) => {
   const product = state.products.find(item => item.productId === Number(productId) && item.vendorId === vendorId);
   if (!product) throw new Error('Product not found in this vendor store.');
+  if (getProductModerationStatus(product) !== 'Approved') throw new Error('Only approved products can be activated or paused.');
   return {
     ...state,
     products: state.products.map(item => item.productId === product.productId ? { ...item, isActive: !item.isActive } : item)
