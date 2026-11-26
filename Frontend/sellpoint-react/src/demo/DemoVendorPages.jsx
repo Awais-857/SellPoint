@@ -75,7 +75,7 @@ export function DemoVendorDashboard() {
 const emptyForm = { productName: '', categoryId: '', description: '', price: '', stockQuantity: '', discountPercent: '0', sku: '', imageUrl: '' };
 
 export function DemoVendorProducts() {
-  const { demoState, updateDemoState, vendorId } = useVendorContext();
+  const { demoState, updateDemoState, vendor, vendorId } = useVendorContext();
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState('');
