@@ -29,6 +29,9 @@ import ReviewForm from './components/ReviewForm';
 import AdminReviews from './components/AdminReviews';
 import OrderTracking from './components/OrderTracking';
 import './App.css';
+import { IS_DEMO_MODE } from './config/appConfig';
+import { DemoProvider } from './demo/DemoProvider';
+import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
