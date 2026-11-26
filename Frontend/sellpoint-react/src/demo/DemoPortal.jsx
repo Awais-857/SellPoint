@@ -137,6 +137,7 @@ export function DemoWorkspace() {
             <button className="demo-secondary-button" onClick={() => navigate('/admin-dashboard')}>Admin dashboard</button>
             <button className="demo-secondary-button" onClick={() => navigate('/admin/vendors')}>Manage vendors</button>
             <button className="demo-secondary-button" onClick={() => navigate('/admin/orders')}>Manage orders</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/admin/payments')}>Payments & refunds</button>
             <button className="demo-secondary-button" onClick={() => navigate('/admin/reports')}>Marketplace reports</button>
             <button className="demo-secondary-button" onClick={() => navigate('/admin/returns')}>Return escalations</button>
           </div>
