@@ -1,5 +1,5 @@
 import { isPublicDemoProduct } from '../services/catalogService';
-import { createDemoPayment } from './demoPaymentService';
+import { createDemoPayment, recordDemoRefund } from './demoPaymentService';
 
 export const DEMO_CART_KEY = 'sellpoint_demo_cart_v1';
 
@@ -129,12 +129,18 @@ export const cancelDemoOrder = (demoState, orderId, customerId) => {
   const payments = (demoState.payments || []).map(payment => Number(payment.orderId) === Number(order.orderId) && payment.status === 'Pending'
     ? { ...payment, status: 'Cancelled', updatedAt: new Date().toISOString() }
     : payment);
-  return {
+  let nextState = {
     ...demoState,
     products,
     payments,
     orders: demoState.orders.map(item => item.orderId === order.orderId ? cancelledOrder : item)
   };
+  const linkedPayment = (demoState.payments || []).find(item => Number(item.orderId) === Number(order.orderId));
+  if (linkedPayment && ['Paid', 'Partially Refunded'].includes(linkedPayment.status)) {
+    const remainingRefund = Number((Number(linkedPayment.amount) - Number(linkedPayment.refundedAmount || 0)).toFixed(2));
+    if (remainingRefund > 0) nextState = recordDemoRefund(nextState, order.orderId, remainingRefund, `cancellation-${order.orderId}`);
+  }
+  return nextState;
 };
 
 export const addDemoDispute = (demoState, orderId, customerId, reason) => {
