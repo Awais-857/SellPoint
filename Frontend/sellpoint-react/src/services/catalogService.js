@@ -18,16 +18,40 @@ const normalizeFilters = (filters = {}) => ({
   searchTerm: (filters.searchTerm || '').trim().toLowerCase(),
   minPrice: filters.minPrice === '' || filters.minPrice == null ? null : Number(filters.minPrice),
   maxPrice: filters.maxPrice === '' || filters.maxPrice == null ? null : Number(filters.maxPrice),
+  minRating: filters.minRating === '' || filters.minRating == null ? null : Number(filters.minRating),
+  inStock: filters.inStock === true || filters.inStock === 'true',
   sortBy: filters.sortBy || 'CreatedDate',
   sortOrder: (filters.sortOrder || 'DESC').toUpperCase(),
   pageNumber: Math.max(1, Number(filters.pageNumber) || 1),
   pageSize: Math.max(1, Number(filters.pageSize) || 12)
 });
 
+// A product is public only when its listing is active and its vendor is both
+// approved and active. Keep this rule in one place for lists and detail pages.
+export const isPublicDemoProduct = (state, product) => {
+  if (!product || !product.isActive) return false;
+  const vendor = state.vendors.find(item => item.vendorId === product.vendorId);
+  return Boolean(vendor && vendor.status === 'Approved' && vendor.isActive);
+};
+
+const getApprovedReviewStats = (reviews, productId) => {
+  const approved = reviews.filter(review =>
+    review.productId === productId && review.status === 'Approved'
+  );
+  const averageRating = approved.length
+    ? approved.reduce((sum, review) => sum + Number(review.rating || 0), 0) / approved.length
+    : 0;
+  return { averageRating: Number(averageRating.toFixed(1)), reviewCount: approved.length };
+};
+
 const demoCatalogService = {
   async listProducts(filters = {}) {
     const options = normalizeFilters(filters);
-    let products = getDemoState().products.filter(product => product.isActive);
+    const state = getDemoState();
+    const reviews = state.reviews || [];
+    let products = state.products
+      .filter(product => isPublicDemoProduct(state, product))
+      .map(product => ({ ...product, ...getApprovedReviewStats(reviews, product.productId) }));
 
     if (options.categoryId) {
       products = products.filter(product => product.categoryId === options.categoryId);
@@ -44,12 +68,18 @@ const demoCatalogService = {
     if (options.maxPrice !== null) {
       products = products.filter(product => product.price <= options.maxPrice);
     }
+    if (options.minRating !== null) {
+      products = products.filter(product => product.averageRating >= options.minRating);
+    }
+    if (options.inStock) {
+      products = products.filter(product => Number(product.stockQuantity) > 0);
+    }
 
     const sortFields = {
       CreatedDate: 'createdAt',
       Price: 'price',
       Name: 'productName',
-      Popularity: 'reviewCount'
+      Popularity: 'averageRating'
     };
     const field = sortFields[options.sortBy] || 'createdAt';
     const direction = options.sortOrder === 'ASC' ? 1 : -1;
@@ -67,33 +97,22 @@ const demoCatalogService = {
     const start = (options.pageNumber - 1) * options.pageSize;
 
     return {
-      products: products.slice(start, start + options.pageSize).map(product => ({
-        ...product,
-        averageRating: product.averageRating || 0,
-        reviewCount: product.reviewCount || 0
-      })),
+      products: products.slice(start, start + options.pageSize),
       totalCount,
       totalPages
     };
   },
 
   async getProductById(id) {
-    const product = getDemoState().products.find(item =>
-      item.productId === Number(id) && item.isActive
+    const state = getDemoState();
+    const product = state.products.find(item =>
+      item.productId === Number(id) && isPublicDemoProduct(state, item)
     );
     if (!product) return null;
 
-    const reviews = getDemoState().reviews.filter(review =>
-      review.productId === product.productId && review.status === 'Approved'
-    );
-    const averageRating = reviews.length
-      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-      : 0;
-
     return {
       ...product,
-      averageRating: Number(averageRating.toFixed(1)),
-      reviewCount: reviews.length
+      ...getApprovedReviewStats(state.reviews || [], product.productId)
     };
   },
 
@@ -102,12 +121,14 @@ const demoCatalogService = {
   },
 
   async getProductReviews(id) {
-    return getDemoState().reviews
-      .filter(review => review.productId === Number(id) && review.status === 'Approved')
-      .map(review => ({
-        ...review,
-        createdDate: review.createdAt
-      }));
+    const state = getDemoState();
+    const product = state.products.find(item =>
+      item.productId === Number(id) && isPublicDemoProduct(state, item)
+    );
+    if (!product) return [];
+    return (state.reviews || [])
+      .filter(review => review.productId === product.productId && review.status === 'Approved')
+      .map(review => ({ ...review, createdDate: review.createdAt }));
   }
 };
 
