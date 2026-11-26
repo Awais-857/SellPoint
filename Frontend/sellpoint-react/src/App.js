@@ -34,6 +34,7 @@ import { DemoProvider, useDemo } from './demo/DemoProvider';
 import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
 import { DemoWishlistPage } from './demo/DemoWishlistPages';
 import { DemoCustomerProfilePage, DemoCustomerAddressesPage } from './demo/DemoCustomerAccountPages';
+import { DemoCustomerReviewsPage, DemoReviewForm, DemoVendorReviewsPage } from './demo/DemoReviewPages';
 import { DemoCheckout, DemoOrderConfirmation, DemoOrderHistory, DemoOrderDetail, DemoOrderTracking } from './demo/DemoCustomerPages';
 import { DemoVendorDashboard, DemoVendorProducts, DemoVendorOrders, DemoVendorRevenue } from './demo/DemoVendorPages';
 import { DemoAdminDashboard, DemoAdminVendors, DemoAdminProducts, DemoAdminCategories, DemoAdminOrders, DemoAdminDisputes, DemoAdminReviews, DemoAdminReports } from './demo/DemoAdminPages';
@@ -112,6 +113,8 @@ function App() {
               <Route path="/wishlist" element={<DemoCustomerRoute><DemoWishlistPage /></DemoCustomerRoute>} />
               <Route path="/customer/profile" element={<DemoCustomerRoute><DemoCustomerProfilePage /></DemoCustomerRoute>} />
               <Route path="/customer/addresses" element={<DemoCustomerRoute><DemoCustomerAddressesPage /></DemoCustomerRoute>} />
+              <Route path="/customer/reviews" element={<DemoCustomerRoute><DemoCustomerReviewsPage /></DemoCustomerRoute>} />
+              <Route path="/product/:id/review" element={<DemoCustomerRoute><DemoReviewForm /></DemoCustomerRoute>} />
               <Route path="/checkout" element={<DemoCustomerRoute><DemoCheckout /></DemoCustomerRoute>} />
               <Route path="/order-confirmation/:id" element={<DemoCustomerRoute><DemoOrderConfirmation /></DemoCustomerRoute>} />
               <Route path="/order-history" element={<DemoCustomerRoute><DemoOrderHistory /></DemoCustomerRoute>} />
@@ -120,6 +123,7 @@ function App() {
               <Route path="/vendor-dashboard" element={<DemoVendorRoute><DemoVendorDashboard /></DemoVendorRoute>} />
               <Route path="/vendor/products" element={<DemoVendorRoute><DemoVendorProducts /></DemoVendorRoute>} />
               <Route path="/vendor/orders" element={<DemoVendorRoute><DemoVendorOrders /></DemoVendorRoute>} />
+              <Route path="/vendor/reviews" element={<DemoVendorRoute><DemoVendorReviewsPage /></DemoVendorRoute>} />
               <Route path="/vendor/revenue" element={<DemoVendorRoute><DemoVendorRevenue /></DemoVendorRoute>} />
               <Route path="/admin-dashboard" element={<DemoAdminRoute><DemoAdminDashboard /></DemoAdminRoute>} />
               <Route path="/admin/vendors" element={<DemoAdminRoute><DemoAdminVendors /></DemoAdminRoute>} />
