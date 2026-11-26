@@ -34,6 +34,15 @@ export function DemoProvider({ children }) {
     return nextState;
   }, [demoState]);
 
+  const updateSessionProfile = useCallback((changes) => {
+    setSession(current => {
+      if (!current || current.role !== 'Customer') return current;
+      const next = { ...current, displayName: changes.displayName ?? current.displayName, email: changes.email ?? current.email };
+      saveDemoSession(next);
+      return next;
+    });
+  }, []);
+
   const resetWorkspace = useCallback(() => {
     clearDemoStorage();
     const nextState = resetDemoState();
@@ -55,8 +64,9 @@ export function DemoProvider({ children }) {
     beginSession,
     endSession,
     updateDemoState,
+    updateSessionProfile,
     resetWorkspace
-  }), [session, demoState, beginSession, endSession, updateDemoState, resetWorkspace]);
+  }), [session, demoState, beginSession, endSession, updateDemoState, updateSessionProfile, resetWorkspace]);
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
 }
