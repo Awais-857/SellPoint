@@ -14,6 +14,19 @@ function StoreHeader() {
   </header>;
 }
 
+function VendorProfileHeader({ vendorId }) {
+  const navigate = useNavigate();
+  return <header className="demo-store-header">
+    <button className="demo-store-brand" onClick={() => navigate('/demo/workspace')}>SellPoint <span>VENDOR</span></button>
+    <nav>
+      <button onClick={() => navigate('/demo/workspace')}>Dashboard</button>
+      <button onClick={() => navigate('/vendor/products')}>Manage products</button>
+      <button onClick={() => navigate('/vendor/orders')}>Orders</button>
+      <button onClick={() => navigate('/store/' + vendorId)}>Preview public store</button>
+    </nav>
+  </header>;
+}
+
 export function DemoPublicStoresPage() {
   const { demoState } = useDemo();
   const navigate = useNavigate();
@@ -84,7 +97,7 @@ export function DemoVendorStoreProfile() {
   const [form, setForm] = useState(() => ({ ...emptyProfile, ...(vendor || {}) }));
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  if (!vendor) return <main className="demo-store-page"><StoreHeader /><section className="demo-store-content"><h1>Vendor profile unavailable</h1></section></main>;
+  if (!vendor) return <main className="demo-store-page"><VendorProfileHeader vendorId={vendor?.vendorId} /><section className="demo-store-content"><h1>Vendor profile unavailable</h1></section></main>;
   const canEdit = vendor.status === 'Approved' && vendor.isActive;
   const update = event => setForm(current => ({ ...current, [event.target.name]: event.target.value }));
   const submit = event => {
@@ -92,7 +105,7 @@ export function DemoVendorStoreProfile() {
     try { updateDemoState(saveVendorStoreProfile(demoState, session.vendorId, form)); setMessage('Your public store profile has been saved.'); setError(''); }
     catch (err) { setError(err.message); setMessage(''); }
   };
-  return <main className="demo-store-page"><StoreHeader /><section className="demo-store-content">
+  return <main className="demo-store-page"><VendorProfileHeader vendorId={vendor?.vendorId} /><section className="demo-store-content">
     <p className="demo-store-eyebrow">VENDOR WORKSPACE</p><h1>Public store profile</h1><p className="demo-store-muted">These details appear on your public store page. Use public contact details that customers may see.</p>
     {!canEdit && <div className="demo-store-notice">Your store is not public while your vendor account is pending, rejected or inactive. Profile editing is available only to approved active vendors.</div>}
     {message && <p className="demo-store-success" role="status">{message}</p>}{error && <p className="demo-store-error" role="alert">{error}</p>}
