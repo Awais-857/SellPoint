@@ -6,6 +6,7 @@ import { addDemoDispute, buildDemoOrder, calculateDemoCartSummary, cancelDemoOrd
 import './demoCustomer.css';
 import { getDemoCustomerAddresses } from './demoCustomerAccountService';
 import { getDemoReviewableOrderItem } from './demoReviewService';
+import { simulateDemoCardPayment, getOrderDemoPayment } from './demoPaymentService';
 
 const money = value => `$${Number(value || 0).toFixed(2)}`;
 const formatDate = value => new Date(value).toLocaleString();
@@ -107,9 +108,15 @@ export function DemoCheckout() {
 export function DemoOrderConfirmation() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { session, demoState } = useDemo();
+  const { session, demoState, updateDemoState } = useDemo();
+  const [paymentMessage, setPaymentMessage] = useState('');
   const order = demoState.orders.find(item => String(item.orderId) === String(id) && item.customerId === session.userId);
   if (!order) return <main className="demo-shop-page"><DemoHeader /><section className="demo-shop-content"><h1>Order not found</h1><button onClick={() => navigate('/order-history')}>View my orders</button></section></main>;
+  const payment = getOrderDemoPayment(demoState, order.orderId, session.userId);
+  const completePayment = outcome => {
+    try { updateDemoState(simulateDemoCardPayment(demoState, order.orderId, session.userId, outcome)); setPaymentMessage(outcome === 'Success' ? 'Payment successful. Your order is now processing.' : 'Payment failed. Your order was cancelled and stock was restored.'); }
+    catch (error) { setPaymentMessage(error.message); }
+  };
   return (
     <main className="demo-shop-page"><DemoHeader />
       <section className="demo-shop-content demo-confirmation">
@@ -121,9 +128,12 @@ export function DemoOrderConfirmation() {
           <div><span>Order number</span><strong>#{order.orderId}</strong></div>
           <div><span>Order date</span><strong>{formatDate(order.orderDate)}</strong></div>
           <div><span>Order status</span><strong>{order.orderStatus}</strong></div>
-          <div><span>Payment</span><strong>{order.paymentMethod === 'Demo Card (no charge)' ? 'Simulated — no charge' : 'Cash on delivery'}</strong></div>
+          <div><span>Payment method</span><strong>{order.paymentMethod === 'Demo Card (no charge)' ? 'Simulated card' : 'Cash on delivery'}</strong></div>
+          <div><span>Payment status</span><strong>{payment?.status || order.paymentStatus}</strong></div>
           <div><span>Total</span><strong>{money(order.totalAmount)}</strong></div>
         </div>
+        {paymentMessage && <p className="demo-shop-feedback" role="status">{paymentMessage}</p>}
+        {payment?.method === 'Demo Card (no charge)' && payment.status === 'Pending' && <section className="demo-shop-card demo-payment-simulation"><h2>Complete simulated payment</h2><p>This is a demonstration only. Choose an outcome to see how the order responds. No card details are requested and no money is charged.</p><div className="demo-shop-actions"><button className="demo-primary-button" onClick={() => completePayment('Success')}>Simulate successful payment</button><button className="demo-outline-button" onClick={() => completePayment('Failure')}>Simulate failed payment</button></div></section>}
         <div className="demo-shop-actions"><button className="demo-primary-button" onClick={() => navigate('/order-history')}>View my orders</button><button className="demo-outline-button" onClick={() => navigate('/products')}>Continue shopping</button></div>
       </section>
     </main>
@@ -199,7 +209,7 @@ export function DemoOrderDetail() {
       <section className="demo-shop-content">
         <p className="demo-shop-eyebrow">ORDER DETAILS</p><h1>Order #{order.orderId}</h1>
         <div className="demo-shop-card demo-detail-card">
-          <div className="demo-detail-grid"><div><span>Status</span><strong>{order.orderStatus}</strong></div><div><span>Payment</span><strong>{order.paymentStatus}</strong></div><div><span>Placed</span><strong>{formatDate(order.orderDate)}</strong></div><div><span>Total</span><strong>{money(order.totalAmount)}</strong></div></div>
+          <div className="demo-detail-grid"><div><span>Status</span><strong>{order.orderStatus}</strong></div><div><span>Payment</span><strong>{order.paymentStatus}</strong></div><div><span>Payment method</span><strong>{order.paymentMethod || 'Cash on delivery'}</strong></div><div><span>Payment reference</span><strong>{getOrderDemoPayment(demoState, order.orderId, session.userId)?.paymentId ? `#${getOrderDemoPayment(demoState, order.orderId, session.userId).paymentId}` : 'Legacy order'}</strong></div><div><span>Placed</span><strong>{formatDate(order.orderDate)}</strong></div><div><span>Total</span><strong>{money(order.totalAmount)}</strong></div></div>
           <h2>Items</h2>
           {order.items.map(item => <div className="demo-summary-item" key={item.orderItemId}><span>{item.productName}{item.variantName ? ` — ${item.variantName}` : ''} × {item.quantity}</span><strong>{money(item.itemTotal)}</strong>{getDemoReviewableOrderItem(demoState, session.userId, item.productId, item.orderItemId) && <button className="demo-inline-link" onClick={() => navigate(`/product/${item.productId}/review?orderItemId=${item.orderItemId}`, { state: { orderItemId: item.orderItemId } })}>Write a review</button>}</div>)}
           <h2>Shipping address</h2><p><strong>{order.shippingAddressSnapshot?.recipientName || order.recipientName || order.customerName}</strong>{order.recipientPhone ? ` · ${order.recipientPhone}` : ''}</p><p>{order.shippingAddress || [order.addressLine1, order.addressLine2, order.city, order.state, order.zipCode, order.country].filter(Boolean).join(', ')}</p>
