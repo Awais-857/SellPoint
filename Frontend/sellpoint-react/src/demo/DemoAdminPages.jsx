@@ -7,6 +7,7 @@ import {
   updateAdminDispute, updateAdminOrderStatus, updateVendorApproval
 } from './demoAdminService';
 import './demoAdmin.css';
+import { recordDemoCashCollection } from './demoPaymentService';
 
 const money = value => `$${Number(value || 0).toFixed(2)}`;
 const dateLabel = value => value ? new Date(value).toLocaleDateString() : '—';
@@ -169,7 +170,12 @@ export function DemoAdminOrders() {
 
 
 export function DemoAdminPayments() {
-  const { demoState } = useAdminState();
+  const { demoState, updateDemoState } = useAdminState();
+  const [message, setMessage] = useState('');
+  const collectCash = orderId => {
+    try { updateDemoState(recordDemoCashCollection(demoState, orderId)); setMessage(`Cash collection recorded for order #${orderId}.`); }
+    catch (error) { setMessage(error.message); }
+  };
   const payments = (demoState.payments || []).slice().sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
   const totalCaptured = payments.reduce((sum,item) => sum + Number(item.amount || 0), 0);
   const totalRefunded = payments.reduce((sum,item) => sum + Number(item.refundedAmount || 0), 0);
@@ -182,7 +188,8 @@ export function DemoAdminPayments() {
       ['Failed payments', failed, 'Simulated failures'],
       ['Refunds recorded', money(totalRefunded), `Of ${money(totalCaptured)} in order payments`]
     ]}/>
-    <div className="demo-admin-table-wrap"><table className="demo-admin-table"><thead><tr><th>Payment</th><th>Order</th><th>Customer</th><th>Method</th><th>Amount</th><th>Refunded</th><th>Status</th><th>Date</th></tr></thead><tbody>
+    {message && <p className="demo-admin-message" role="status">{message}</p>}
+    <div className="demo-admin-table-wrap"><table className="demo-admin-table"><thead><tr><th>Payment</th><th>Order</th><th>Customer</th><th>Method</th><th>Amount</th><th>Refunded</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>
       {payments.map(payment => {
         const order = demoState.orders.find(item => Number(item.orderId) === Number(payment.orderId));
         return <tr key={payment.paymentId}>
@@ -191,6 +198,9 @@ export function DemoAdminPayments() {
           <td>{money(payment.amount)}</td><td>{money(payment.refundedAmount)}</td>
           <td><span className={`demo-admin-pill ${payment.status === 'Paid' ? 'approved' : payment.status === 'Failed' ? 'rejected' : 'pending'}`}>{payment.status}</span></td>
           <td>{dateLabel(payment.createdAt)}</td>
+          <td>{payment.method === 'CashOnDelivery' && payment.status === 'Pending' && order?.orderStatus === 'Delivered'
+            ? <button className="demo-admin-primary" onClick={() => collectCash(order.orderId)}>Mark collected</button>
+            : payment.method === 'CashOnDelivery' && payment.status === 'Pending' ? 'After delivery' : '—'}</td>
         </tr>;
       })}
     </tbody></table></div>
