@@ -8,6 +8,7 @@ import {
   getVendorRevenue,
   saveVendorProduct,
   toggleVendorProduct,
+  updateVendorVariantStock,
   updateVendorOrderItemStatus
 } from './demoVendorService';
 import './demoVendor.css';
@@ -80,6 +81,8 @@ export function DemoVendorProducts() {
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [stockProductId, setStockProductId] = useState(null);
+  const [stockDraft, setStockDraft] = useState({});
   const products = getVendorProducts(demoState, vendorId);
   const categories = demoState.categories.filter(item => item.isActive);
   const editingProductHasVariants = Boolean(products.find(item => item.productId === editing)?.variants?.length);
@@ -101,6 +104,17 @@ export function DemoVendorProducts() {
     if (!window.confirm('Remove this product from your demo store?')) return;
     try { updateDemoState(deleteVendorProduct(demoState, vendorId, productId)); }
     catch (err) { setError(err.message); }
+  };
+  const openStockEditor = product => {
+    setStockProductId(product.productId);
+    setStockDraft(Object.fromEntries((product.variants || []).map(variant => [variant.variantId, String(variant.stockQuantity)])));
+    setError('');
+  };
+  const saveStock = productId => {
+    try {
+      updateDemoState(updateVendorVariantStock(demoState, vendorId, productId, stockDraft));
+      setStockProductId(null); setStockDraft({}); setError('');
+    } catch (err) { setError(err.message); }
   };
   const toggle = productId => {
     try { updateDemoState(toggleVendorProduct(demoState, vendorId, productId)); }
@@ -125,8 +139,18 @@ export function DemoVendorProducts() {
       </form>}
       {products.length === 0 ? <div className="demo-vendor-empty">No products in this store yet. Add your first product.</div> :
         <div className="demo-vendor-table-wrap"><table className="demo-vendor-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-          {products.map(product => <tr key={product.productId}><td><strong>{product.productName}</strong><small>{product.sku || 'No SKU'}</small></td><td>{product.categoryName}</td><td>{money(product.price)}</td><td>{product.stockQuantity}{product.variants?.length > 0 && <small>{product.variants.map(variant => `${variant.variantName}: ${variant.stockQuantity}`).join(' · ')}</small>}</td><td><span className={`demo-vendor-pill ${product.moderationStatus.toLowerCase()}`}>{product.moderationStatus}</span><small>{product.moderationStatus === 'Approved' ? (product.isActive ? 'Public listing active' : 'Paused by vendor') : product.moderationReason || 'Awaiting admin review'}</small></td><td><div className="demo-vendor-row-actions"><button onClick={() => openEdit(product)}>{product.moderationStatus === 'Rejected' ? 'Edit & resubmit' : 'Edit'}</button>{product.moderationStatus === 'Approved' && <button onClick={() => toggle(product.productId)}>{product.isActive ? 'Pause' : 'Activate'}</button>}<button className="danger" onClick={() => remove(product.productId)}>Delete</button></div></td></tr>)}
+          {products.map(product => <tr key={product.productId}><td><strong>{product.productName}</strong><small>{product.sku || 'No SKU'}</small></td><td>{product.categoryName}</td><td>{money(product.price)}</td><td>{product.stockQuantity}{product.variants?.length > 0 && <small>{product.variants.map(variant => `${variant.variantName}: ${variant.stockQuantity}`).join(' · ')}</small>}</td><td><span className={`demo-vendor-pill ${product.moderationStatus.toLowerCase()}`}>{product.moderationStatus}</span><small>{product.moderationStatus === 'Approved' ? (product.isActive ? 'Public listing active' : 'Paused by vendor') : product.moderationReason || 'Awaiting admin review'}</small></td><td><div className="demo-vendor-row-actions"><button onClick={() => openEdit(product)}>{product.moderationStatus === 'Rejected' ? 'Edit & resubmit' : 'Edit'}</button>{product.variants?.length > 0 && product.moderationStatus === 'Approved' && <button onClick={() => openStockEditor(product)}>Manage stock</button>}{product.moderationStatus === 'Approved' && <button onClick={() => toggle(product.productId)}>{product.isActive ? 'Pause' : 'Activate'}</button>}<button className="danger" onClick={() => remove(product.productId)}>Delete</button></div></td></tr>)}
         </tbody></table></div>}
+      {stockProductId !== null && (() => {
+        const selectedProduct = products.find(product => product.productId === stockProductId);
+        if (!selectedProduct) return null;
+        return <section className="demo-vendor-stock-editor" aria-label="Manage product option stock">
+          <div className="demo-vendor-form-heading"><div><h2>Manage option inventory</h2><p>{selectedProduct.productName} · Total stock updates automatically</p></div><button type="button" onClick={() => setStockProductId(null)}>Close</button></div>
+          <div className="demo-vendor-stock-grid">{selectedProduct.variants.map(variant => <label key={variant.variantId}>{variant.variantName}<input type="number" min="0" step="1" value={stockDraft[variant.variantId] ?? variant.stockQuantity} onChange={event => setStockDraft(current => ({ ...current, [variant.variantId]: event.target.value }))} /></label>)}</div>
+          <div className="demo-vendor-stock-total">Total available stock: <strong>{selectedProduct.variants.reduce((sum, variant) => sum + Number(stockDraft[variant.variantId] ?? variant.stockQuantity), 0)}</strong></div>
+          <div className="demo-vendor-form-actions"><button className="demo-vendor-primary" type="button" onClick={() => saveStock(stockProductId)}>Save inventory</button><button type="button" onClick={() => setStockProductId(null)}>Cancel</button></div>
+        </section>;
+      })()}
     </section></main>
   );
 }
