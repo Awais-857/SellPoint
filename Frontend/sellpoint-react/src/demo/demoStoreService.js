@@ -48,9 +48,13 @@ export const getPublicDemoStoreProducts = (state, vendorId, filters = {}) => {
   if (!getPublicDemoStore(state, vendorId)) return [];
   const search = text(filters.search).toLowerCase();
   const categoryId = filters.categoryId ? Number(filters.categoryId) : null;
-  const products = (state.products || []).filter(product =>
-    product.vendorId === Number(vendorId) &&
-    isPublicDemoProduct(state, product) &&
+  const storeProducts = (state.products || []).filter(product =>
+    product.vendorId === Number(vendorId) && isPublicDemoProduct(state, product)
+  );
+  const categories = [...new Map(storeProducts.map(item => [item.categoryId, {
+    categoryId: item.categoryId, categoryName: item.categoryName
+  }])).values()];
+  const products = storeProducts.filter(product =>
     (!categoryId || Number(product.categoryId) === categoryId) &&
     (!search || [product.productName, product.description, product.categoryName]
       .some(value => text(value).toLowerCase().includes(search)))
