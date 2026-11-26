@@ -19,6 +19,17 @@ describe('demoVendorService', () => {
     expect(edited.products[1].productName).toBe('USB-C Hub');
   });
 
+  test('keeps aggregate stock synchronized with individual variant inventory', () => {
+    const variantProduct = { ...product, variants: [
+      { variantId: 1, variantName: 'Black', stockQuantity: 2 },
+      { variantId: 2, variantName: 'White', stockQuantity: 3 }
+    ] };
+    const variantState = { ...state, products: [variantProduct] };
+    const edited = saveVendorProduct(variantState, 101, { productName: 'Headphones', categoryId: '1', price: '120', stockQuantity: '99' }, 1001);
+    expect(edited.products[0].stockQuantity).toBe(5);
+    expect(edited.products[0].variants.map(item => item.stockQuantity)).toEqual([2, 3]);
+  });
+
   test('resubmits rejected products for approval and blocks activation before approval', () => {
     const rejected = { ...product, moderationStatus: 'Rejected', moderationReason: 'Improve images', isActive: false };
     const rejectedState = { ...state, products: [rejected] };
