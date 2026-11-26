@@ -73,10 +73,7 @@ export const getPublicDemoStoreProducts = (state, vendorId, filters = {}) => {
     products: products.slice((page - 1) * pageSize, page * pageSize),
     totalCount: products.length,
     totalPages: Math.max(1, Math.ceil(products.length / pageSize)),
-    categories: [...new Map(products.map(item => [item.categoryId, {
-      categoryId: item.categoryId,
-      categoryName: item.categoryName
-    }])).values()]
+    categories
   };
 };
 
