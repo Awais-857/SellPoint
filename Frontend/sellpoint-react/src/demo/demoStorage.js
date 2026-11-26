@@ -23,14 +23,27 @@ const writeJson = (key, value) => {
   }
 };
 
+const isValidDemoState = (data) => {
+  const collectionNames = [
+    'categories',
+    'vendors',
+    'customers',
+    'products',
+    'orders',
+    'reviews',
+    'disputes'
+  ];
+
+  return Boolean(data) && collectionNames.every(name => Array.isArray(data[name]));
+};
+
 export const getDemoState = () => {
   const stored = readJson(DEMO_STATE_STORAGE_KEY);
 
   if (
     stored &&
     stored.version === DEMO_STATE_VERSION &&
-    stored.data &&
-    Array.isArray(stored.data.products)
+    isValidDemoState(stored.data)
   ) {
     return stored.data;
   }
