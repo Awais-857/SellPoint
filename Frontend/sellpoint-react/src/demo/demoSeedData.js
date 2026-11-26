@@ -149,6 +149,37 @@ orders.push({
   items: multiVendorItems
 });
 
+// Recent delivered order gives the customer a ready-to-use return example.
+const returnSampleProduct = products.find(product => product.productId === 1001);
+orders.push({
+  orderId: 5017,
+  customerId: customers[0].userId,
+  customerName: customers[0].name,
+  orderDate: '2026-11-20T10:00:00.000Z',
+  deliveredAt: '2026-11-22T10:00:00.000Z',
+  orderStatus: 'Delivered',
+  paymentStatus: 'Paid',
+  subtotal: 161.98,
+  shipping: 5,
+  tax: 16.2,
+  totalAmount: 183.18,
+  items: [{
+    orderItemId: 8201,
+    productId: returnSampleProduct.productId,
+    productName: returnSampleProduct.productName,
+    vendorId: returnSampleProduct.vendorId,
+    vendorName: returnSampleProduct.businessName,
+    variantId: 10011,
+    variantName: 'Black',
+    variantOptions: { Color: 'Black' },
+    quantity: 2,
+    unitPrice: 80.99,
+    itemTotal: 161.98,
+    itemStatus: 'Delivered',
+    deliveredAt: '2026-11-22T10:00:00.000Z'
+  }]
+});
+
 const reviews = Array.from({ length: 24 }, (_, index) => {
   const product = products[index % products.length];
   const customer = customers[index % customers.length];
@@ -184,7 +215,8 @@ export const DEMO_SEED_DATA = {
   products,
   orders,
   reviews,
-  disputes
+  disputes,
+  returnRequests: []
 };
 
 export const createDemoState = () => JSON.parse(JSON.stringify(DEMO_SEED_DATA));
