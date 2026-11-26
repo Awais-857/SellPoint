@@ -17,7 +17,8 @@ const vendors = [
   { vendorId: 102, userId: 202, businessName: 'Urban Home', ownerName: 'Sara Khan', email: 'urban@example.demo', status: 'Approved', isActive: true, joinedAt: '2026-02-03' },
   { vendorId: 103, userId: 203, businessName: 'Peak Sports', ownerName: 'Usman Raza', email: 'peak@example.demo', status: 'Approved', isActive: true, joinedAt: '2026-02-18' },
   { vendorId: 104, userId: 204, businessName: 'The Style Corner', ownerName: 'Ayesha Noor', email: 'style@example.demo', status: 'Pending', isActive: true, joinedAt: '2026-03-04' },
-  { vendorId: 105, userId: 205, businessName: 'Pixel Gaming', ownerName: 'Bilal Ahmed', email: 'pixel@example.demo', status: 'Approved', isActive: false, joinedAt: '2026-03-11' }
+  { vendorId: 105, userId: 205, businessName: 'Pixel Gaming', ownerName: 'Bilal Ahmed', email: 'pixel@example.demo', status: 'Approved', isActive: false, joinedAt: '2026-03-11' },
+  { vendorId: 106, userId: 206, businessName: 'Fashion Corner', ownerName: 'Noor Fatima', email: 'fashion@example.demo', status: 'Rejected', isActive: false, rejectionReason: 'Please provide complete business verification details.', joinedAt: '2026-03-14' }
 ];
 
 const customers = [
@@ -73,7 +74,14 @@ const products = productTemplates.map((item, index) => ({
   stockQuantity: item[4],
   categoryName: item[5],
   description: `A quality ${item[0].toLowerCase()} from a trusted SellPoint demo seller.`,
-  imageUrl: null,
+  imageUrl: [
+    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=800&q=80'
+  ][index % 5],
   isActive: index !== 9 && index !== 27,
   createdAt: '2026-03-15'
 }));
@@ -99,6 +107,27 @@ const orders = Array.from({ length: 15 }, (_, index) => {
     totalAmount: Number((subtotal + 5).toFixed(2)),
     items: [{ orderItemId: 8001 + index, productId: product.productId, productName: product.productName, vendorId: product.vendorId, quantity, unitPrice, itemTotal: subtotal }]
   };
+});
+
+// One parent order intentionally contains products from two approved vendors.
+const firstMultiVendorProduct = products.find(product => product.productId === 1001);
+const secondMultiVendorProduct = products.find(product => product.productId === 1006);
+const multiVendorItems = [
+  { orderItemId: 8101, productId: firstMultiVendorProduct.productId, productName: firstMultiVendorProduct.productName, vendorId: firstMultiVendorProduct.vendorId, quantity: 1, unitPrice: firstMultiVendorProduct.price, itemTotal: firstMultiVendorProduct.price, itemStatus: 'Shipped' },
+  { orderItemId: 8102, productId: secondMultiVendorProduct.productId, productName: secondMultiVendorProduct.productName, vendorId: secondMultiVendorProduct.vendorId, quantity: 2, unitPrice: secondMultiVendorProduct.price, itemTotal: Number((secondMultiVendorProduct.price * 2).toFixed(2)), itemStatus: 'Processing' }
+];
+const multiVendorSubtotal = multiVendorItems.reduce((sum, item) => sum + item.itemTotal, 0);
+orders.push({
+  orderId: 5016,
+  customerId: customers[0].userId,
+  customerName: customers[0].name,
+  orderDate: '2026-03-25',
+  orderStatus: 'Processing',
+  paymentStatus: 'Paid',
+  subtotal: Number(multiVendorSubtotal.toFixed(2)),
+  shipping: 5,
+  totalAmount: Number((multiVendorSubtotal + 5).toFixed(2)),
+  items: multiVendorItems
 });
 
 const reviews = Array.from({ length: 24 }, (_, index) => {
