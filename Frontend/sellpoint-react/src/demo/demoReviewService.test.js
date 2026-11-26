@@ -38,6 +38,8 @@ describe('demoReviewService', () => {
       expect.objectContaining({ orderId: 5001, orderItemId: 8001, productId: 1001 })
     ]);
     expect(getEligibleDemoReviewItems(state, 302)).toHaveLength(0);
+    const secondDeliveredItem = { ...state, orders: [{ ...state.orders[0], items: [state.orders[0].items[0], { orderItemId: 8004, productId: 1001, productName: 'Wireless Headphones', vendorId: 101, itemStatus: 'Delivered' }] }] };
+    expect(getEligibleDemoReviewItems(secondDeliveredItem, 301)).toHaveLength(2);
     expect(getDemoReviewableOrderItem(state, 301, 1001, 8001)).toMatchObject({ orderId: 5001, vendorId: 101 });
     expect(getDemoReviewableOrderItem(state, 301, 1006, 8002)).toBeNull();
     expect(getDemoReviewableOrderItem(state, 302, 1001, 8001)).toBeNull();
