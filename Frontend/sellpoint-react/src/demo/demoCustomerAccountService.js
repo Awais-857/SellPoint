@@ -51,20 +51,28 @@ export const saveDemoCustomerAddress = (state, customerId, address, addressId = 
   if (addressId != null && !current) throw new Error('Address not found in this customer account.');
   const values = validateAddress(address);
   const nextId = Math.max(6000, ...(state.addresses || []).map(item => Number(item.addressId) || 0)) + 1;
-  const isDefault = Boolean(address.isDefault) || existing.length === 0;
   const saved = {
     ...(current || {}),
     ...values,
     addressId: current?.addressId ?? nextId,
-    customerId: Number(customerId),
-    isDefault
+    customerId: Number(customerId)
   };
+  const remaining = existing.filter(item => item.addressId !== saved.addressId);
+  const currentDefaultId = existing.find(item => item.isDefault)?.addressId;
+  const defaultAddressId = Boolean(address.isDefault) || existing.length === 0
+    ? saved.addressId
+    : currentDefaultId === saved.addressId
+      ? (remaining[0]?.addressId ?? saved.addressId)
+      : (currentDefaultId ?? saved.addressId);
+  const customerAddresses = [...remaining, saved].map(item => ({
+    ...item,
+    isDefault: item.addressId === defaultAddressId
+  }));
   return {
     ...state,
     addresses: [
       ...(state.addresses || []).filter(item => item.customerId !== Number(customerId)),
-      ...existing.filter(item => item.addressId !== saved.addressId).map(item => ({ ...item, isDefault: isDefault ? false : item.isDefault })),
-      saved
+      ...customerAddresses
     ]
   };
 };
