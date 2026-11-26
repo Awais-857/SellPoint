@@ -17,6 +17,7 @@ function ProductListing() {
     // Filter states
     const [selectedCategory, setSelectedCategory] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [sortBy, setSortBy] = useState('CreatedDate');
@@ -46,7 +47,7 @@ function ProductListing() {
     // Fetch products when filters change
     useEffect(() => {
         fetchProducts();
-    }, [selectedCategory, searchTerm, minPrice, maxPrice, sortBy, sortOrder, currentPage]);
+    }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, sortBy, sortOrder, currentPage]);
 
     const fetchCategories = async () => {
         try {
@@ -64,7 +65,7 @@ function ProductListing() {
         try {
             const result = await catalogService.listProducts({
                 categoryId: selectedCategory || undefined,
-                searchTerm: searchTerm || undefined,
+                searchTerm: appliedSearchTerm || undefined,
                 minPrice: minPrice ? parseFloat(minPrice) : undefined,
                 maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
                 sortBy,
@@ -87,7 +88,7 @@ function ProductListing() {
     const handleSearch = (e) => {
         e.preventDefault();
         setCurrentPage(1);
-        fetchProducts();
+        setAppliedSearchTerm(searchTerm);
     };
 
     const handleCategoryChange = (categoryId) => {
@@ -105,6 +106,7 @@ function ProductListing() {
     const handleClearFilters = () => {
         setSelectedCategory('');
         setSearchTerm('');
+        setAppliedSearchTerm('');
         setMinPrice('');
         setMaxPrice('');
         setSortBy('CreatedDate');

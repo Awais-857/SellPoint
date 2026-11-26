@@ -34,7 +34,7 @@ function ProductDetail() {
             setProduct(productData);
 
             // Fetch related products from same category
-            if (response.data.categoryId) {
+            if (productData.categoryId) {
                 fetchRelatedProducts(productData.categoryId, productData.productId);
             }
         } catch (err) {

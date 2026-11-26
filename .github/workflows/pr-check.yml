@@ -28,7 +28,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: npm
           cache-dependency-path: Frontend/sellpoint-react/package-lock.json
 
@@ -38,6 +38,8 @@ jobs:
 
       - name: Run frontend tests
         working-directory: Frontend/sellpoint-react
+        env:
+          REACT_APP_DATA_MODE: demo
         run: npm test -- --watchAll=false --runInBand
 
       - name: Build frontend
