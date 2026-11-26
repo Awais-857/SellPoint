@@ -66,6 +66,25 @@ function PublicRoute({ children }) {
 }
 
 function App() {
+  if (IS_DEMO_MODE) {
+    return (
+      <BrowserRouter>
+        <DemoProvider>
+          <div className="App">
+            <Routes>
+              <Route path="/demo" element={<DemoPortal />} />
+              <Route path="/demo/workspace" element={<DemoWorkspace />} />
+              <Route path="/products" element={<ProductListing />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/" element={<Navigate to="/demo" replace />} />
+              <Route path="*" element={<Navigate to="/demo" replace />} />
+            </Routes>
+          </div>
+        </DemoProvider>
+      </BrowserRouter>
+    );
+  }
+
   return (
     <BrowserRouter>
       <div className="App">
