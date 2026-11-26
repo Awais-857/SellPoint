@@ -1,9 +1,12 @@
 // src/services/cartHelper.js
 import api from './api';
+import { IS_DEMO_MODE } from '../config/appConfig';
 
-const GUEST_CART_KEY = 'guestCart';
+const GUEST_CART_KEY = IS_DEMO_MODE ? 'sellpoint_demo_cart_v1' : 'guestCart';
 
-export const isLoggedIn = () => !!localStorage.getItem('token');
+// Demo sessions never use the real JWT or server cart, even if this browser
+// also contains credentials from a separate full-stack session.
+export const isLoggedIn = () => !IS_DEMO_MODE && !!localStorage.getItem('token');
 
 // ---------- Guest storage helpers ----------
 const readGuestCart = () => {
@@ -127,7 +130,7 @@ export const getGuestCartCount = () => {
  * Pushes each guest-cart item to the server, then clears localStorage.
  */
 export const mergeGuestCartToServer = async () => {
-    if (!isLoggedIn()) return;
+    if (IS_DEMO_MODE || !isLoggedIn()) return;
     const items = readGuestCart();
     if (items.length === 0) return;
 
