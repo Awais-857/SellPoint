@@ -177,7 +177,7 @@ export function DemoAdminPayments() {
     catch (error) { setMessage(error.message); }
   };
   const payments = (demoState.payments || []).slice().sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-  const totalCaptured = payments.reduce((sum,item) => sum + Number(item.amount || 0), 0);
+  const totalOrderVolume = payments.reduce((sum,item) => sum + Number(item.amount || 0), 0);
   const totalRefunded = payments.reduce((sum,item) => sum + Number(item.refundedAmount || 0), 0);
   const captured = payments.filter(item => ['Paid','Partially Refunded','Refunded'].includes(item.status)).length;
   const failed = payments.filter(item => item.status === 'Failed').length;
@@ -186,7 +186,7 @@ export function DemoAdminPayments() {
       ['Payment records', payments.length, 'One record per order'],
       ['Captured payments', captured, 'Successful demo payments'],
       ['Failed payments', failed, 'Simulated failures'],
-      ['Refunds recorded', money(totalRefunded), `Of ${money(totalCaptured)} in order payments`]
+      ['Refunds recorded', money(totalRefunded), `Of ${money(totalOrderVolume)} in order payments`]
     ]}/>
     {message && <p className="demo-admin-message" role="status">{message}</p>}
     <div className="demo-admin-table-wrap"><table className="demo-admin-table"><thead><tr><th>Payment</th><th>Order</th><th>Customer</th><th>Method</th><th>Amount</th><th>Refunded</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>
@@ -198,9 +198,9 @@ export function DemoAdminPayments() {
           <td>{money(payment.amount)}</td><td>{money(payment.refundedAmount)}</td>
           <td><span className={`demo-admin-pill ${payment.status === 'Paid' ? 'approved' : payment.status === 'Failed' ? 'rejected' : 'pending'}`}>{payment.status}</span></td>
           <td>{dateLabel(payment.createdAt)}</td>
-          <td>{payment.method === 'CashOnDelivery' && payment.status === 'Pending' && order?.orderStatus === 'Delivered'
+          <td>{['CashOnDelivery', 'Cash on delivery'].includes(payment.method) && payment.status === 'Pending' && order?.orderStatus === 'Delivered'
             ? <button className="demo-admin-primary" onClick={() => collectCash(order.orderId)}>Mark collected</button>
-            : payment.method === 'CashOnDelivery' && payment.status === 'Pending' ? 'After delivery' : '—'}</td>
+            : ['CashOnDelivery', 'Cash on delivery'].includes(payment.method) && payment.status === 'Pending' ? 'After delivery' : '—'}</td>
         </tr>;
       })}
     </tbody></table></div>
