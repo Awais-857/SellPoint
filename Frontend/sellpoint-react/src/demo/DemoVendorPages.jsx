@@ -68,6 +68,7 @@ export function DemoVendorDashboard() {
         <div className="demo-vendor-action-grid">
           <button onClick={() => navigate('/vendor/products')}><span>📦</span><strong>Manage products</strong><small>View product options and each variant's available stock; add, edit or pause listings</small></button>
           <button onClick={() => navigate('/vendor/orders')}><span>🧾</span><strong>Customer orders</strong><small>Review orders and update item status</small></button>
+          <button onClick={() => navigate('/vendor/store-profile')}><span>🏪</span><strong>Public store profile</strong><small>Manage your store branding, description and customer contact information</small></button>
           <button onClick={() => navigate('/vendor/revenue')}><span>📈</span><strong>Revenue overview</strong><small>Review sales, payments and trends</small></button>
           <button onClick={() => navigate('/vendor/returns')}><span>↩️</span><strong>Returns & refunds</strong><small>Review customer return requests and record simulated refunds</small></button>
         </div>
