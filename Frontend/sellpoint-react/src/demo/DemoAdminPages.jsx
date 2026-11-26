@@ -21,6 +21,7 @@ function AdminHeader({ active }) {
     ['products', 'Products', '/admin/products'],
     ['categories', 'Categories', '/admin/categories'],
     ['orders', 'Orders', '/admin/orders'],
+    ['payments', 'Payments', '/admin/payments'],
     ['disputes', 'Disputes', '/admin/disputes'],
     ['reviews', 'Reviews', '/admin/reviews'],
     ['returns', 'Returns', '/admin/returns'],
@@ -51,6 +52,7 @@ export function DemoAdminDashboard() {
     ['Products','Review vendor product submissions','/admin/products','📦'],
     ['Categories','Organize the marketplace catalogue','/admin/categories','🗂️'],
     ['Orders','Monitor all marketplace orders','/admin/orders','📦'],
+    ['Payments','Review payment records and simulated refunds','/admin/payments','💳'],
     ['Disputes','Review and record dispute decisions','/admin/disputes','⚖️'],
     ['Reviews','Moderate customer product reviews','/admin/reviews','⭐'],
     ['Reports','Explore marketplace sales and trends','/admin/reports','📊'],
@@ -162,6 +164,42 @@ export function DemoAdminOrders() {
     {message&&<p className="demo-admin-message" role="status">{message}</p>}
     <div className="demo-admin-table-wrap"><table className="demo-admin-table"><thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th>Payment</th><th>Action</th></tr></thead><tbody>{orders.map(o=><tr key={o.orderId}><td>#{o.orderId}</td><td>{o.customerName}</td><td>{dateLabel(o.orderDate)}</td><td>{o.items?.length||0}</td><td>{money(o.totalAmount)}</td><td><span className="demo-admin-pill">{o.orderStatus}</span></td><td>{o.paymentStatus}</td><td><button onClick={()=>setSelected(o)}>Manage</button></td></tr>)}</tbody></table></div>
     {selected&&<div className="demo-admin-modal-backdrop" onClick={()=>setSelected(null)}><section className="demo-admin-modal" onClick={e=>e.stopPropagation()}><div className="demo-admin-form-heading"><h2>Order #{selected.orderId}</h2><button onClick={()=>setSelected(null)}>×</button></div><p><strong>Customer:</strong> {selected.customerName}</p><p><strong>Date:</strong> {dateLabel(selected.orderDate)}</p><h3>Items</h3>{selected.items?.map(item=><p key={item.orderItemId}>{item.productName} · {item.quantity} × {money(item.unitPrice)} · {money(item.itemTotal)}</p>)}<p><strong>Order total:</strong> {money(selected.totalAmount)}</p><label>Update order status<select defaultValue={selected.orderStatus} onChange={e=>setSelected({...selected,nextStatus:e.target.value})}>{['Pending','Processing','Shipped','Delivered','Cancelled'].map(x=><option key={x}>{x}</option>)}</select></label><div className="demo-admin-form-actions"><button className="demo-admin-primary" onClick={()=>change(selected.orderId,selected.nextStatus||selected.orderStatus)}>Save status</button><button onClick={()=>setSelected(null)}>Close</button></div></section></div>}
+  </AdminPage>;
+}
+
+
+export function DemoAdminPayments() {
+  const { demoState } = useAdminState();
+  const payments = (demoState.payments || []).slice().sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const totalCaptured = payments.reduce((sum,item) => sum + Number(item.amount || 0), 0);
+  const totalRefunded = payments.reduce((sum,item) => sum + Number(item.refundedAmount || 0), 0);
+  const captured = payments.filter(item => ['Paid','Partially Refunded','Refunded'].includes(item.status)).length;
+  const failed = payments.filter(item => item.status === 'Failed').length;
+  return <AdminPage active="payments" eyebrow="PAYMENT OPERATIONS" title="Payments & refunds" description="Review order-linked payment records and simulated refunds. No payment gateway or real money transfers are connected.">
+    <StatCards items={[
+      ['Payment records', payments.length, 'One record per order'],
+      ['Captured payments', captured, 'Successful demo payments'],
+      ['Failed payments', failed, 'Simulated failures'],
+      ['Refunds recorded', money(totalRefunded), `Of ${money(totalCaptured)} in order payments`]
+    ]}/>
+    <div className="demo-admin-table-wrap"><table className="demo-admin-table"><thead><tr><th>Payment</th><th>Order</th><th>Customer</th><th>Method</th><th>Amount</th><th>Refunded</th><th>Status</th><th>Date</th></tr></thead><tbody>
+      {payments.map(payment => {
+        const order = demoState.orders.find(item => Number(item.orderId) === Number(payment.orderId));
+        return <tr key={payment.paymentId}>
+          <td><strong>#{payment.paymentId}</strong></td><td>#{payment.orderId}</td><td>{order?.customerName || `Customer #${payment.customerId}`}</td>
+          <td>{payment.method === 'Demo Card (no charge)' ? 'Simulated card' : 'Cash on delivery'}</td>
+          <td>{money(payment.amount)}</td><td>{money(payment.refundedAmount)}</td>
+          <td><span className={`demo-admin-pill ${payment.status === 'Paid' ? 'approved' : payment.status === 'Failed' ? 'rejected' : 'pending'}`}>{payment.status}</span></td>
+          <td>{dateLabel(payment.createdAt)}</td>
+        </tr>;
+      })}
+    </tbody></table></div>
+    <section className="demo-admin-report-card"><h2>Refund history</h2>
+      {payments.some(payment => (payment.refunds || []).length) ? <div className="demo-admin-table-wrap"><table className="demo-admin-table"><thead><tr><th>Refund reference</th><th>Payment</th><th>Order</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead><tbody>
+        {payments.flatMap(payment => (payment.refunds || []).map(refund => <tr key={refund.refundId}><td>{refund.reference}</td><td>#{payment.paymentId}</td><td>#{payment.orderId}</td><td>{money(refund.amount)}</td><td>{refund.status}</td><td>{dateLabel(refund.createdAt)}</td></tr>))}
+      </tbody></table></div> : <p>No simulated refunds have been recorded yet.</p>}
+    </section>
+    <p className="demo-shop-muted">Cash-on-delivery records remain Pending until collection is recorded outside this demonstration. This demo does not connect to a courier, bank, card processor or payment gateway.</p>
   </AdminPage>;
 }
 
