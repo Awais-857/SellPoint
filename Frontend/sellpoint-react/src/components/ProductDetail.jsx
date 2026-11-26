@@ -210,7 +210,7 @@ function ProductDetail() {
                                 <span className={styles['savings']}>You save: ${savings.toFixed(2)}</span>
                             </>
                         ) : (
-                            <span className={styles['price-large']}>${product.price.toFixed(2)}</span>
+                            <span className={styles['price-large']}>${displayedPrice.toFixed(2)}</span>
                         )}
                     </div>
 
