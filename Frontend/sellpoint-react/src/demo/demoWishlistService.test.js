@@ -16,7 +16,6 @@ describe('demoWishlistService', () => {
     expect(toggleDemoWishlistItem(1)).toEqual([1]);
     expect(toggleDemoWishlistItem(1)).toEqual([]);
     toggleDemoWishlistItem(1);
-    toggleDemoWishlistItem(1);
     toggleDemoWishlistItem(2);
     expect(getDemoWishlistIds()).toEqual([1, 2]);
     expect(removeDemoWishlistItem(1)).toEqual([2]);
