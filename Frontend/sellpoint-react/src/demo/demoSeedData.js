@@ -22,10 +22,10 @@ const vendors = [
 ];
 
 const customers = [
-  { userId: 301, name: 'Mariam Shah', email: 'mariam@example.demo', city: 'Lahore' },
-  { userId: 302, name: 'Daniyal Khan', email: 'daniyal@example.demo', city: 'Multan' },
-  { userId: 303, name: 'Hira Malik', email: 'hira@example.demo', city: 'Islamabad' },
-  { userId: 304, name: 'Zain Abbas', email: 'zain@example.demo', city: 'Karachi' }
+  { userId: 301, name: 'Mariam Shah', email: 'mariam@example.demo', phone: '0300-1234567', city: 'Lahore' },
+  { userId: 302, name: 'Daniyal Khan', email: 'daniyal@example.demo', phone: '0301-2345678', city: 'Multan' },
+  { userId: 303, name: 'Hira Malik', email: 'hira@example.demo', phone: '0302-3456789', city: 'Islamabad' },
+  { userId: 304, name: 'Zain Abbas', email: 'zain@example.demo', phone: '0303-4567890', city: 'Karachi' }
 ];
 
 const addresses = [
