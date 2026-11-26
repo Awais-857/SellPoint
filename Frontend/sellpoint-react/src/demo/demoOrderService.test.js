@@ -16,6 +16,8 @@ describe('demoOrderService', () => {
     expect(result.order.orderId).toBe(5001);
     expect(result.order.totalAmount).toBe(203);
     expect(result.order.customerId).toBe(301);
+    expect(result.order.shippingAddressSnapshot).toEqual(address);
+    expect(result.order.addressId).toBeNull();
     expect(result.nextState.products[0].stockQuantity).toBe(3);
     expect(result.nextState.orders).toHaveLength(1);
   });
