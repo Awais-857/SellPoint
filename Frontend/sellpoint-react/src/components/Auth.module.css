@@ -60,7 +60,7 @@
     border-color: #667eea;
 }
 
-button {
+.auth-card button {
     width: 100%;
     padding: 12px;
     background: #667eea;
@@ -73,11 +73,11 @@ button {
     transition: background 0.3s;
 }
 
-button:hover {
+.auth-card button:hover {
     background: #5a67d8;
 }
 
-button:disabled {
+.auth-card button:disabled {
     background: #a0aec0;
     cursor: not-allowed;
 }
@@ -167,7 +167,7 @@ button:disabled {
     cursor: pointer;
 }
 
-textarea {
+.auth-card textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -177,7 +177,7 @@ textarea {
     resize: vertical;
 }
 
-textarea:focus {
+.auth-card textarea:focus {
     outline: none;
     border-color: #667eea;
 }
@@ -219,11 +219,12 @@ textarea:focus {
 
 /* Table styles */
 @media (max-width: 768px) {
-    table {
+    .auth-card table {
         font-size: 14px;
     }
-    
-    td, th {
+
+    .auth-card td,
+    .auth-card th {
         padding: 8px !important;
     }
 }
