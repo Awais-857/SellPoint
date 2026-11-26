@@ -30,7 +30,7 @@ import AdminReviews from './components/AdminReviews';
 import OrderTracking from './components/OrderTracking';
 import './App.css';
 import { IS_DEMO_MODE } from './config/appConfig';
-import { DemoProvider } from './demo/DemoProvider';
+import { DemoProvider, useDemo } from './demo/DemoProvider';
 import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
 
 // Protected Route Component
@@ -65,6 +65,15 @@ function PublicRoute({ children }) {
   return children;
 }
 
+function DemoCustomerRoute({ children }) {
+  const { session } = useDemo();
+
+  if (!session) return <Navigate to="/demo" replace />;
+  if (session.role !== 'Customer') return <Navigate to="/demo/workspace" replace />;
+
+  return children;
+}
+
 function App() {
   if (IS_DEMO_MODE) {
     return (
@@ -74,8 +83,8 @@ function App() {
             <Routes>
               <Route path="/demo" element={<DemoPortal />} />
               <Route path="/demo/workspace" element={<DemoWorkspace />} />
-              <Route path="/products" element={<ProductListing />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/products" element={<DemoCustomerRoute><ProductListing /></DemoCustomerRoute>} />
+              <Route path="/product/:id" element={<DemoCustomerRoute><ProductDetail /></DemoCustomerRoute>} />
               <Route path="/" element={<Navigate to="/demo" replace />} />
               <Route path="*" element={<Navigate to="/demo" replace />} />
             </Routes>
