@@ -48,7 +48,7 @@ export const saveVendorProduct = (state, vendorId, formData, productId = null) =
     return {
       ...state,
       products: state.products.map(item => item.productId === existing.productId
-        ? { ...item, ...productData, moderationStatus, isActive: moderationStatus === 'Approved' ? item.isActive : false, moderationReason: null }
+        ? { ...item, ...(item.variants?.length ? { ...productData, stockQuantity: item.variants.reduce((sum, variant) => sum + Number(variant.stockQuantity || 0), 0) } : productData), moderationStatus, isActive: moderationStatus === 'Approved' ? item.isActive : false, moderationReason: null }
         : item)
     };
   }
