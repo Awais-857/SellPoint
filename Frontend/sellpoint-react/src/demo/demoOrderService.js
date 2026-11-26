@@ -1,3 +1,5 @@
+import { isPublicDemoProduct } from '../services/catalogService';
+
 export const DEMO_CART_KEY = 'sellpoint_demo_cart_v1';
 
 export const calculateDemoCartSummary = (items) => {
@@ -19,21 +21,38 @@ export const buildDemoOrder = (demoState, session, cartItems, address, paymentMe
   if (!session || session.role !== 'Customer') throw new Error('A Customer demo session is required.');
   if (!cartItems.length) throw new Error('Your cart is empty.');
 
-  const products = demoState.products.map(product => ({ ...product }));
+  const products = demoState.products.map(product => ({ ...product, variants: (product.variants || []).map(variant => ({ ...variant, options: { ...(variant.options || {}) } })) }));
   const orderItems = cartItems.map((cartItem, index) => {
-    const product = products.find(item => item.productId === cartItem.productId && item.isActive);
+    const product = products.find(item => item.productId === cartItem.productId && isPublicDemoProduct(demoState, item));
     if (!product) throw new Error(`${cartItem.productName} is no longer available.`);
-    if (product.stockQuantity < cartItem.quantity) {
-      throw new Error(`Only ${product.stockQuantity} unit(s) of ${product.productName} remain in stock.`);
+
+    let variant = null;
+    if (Array.isArray(product.variants) && product.variants.length) {
+      variant = product.variants.find(item => Number(item.variantId) === Number(cartItem.variantId));
+      if (!variant) throw new Error(`Please select an available option for ${product.productName} again.`);
+      if (variant.stockQuantity < cartItem.quantity) {
+        throw new Error(`Only ${variant.stockQuantity} unit(s) of ${product.productName} (${variant.variantName}) remain in stock.`);
+      }
+      variant.stockQuantity -= cartItem.quantity;
+      product.stockQuantity = product.variants.reduce((sum, item) => sum + Number(item.stockQuantity || 0), 0);
+    } else {
+      if (product.stockQuantity < cartItem.quantity) {
+        throw new Error(`Only ${product.stockQuantity} unit(s) of ${product.productName} remain in stock.`);
+      }
+      product.stockQuantity -= cartItem.quantity;
     }
-    product.stockQuantity -= cartItem.quantity;
-    const unitPrice = Number((product.price * (1 - (product.discountPercent || 0) / 100)).toFixed(2));
+
+    const basePrice = Number(variant?.price ?? product.price);
+    const unitPrice = Number((basePrice * (1 - (product.discountPercent || 0) / 100)).toFixed(2));
     return {
       orderItemId: Math.max(0, ...demoState.orders.flatMap(order => (order.items || []).map(item => item.orderItemId || 0))) + index + 1,
       productId: product.productId,
       productName: product.productName,
       vendorId: product.vendorId,
       vendorName: product.businessName,
+      variantId: variant?.variantId ?? null,
+      variantName: variant?.variantName ?? null,
+      variantOptions: variant?.options ?? null,
       quantity: cartItem.quantity,
       unitPrice,
       itemTotal: Number((unitPrice * cartItem.quantity).toFixed(2)),
@@ -85,12 +104,19 @@ export const cancelDemoOrder = (demoState, orderId, customerId) => {
 
   const cancelledOrder = { ...order, orderStatus: 'Cancelled', paymentStatus: order.paymentStatus === 'Paid' ? 'Refunded' : order.paymentStatus };
   const products = demoState.products.map(product => {
-    const cancelledQuantity = (order.items || [])
-      .filter(item => item.productId === product.productId)
-      .reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-    return cancelledQuantity
-      ? { ...product, stockQuantity: product.stockQuantity + cancelledQuantity }
-      : product;
+    const cancelledItems = (order.items || []).filter(item => item.productId === product.productId);
+    if (!cancelledItems.length) return product;
+    const variants = (product.variants || []).map(variant => {
+      const quantity = cancelledItems
+        .filter(item => Number(item.variantId) === Number(variant.variantId))
+        .reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+      return quantity ? { ...variant, stockQuantity: Number(variant.stockQuantity || 0) + quantity } : variant;
+    });
+    const variantRestock = cancelledItems.some(item => item.variantId != null);
+    const plainQuantity = variantRestock ? 0 : cancelledItems.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+    return variantRestock
+      ? { ...product, variants, stockQuantity: variants.reduce((sum, item) => sum + Number(item.stockQuantity || 0), 0) }
+      : { ...product, stockQuantity: Number(product.stockQuantity || 0) + plainQuantity };
   });
   return {
     ...demoState,
