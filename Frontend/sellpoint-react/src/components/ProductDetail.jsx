@@ -1,7 +1,7 @@
 // src/components/ProductDetail.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import { catalogService } from '../services/catalogService';
 import styles from './ProductDetail.module.css';
 import { addToCart } from '../services/cartHelper';
 
@@ -26,12 +26,16 @@ function ProductDetail() {
         setError('');
 
         try {
-            const response = await api.get(`/products/${id}`);
-            setProduct(response.data);
+            const productData = await catalogService.getProductById(id);
+            if (!productData) {
+                setError('Product not found');
+                return;
+            }
+            setProduct(productData);
 
             // Fetch related products from same category
             if (response.data.categoryId) {
-                fetchRelatedProducts(response.data.categoryId, response.data.productId);
+                fetchRelatedProducts(productData.categoryId, productData.productId);
             }
         } catch (err) {
             console.error('Failed to fetch product', err);
@@ -43,8 +47,8 @@ function ProductDetail() {
 
     const fetchReviews = async () => {
         try {
-            const response = await api.get(`/products/${id}/reviews`);
-            setReviews(response.data);
+            const reviewData = await catalogService.getProductReviews(id);
+            setReviews(reviewData);
         } catch (err) {
             console.error('Failed to fetch reviews', err);
         }
@@ -52,14 +56,13 @@ function ProductDetail() {
 
     const fetchRelatedProducts = async (categoryId, currentProductId) => {
         try {
-            const response = await api.get('/products', {
-                params: {
-                    categoryId: categoryId,
-                    pageSize: 4
-                }
+            const result = await catalogService.listProducts({
+                categoryId,
+                pageSize: 5,
+                pageNumber: 1
             });
             // Filter out current product
-            const related = (response.data.products || []).filter(p => p.productId !== currentProductId);
+            const related = (result.products || []).filter(p => p.productId !== currentProductId);
             setRelatedProducts(related.slice(0, 4));
         } catch (err) {
             console.error('Failed to fetch related products', err);
