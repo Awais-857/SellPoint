@@ -4,7 +4,7 @@ const baseOrder = { orderId: 5001, customerId: 301, totalAmount: 203, paymentMet
   items: [{ productId: 1, quantity: 2, variantId: 11 }] };
 const baseState = () => ({
   orders: [baseOrder], payments: [createDemoPayment(baseOrder, [], new Date('2026-11-27T10:00:00Z'))],
-  products: [{ productId: 1, stockQuantity: 5, variants: [{ variantId: 11, stockQuantity: 3 }, { variantId: 12, stockQuantity: 2 }] }]
+  products: [{ productId: 1, stockQuantity: 3, variants: [{ variantId: 11, stockQuantity: 1 }, { variantId: 12, stockQuantity: 2 }] }]
 });
 
 describe('demoPaymentService', () => {
