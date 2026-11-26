@@ -2,7 +2,7 @@ import { createDemoState } from './demoSeedData';
 
 export const DEMO_STATE_STORAGE_KEY = 'sellpoint_demo_state_v1';
 export const DEMO_SESSION_STORAGE_KEY = 'sellpoint_demo_session_v1';
-export const DEMO_STATE_VERSION = 7;
+export const DEMO_STATE_VERSION = 8;
 export const DEMO_CART_STORAGE_KEY = 'sellpoint_demo_cart_v1';
 
 const readJson = (key) => {
@@ -27,7 +27,7 @@ const writeJson = (key, value) => {
 const isValidDemoState = (data) => {
   const collectionNames = [
     'categories', 'vendors', 'customers', 'addresses', 'products',
-    'orders', 'reviews', 'disputes', 'returnRequests', 'notifications'
+    'orders', 'reviews', 'disputes', 'returnRequests', 'notifications', 'payments'
   ];
   return Boolean(data) && collectionNames.every(name => Array.isArray(data[name]));
 };
@@ -36,9 +36,27 @@ export const getDemoState = () => {
   const stored = readJson(DEMO_STATE_STORAGE_KEY);
   if (stored && stored.version === DEMO_STATE_VERSION && isValidDemoState(stored.data)) return stored.data;
 
-  // Preserve existing visitor changes when upgrading the previous v6 dataset.
-  if (stored && stored.version === 6 && stored.data) {
-    const migrated = { ...stored.data, notifications: [] };
+  // Preserve visitor changes while adding payment records to existing Demo data.
+  if (stored && [6, 7].includes(stored.version) && stored.data) {
+    const migrated = {
+      ...stored.data,
+      notifications: Array.isArray(stored.data.notifications) ? stored.data.notifications : [],
+      payments: (stored.data.payments || []).length ? stored.data.payments : (stored.data.orders || []).map((order, index) => ({
+        paymentId: 20001 + index,
+        orderId: order.orderId,
+        customerId: order.customerId,
+        amount: Number(order.totalAmount || 0),
+        currency: 'USD',
+        method: order.paymentMethod || 'Cash on delivery',
+        status: order.paymentStatus === 'Refunded' ? 'Refunded' : order.paymentStatus === 'Paid' ? 'Paid' : order.paymentStatus === 'Failed' ? 'Failed' : 'Pending',
+        refundedAmount: order.paymentStatus === 'Refunded' ? Number(order.totalAmount || 0) : 0,
+        refundStatus: order.paymentStatus === 'Refunded' ? 'Refunded' : 'Not refunded',
+        refunds: [],
+        transactions: [],
+        createdAt: order.orderDate,
+        paidAt: order.paymentStatus === 'Paid' || order.paymentStatus === 'Refunded' ? order.orderDate : null
+      }))
+    };
     if (isValidDemoState(migrated)) {
       saveDemoState(migrated);
       return migrated;
