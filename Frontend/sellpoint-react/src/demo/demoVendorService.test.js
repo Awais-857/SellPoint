@@ -43,6 +43,16 @@ describe('demoVendorService', () => {
     expect(() => updateVendorOrderItemStatus(state, 102, 8001, 'Delivered')).toThrow(/not found/);
   });
 
+  test('keeps a parent order processing while another vendor still has work in progress', () => {
+    const secondVendor = { vendorId: 102, userId: 202, businessName: 'Other Store', status: 'Approved', isActive: true };
+    const secondItem = { orderItemId: 8002, productId: 2001, productName: 'Desk Lamp', vendorId: 102, quantity: 1, unitPrice: 30, itemTotal: 30, itemStatus: 'Processing' };
+    const multiVendorOrder = { ...order, orderStatus: 'Processing', items: [{ ...order.items[0], itemStatus: 'Pending' }, secondItem] };
+    const updated = updateVendorOrderItemStatus({ ...state, vendors: [vendor, secondVendor], orders: [multiVendorOrder] }, 101, 8001, 'Shipped');
+    expect(updated.orders[0].items[0].itemStatus).toBe('Shipped');
+    expect(updated.orders[0].items[1].itemStatus).toBe('Processing');
+    expect(updated.orders[0].orderStatus).toBe('Processing');
+  });
+
   test('calculates vendor revenue without cancelled or refunded orders', () => {
     const revenue = getVendorRevenue(state, 101, 'monthly');
     expect(revenue.summary.totalSales).toBe(100);
