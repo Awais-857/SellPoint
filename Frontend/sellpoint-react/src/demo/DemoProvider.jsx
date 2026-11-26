@@ -9,6 +9,7 @@ import {
   saveDemoSession,
   startDemoSession
 } from './demoStorage';
+import { createNotificationsForStateChange } from './demoNotificationService';
 
 const DemoContext = createContext(null);
 
@@ -28,7 +29,8 @@ export function DemoProvider({ children }) {
   }, []);
 
   const updateDemoState = useCallback((updater) => {
-    const nextState = typeof updater === 'function' ? updater(demoState) : updater;
+    const proposedState = typeof updater === 'function' ? updater(demoState) : updater;
+    const nextState = createNotificationsForStateChange(demoState, proposedState);
     saveDemoState(nextState);
     setDemoState(nextState);
     return nextState;
@@ -47,23 +49,14 @@ export function DemoProvider({ children }) {
     setDemoState(nextState);
 
     if (session) {
-      const nextSession = {
-        ...session,
-        startedAt: new Date().toISOString()
-      };
+      const nextSession = { ...session, startedAt: new Date().toISOString() };
       saveDemoSession(nextSession);
       setSession(nextSession);
     }
   }, [session]);
 
   const value = useMemo(() => ({
-    session,
-    demoState,
-    beginSession,
-    endSession,
-    updateDemoState,
-    updateSessionProfile,
-    resetWorkspace
+    session, demoState, beginSession, endSession, updateDemoState, updateSessionProfile, resetWorkspace
   }), [session, demoState, beginSession, endSession, updateDemoState, updateSessionProfile, resetWorkspace]);
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>;
@@ -71,8 +64,6 @@ export function DemoProvider({ children }) {
 
 export function useDemo() {
   const context = useContext(DemoContext);
-  if (!context) {
-    throw new Error('useDemo must be used inside DemoProvider.');
-  }
+  if (!context) throw new Error('useDemo must be used inside DemoProvider.');
   return context;
 }

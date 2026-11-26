@@ -31,6 +31,7 @@ import OrderTracking from './components/OrderTracking';
 import './App.css';
 import { IS_DEMO_MODE } from './config/appConfig';
 import { DemoProvider, useDemo } from './demo/DemoProvider';
+import { DemoNotificationCenter } from './demo/DemoNotificationCenter';
 import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
 import { DemoWishlistPage } from './demo/DemoWishlistPages';
 import { DemoCustomerProfilePage, DemoCustomerAddressesPage } from './demo/DemoCustomerAccountPages';
@@ -150,6 +151,7 @@ function App() {
               <Route path="/" element={<Navigate to="/demo" replace />} />
               <Route path="*" element={<Navigate to="/demo" replace />} />
             </Routes>
+            <DemoNotificationCenter />
           </div>
         </DemoProvider>
       </BrowserRouter>

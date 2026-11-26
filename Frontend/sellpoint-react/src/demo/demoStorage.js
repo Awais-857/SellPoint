@@ -2,7 +2,7 @@ import { createDemoState } from './demoSeedData';
 
 export const DEMO_STATE_STORAGE_KEY = 'sellpoint_demo_state_v1';
 export const DEMO_SESSION_STORAGE_KEY = 'sellpoint_demo_session_v1';
-export const DEMO_STATE_VERSION = 6;
+export const DEMO_STATE_VERSION = 7;
 export const DEMO_CART_STORAGE_KEY = 'sellpoint_demo_cart_v1';
 
 const readJson = (key) => {
@@ -27,25 +27,30 @@ const writeJson = (key, value) => {
 const isValidDemoState = (data) => {
   const collectionNames = [
     'categories', 'vendors', 'customers', 'addresses', 'products',
-    'orders', 'reviews', 'disputes', 'returnRequests'
+    'orders', 'reviews', 'disputes', 'returnRequests', 'notifications'
   ];
   return Boolean(data) && collectionNames.every(name => Array.isArray(data[name]));
 };
 
 export const getDemoState = () => {
   const stored = readJson(DEMO_STATE_STORAGE_KEY);
-  if (stored && stored.version === DEMO_STATE_VERSION && isValidDemoState(stored.data)) {
-    return stored.data;
+  if (stored && stored.version === DEMO_STATE_VERSION && isValidDemoState(stored.data)) return stored.data;
+
+  // Preserve existing visitor changes when upgrading the previous v6 dataset.
+  if (stored && stored.version === 6 && stored.data) {
+    const migrated = { ...stored.data, notifications: [] };
+    if (isValidDemoState(migrated)) {
+      saveDemoState(migrated);
+      return migrated;
+    }
   }
+
   const freshState = createDemoState();
   saveDemoState(freshState);
   return freshState;
 };
 
-export const saveDemoState = (data) => writeJson(DEMO_STATE_STORAGE_KEY, {
-  version: DEMO_STATE_VERSION,
-  data
-});
+export const saveDemoState = (data) => writeJson(DEMO_STATE_STORAGE_KEY, { version: DEMO_STATE_VERSION, data });
 
 export const resetDemoState = () => {
   const freshState = createDemoState();
@@ -53,8 +58,6 @@ export const resetDemoState = () => {
   return freshState;
 };
 
-// Remove every SellPoint Demo key, including future demo-only features. This
-// deliberately leaves API-mode credentials and the API guest cart untouched.
 export const clearDemoStorage = () => {
   try {
     const keys = [];
@@ -65,7 +68,7 @@ export const clearDemoStorage = () => {
     keys.forEach(key => window.localStorage.removeItem(key));
     window.dispatchEvent(new Event('cartUpdated'));
   } catch (error) {
-    console.error('Unable to clear all SellPoint demo data.', error);
+    console.error('Unable to clear all SellPoint Demo data.', error);
   }
 };
 
@@ -81,7 +84,7 @@ export const clearDemoSession = () => {
   try {
     window.localStorage.removeItem(DEMO_SESSION_STORAGE_KEY);
   } catch (error) {
-    console.error('Unable to clear the SellPoint demo session.', error);
+    console.error('Unable to clear the SellPoint Demo session.', error);
   }
 };
 
@@ -96,15 +99,11 @@ export const startDemoSession = (role, vendorId = 101) => {
     const vendor = createDemoState().vendors.find(item => item.vendorId === Number(vendorId));
     if (!vendor) throw new Error('Choose a valid demo vendor.');
     identity = {
-      userId: vendor.userId,
-      vendorId: vendor.vendorId,
-      displayName: vendor.ownerName,
-      businessName: vendor.businessName,
-      email: vendor.email
+      userId: vendor.userId, vendorId: vendor.vendorId, displayName: vendor.ownerName,
+      businessName: vendor.businessName, email: vendor.email
     };
   }
   if (!identity) throw new Error('Choose a valid demo role: Customer, Vendor, or Admin.');
-
   const session = { role, ...identity, startedAt: new Date().toISOString() };
   saveDemoSession(session);
   return session;
