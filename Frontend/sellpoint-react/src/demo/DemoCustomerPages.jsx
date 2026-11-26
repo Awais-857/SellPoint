@@ -17,6 +17,7 @@ function DemoHeader({ backLabel = 'Demo workspace', backTo = '/demo/workspace' }
       <button className="demo-shop-brand" onClick={() => navigate('/products')}>SellPoint <span>DEMO</span></button>
       <nav>
         <button onClick={() => navigate('/products')}>Shop</button>
+        <button onClick={() => navigate('/stores')}>Stores</button>
         <button onClick={() => navigate('/cart')}>Cart</button>
         <button onClick={() => navigate('/wishlist')}>Wishlist</button>
         <button onClick={() => navigate('/order-history')}>My orders</button>
