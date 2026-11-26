@@ -34,7 +34,7 @@ function ProductCard({ product, onAddToCart }) {
                     {product.productName}
                 </h3>
 
-                <p className={styles['product-vendor']}>{product.businessName}</p>
+                <p className={styles['product-vendor']}>{IS_DEMO_MODE ? <button type="button" className="demo-product-store-link" onClick={() => navigate('/store/' + product.vendorId)}>{product.businessName}</button> : product.businessName}</p>
                 {IS_DEMO_MODE && <DemoWishlistButton product={product} />}
 
                 <div className={styles['product-rating']}>
