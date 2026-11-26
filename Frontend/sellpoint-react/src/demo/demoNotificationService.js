@@ -15,6 +15,7 @@ export const createNotificationsForStateChange = (previous, next, now = new Date
   const oldProducts = new Map((previous.products || []).map(item => [Number(item.productId), item]));
   const oldReturns = new Map((previous.returnRequests || []).map(item => [Number(item.returnId), item]));
   const oldReviews = new Map((previous.reviews || []).map(item => [Number(item.reviewId), item]));
+  const oldPayments = new Map((previous.payments || []).map(item => [Number(item.paymentId), item]));
 
   (next.orders || []).forEach(order => {
     const old = oldOrders.get(Number(order.orderId));
@@ -87,6 +88,26 @@ export const createNotificationsForStateChange = (previous, next, now = new Date
     }
     if (old.status !== review.status) {
       add('Customer', review.customerId, 'review-moderation', 'Review status updated', `Your review for ${review.productName} was ${String(review.status).toLowerCase()}.`, '/customer/reviews');
+    }
+  });
+
+
+  (next.payments || []).forEach(payment => {
+    const old = oldPayments.get(Number(payment.paymentId));
+    if (!old || old.status === payment.status) return;
+    if (payment.status === 'Paid') {
+      add('Customer', payment.customerId, 'payment-success', 'Payment successful', `Payment for order #${payment.orderId} was successful.`, `/order-detail/${payment.orderId}`);
+      add('Admin', null, 'payment-success', 'Payment received', `Payment for order #${payment.orderId} was recorded.`, '/admin/payments');
+      const order = (next.orders || []).find(item => Number(item.orderId) === Number(payment.orderId));
+      [...new Set((order?.items || []).map(item => Number(item.vendorId)))].forEach(vendorId => {
+        add('Vendor', vendorId, 'payment-success', 'Order payment received', `Payment for order #${payment.orderId} was successful.`, '/vendor/orders');
+      });
+    } else if (payment.status === 'Failed') {
+      add('Customer', payment.customerId, 'payment-failed', 'Payment failed', `Payment for order #${payment.orderId} failed. The order was cancelled.`, `/order-detail/${payment.orderId}`);
+      add('Admin', null, 'payment-failed', 'Payment failed', `Payment for order #${payment.orderId} failed.`, '/admin/payments');
+    } else if (payment.status === 'Partially Refunded' || payment.status === 'Refunded') {
+      add('Customer', payment.customerId, 'payment-refund', 'Refund recorded', `A simulated refund of ${Number(payment.refunds?.[payment.refunds.length - 1]?.amount || 0).toFixed(2)} was recorded for order #${payment.orderId}.`, `/order-detail/${payment.orderId}`);
+      add('Admin', null, 'payment-refund', 'Refund recorded', `A simulated refund was recorded for order #${payment.orderId}.`, '/admin/payments');
     }
   });
 
