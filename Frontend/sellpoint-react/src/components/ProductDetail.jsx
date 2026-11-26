@@ -5,6 +5,7 @@ import { catalogService } from '../services/catalogService';
 import styles from './ProductDetail.module.css';
 import { addToCart } from '../services/cartHelper';
 import { IS_DEMO_MODE } from '../config/appConfig';
+import { DemoWishlistButton } from '../demo/DemoWishlistPages';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -16,6 +17,10 @@ function ProductDetail() {
     const [addingToCart, setAddingToCart] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [relatedProducts, setRelatedProducts] = useState([]);
+    const [selectedVariantId, setSelectedVariantId] = useState('');
+    const selectedVariant = product?.variants?.find(item => String(item.variantId) === String(selectedVariantId)) || product?.variants?.[0] || null;
+    const availableStock = selectedVariant ? Number(selectedVariant.stockQuantity) : Number(product?.stockQuantity || 0);
+    const displayedPrice = Number(selectedVariant?.price ?? product?.price ?? 0);
 
     useEffect(() => {
         fetchProduct();
@@ -72,13 +77,13 @@ function ProductDetail() {
 
     const handleQuantityChange = (e) => {
         const value = parseInt(e.target.value);
-        if (value >= 1 && value <= (product?.stockQuantity || 10)) {
+        if (value >= 1 && value <= availableStock) {
             setQuantity(value);
         }
     };
 
     const incrementQuantity = () => {
-        if (quantity < (product?.stockQuantity || 10)) {
+        if (quantity < availableStock) {
             setQuantity(quantity + 1);
         }
     };
@@ -92,7 +97,7 @@ function ProductDetail() {
     const handleAddToCart = async () => {
         setAddingToCart(true);
         try {
-            await addToCart(product, quantity);
+            await addToCart(product, quantity, selectedVariant);
             alert(`${quantity} × ${product.productName} added to cart!`);
             return true;
         } catch (err) {
@@ -117,9 +122,9 @@ function ProductDetail() {
         }
     };
 
-    const discountedPrice = product?.price * (1 - (product?.discountPercent || 0) / 100);
+    const discountedPrice = displayedPrice * (1 - (product?.discountPercent || 0) / 100);
     const hasDiscount = (product?.discountPercent || 0) > 0;
-    const savings = product?.price - discountedPrice;
+    const savings = displayedPrice - discountedPrice;
 
     if (loading) {
         return (
@@ -151,7 +156,7 @@ function ProductDetail() {
                 <div className={styles['header-links']}>
                     <span onClick={() => navigate('/products')}>Continue Shopping</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
-                    <span onClick={() => navigate('/dashboard')}>My Account</span>
+                    <span onClick={() => navigate(IS_DEMO_MODE ? '/demo/workspace' : '/dashboard')}>My Account</span>
                 </div>
             </div>
 
@@ -184,7 +189,7 @@ function ProductDetail() {
 
                 {/* Product Details */}
                 <div className={styles['product-info']}>
-                    <h1 className={styles['product-title']}>{product.productName}</h1>
+                    <div className="demo-product-title-row"><h1 className={styles['product-title']}>{product.productName}</h1>{IS_DEMO_MODE && <DemoWishlistButton product={product} />}</div>
 
                     <div className={styles['product-meta']}>
                         <span className={styles['vendor-name']}>
@@ -209,9 +214,15 @@ function ProductDetail() {
                         )}
                     </div>
 
+                    {IS_DEMO_MODE && Array.isArray(product.variants) && product.variants.length > 0 && <div className="demo-variant-selector">
+                        <label htmlFor="demo-product-variant">Choose an option</label>
+                        <select id="demo-product-variant" value={selectedVariant?.variantId || ''} onChange={event => { setSelectedVariantId(event.target.value); setQuantity(1); }}>
+                            {product.variants.map(variant => <option key={variant.variantId} value={variant.variantId} disabled={Number(variant.stockQuantity) <= 0}>{variant.variantName} — {Number(variant.stockQuantity)} available</option>)}
+                        </select>
+                    </div>}
                     <div className={styles['product-stock']}>
-                        {product.stockQuantity > 0 ? (
-                            <span className={styles['in-stock']}>✓ In Stock ({product.stockQuantity} available)</span>
+                        {availableStock > 0 ? (
+                            <span className={styles['in-stock']}>✓ In Stock ({availableStock} available)</span>
                         ) : (
                             <span className={styles['out-of-stock']}>✗ Out of Stock</span>
                         )}
@@ -228,7 +239,7 @@ function ProductDetail() {
                         <p>{product.description || 'No description available.'}</p>
                     </div>
 
-                    {product.stockQuantity > 0 && (
+                    {availableStock > 0 && (
                         <div className={styles['purchase-section']}>
                             <div className={styles['quantity-selector']}>
                                 <label>Quantity:</label>
@@ -239,9 +250,9 @@ function ProductDetail() {
                                         value={quantity}
                                         onChange={handleQuantityChange}
                                         min="1"
-                                        max={product.stockQuantity}
+                                        max={availableStock}
                                     />
-                                    <button onClick={incrementQuantity} disabled={quantity >= product.stockQuantity}>+</button>
+                                    <button onClick={incrementQuantity} disabled={quantity >= availableStock}>+</button>
                                 </div>
                             </div>
 
