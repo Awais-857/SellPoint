@@ -61,6 +61,20 @@ export const getCart = async () => {
 };
 
 export const addToCart = async (product, quantity = 1) => {
+    if (IS_DEMO_MODE) {
+        if (!product || !product.isActive || Number(product.stockQuantity) <= 0) {
+            throw new Error('This product is currently unavailable.');
+        }
+        if (!Number.isInteger(quantity) || quantity < 1) {
+            throw new Error('Choose a valid quantity.');
+        }
+        const existingItem = readGuestCart().find((item) => item.productId === product.productId);
+        const requestedQuantity = (existingItem?.quantity || 0) + quantity;
+        if (requestedQuantity > Number(product.stockQuantity)) {
+            throw new Error(`Only ${product.stockQuantity} unit(s) are available.`);
+        }
+    }
+
     if (isLoggedIn()) {
         await api.post('/cart/add', { productId: product.productId, quantity });
         window.dispatchEvent(new Event('cartUpdated'));

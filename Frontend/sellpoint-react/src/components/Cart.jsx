@@ -107,7 +107,7 @@ function Cart() {
             alert('Your cart is empty');
             return;
         }
-        if (!loggedIn) {
+        if (!loggedIn && !demoMode) {
             alert('Please log in to proceed with checkout.');
             navigate('/login', { state: { from: 'checkout' } });
             return;
@@ -137,9 +137,11 @@ function Cart() {
                     <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                     <div className={styles['header-links']}>
                         <span onClick={() => navigate('/products')}>Continue Shopping</span>
-                        {loggedIn
-                            ? <span onClick={() => navigate('/dashboard')}>My Account</span>
-                            : <span onClick={() => navigate('/login')}>Login</span>}
+                        {demoMode
+                            ? <span onClick={() => navigate('/demo/workspace')}>Demo Workspace</span>
+                            : loggedIn
+                                ? <span onClick={() => navigate('/dashboard')}>My Account</span>
+                                : <span onClick={() => navigate('/login')}>Login</span>}
                     </div>
                 </div>
                 <div className={styles['loading-state']}>
@@ -156,9 +158,11 @@ function Cart() {
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                 <div className={styles['header-links']}>
                     <span onClick={handleContinueShopping}>Continue Shopping</span>
-                    {loggedIn
-                        ? <span onClick={() => navigate('/dashboard')}>My Account</span>
-                        : <span onClick={() => navigate('/login')}>Login</span>}
+                    {demoMode
+                        ? <span onClick={() => navigate('/demo/workspace')}>Demo Workspace</span>
+                        : loggedIn
+                            ? <span onClick={() => navigate('/dashboard')}>My Account</span>
+                            : <span onClick={() => navigate('/login')}>Login</span>}
                 </div>
             </div>
 

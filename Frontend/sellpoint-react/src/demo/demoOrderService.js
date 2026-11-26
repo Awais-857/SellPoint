@@ -84,8 +84,17 @@ export const cancelDemoOrder = (demoState, orderId, customerId) => {
   if (!['Pending', 'Confirmed'].includes(order.orderStatus)) throw new Error('Only pending or confirmed orders can be cancelled.');
 
   const cancelledOrder = { ...order, orderStatus: 'Cancelled', paymentStatus: order.paymentStatus === 'Paid' ? 'Refunded' : order.paymentStatus };
+  const products = demoState.products.map(product => {
+    const cancelledQuantity = (order.items || [])
+      .filter(item => item.productId === product.productId)
+      .reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+    return cancelledQuantity
+      ? { ...product, stockQuantity: product.stockQuantity + cancelledQuantity }
+      : product;
+  });
   return {
     ...demoState,
+    products,
     orders: demoState.orders.map(item => item.orderId === order.orderId ? cancelledOrder : item)
   };
 };
