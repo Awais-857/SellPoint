@@ -21,7 +21,7 @@ const state = {
   ],
   reviews: [
     { reviewId: 1, vendorId: 101, productId: 1, status: 'Approved', rating: 5, createdAt: '2026-02-01' },
-    { reviewId: 2, vendorId: 101, productId: 1, status: 'Pending', rating: 1, createdAt: '2026-02-02' },
+    { reviewId: 2, vendorId: 101, productId: 2, status: 'Approved', rating: 1, createdAt: '2026-02-02' },
     { reviewId: 3, vendorId: 102, productId: 3, status: 'Approved', rating: 4, createdAt: '2026-02-03' }
   ]
 };
@@ -48,6 +48,7 @@ describe('demoStoreService', () => {
       averageRating: 5
     });
     expect(getPublicDemoStoreReviews(state, 101)).toHaveLength(1);
+    expect(getPublicDemoStoreReviews(state, 101).map(review => review.reviewId)).toEqual([1]);
   });
 
   test('supports store product search, category filtering, sorting and pagination', () => {
@@ -59,6 +60,7 @@ describe('demoStoreService', () => {
       ]
     };
     expect(getPublicDemoStoreProducts(expanded, 101, { search: 'another' }).totalCount).toBe(1);
+    expect(getPublicDemoStoreProducts(expanded, 101, { search: 'no-match' }).categories).toHaveLength(1);
     expect(getPublicDemoStoreProducts(expanded, 101, { categoryId: 2 }).totalCount).toBe(0);
     expect(getPublicDemoStoreProducts(expanded, 101, { sortBy: 'price-low' }).products[0].price).toBe(5);
     expect(getPublicDemoStoreProducts(expanded, 101, { pageSize: 1, page: 2 }).products).toHaveLength(1);
