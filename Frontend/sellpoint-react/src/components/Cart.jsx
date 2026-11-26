@@ -158,6 +158,7 @@ function Cart() {
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                 <div className={styles['header-links']}>
                     <span onClick={handleContinueShopping}>Continue Shopping</span>
+                    {demoMode && <span onClick={() => navigate('/wishlist')}>Wishlist ♥</span>}
                     {demoMode
                         ? <span onClick={() => navigate('/demo/workspace')}>Demo Workspace</span>
                         : loggedIn
