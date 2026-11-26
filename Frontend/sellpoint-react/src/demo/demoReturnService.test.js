@@ -14,6 +14,7 @@ const fixture = () => ({
       vendorName: 'Nova Tech Store', variantId: 10011, variantName: 'Black', quantity: 2,
       unitPrice: 80.99, itemTotal: 161.98, itemStatus: 'Delivered', deliveredAt: '2026-11-22T10:00:00.000Z' }]
   }],
+  payments: [{ paymentId: 20017, orderId: 5017, customerId: 301, amount: 183.18, status: 'Paid', refundedAmount: 0, refundStatus: 'Not refunded', refunds: [], transactions: [] }],
   returnRequests: []
 });
 const now = new Date('2026-11-27T10:00:00.000Z');
@@ -65,6 +66,7 @@ describe('demoReturnService', () => {
     const id = state.returnRequests[0].returnId;
     const approved = decideDemoReturnAsVendor(state, id, 101, 'Approved', { restock: true }, now);
     expect(approved.returnRequests[0].refundStatus).toBe('Simulated refund recorded');
+    expect(approved.payments[0]).toMatchObject({ status: 'Partially Refunded', refundedAmount: 80.99 });
     expect(approved.products[0].variants[0].stockQuantity).toBe(8);
     expect(approved.products[0].variants[1].stockQuantity).toBe(5);
     expect(approved.products[0].stockQuantity).toBe(13);
@@ -80,6 +82,7 @@ describe('demoReturnService', () => {
     const final = decideDemoReturnAsAdmin(escalated, id, 'Approved', { restock: true, notes: 'Customer evidence accepted' }, now);
     expect(final.returnRequests[0].status).toBe('Approved by Admin');
     expect(final.returnRequests[0].refundAmount).toBe(80.99);
+    expect(final.payments[0]).toMatchObject({ status: 'Partially Refunded', refundedAmount: 80.99 });
     expect(final.products[0].variants[0].stockQuantity).toBe(8);
   });
   test('admin cannot decide a request that was not escalated', () => {
