@@ -20,6 +20,8 @@ describe('demoOrderService', () => {
     expect(result.order.addressId).toBeNull();
     expect(result.nextState.products[0].stockQuantity).toBe(3);
     expect(result.nextState.orders).toHaveLength(1);
+    expect(result.nextState.payments).toHaveLength(1);
+    expect(result.nextState.payments[0]).toMatchObject({ orderId: result.order.orderId, amount: 203, status: 'Pending' });
   });
 
   test('deducts and restores the stock of the selected variant only', () => {
