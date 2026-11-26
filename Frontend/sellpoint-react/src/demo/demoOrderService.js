@@ -72,7 +72,7 @@ export const buildDemoOrder = (demoState, session, cartItems, address, paymentMe
     customerName: session.displayName,
     orderDate: date.toISOString(),
     orderStatus: 'Pending',
-    paymentStatus: paymentMethod === 'DemoCard' ? 'Simulated' : 'Pending',
+    paymentStatus: 'Pending',
     paymentMethod: paymentMethod === 'DemoCard' ? 'Demo Card (no charge)' : 'CashOnDelivery',
     subtotal,
     shipping,
