@@ -25,9 +25,11 @@ describe('demoOrderService', () => {
     expect(() => buildDemoOrder(state, { ...session, role: 'Vendor' }, cart, address, 'CashOnDelivery')).toThrow(/Customer demo session/);
   });
 
-  test('cancels only a customer's pending order', () => {
+  test("cancels a customer's pending order and restores stock", () => {
     const order = { orderId: 5001, customerId: 301, orderStatus: 'Pending', paymentStatus: 'Pending' };
-    expect(cancelDemoOrder({ ...state, orders: [order] }, 5001, 301).orders[0].orderStatus).toBe('Cancelled');
+    const cancelled = cancelDemoOrder({ ...state, orders: [order], products: [{ ...product, stockQuantity: 3 }] }, 5001, 301);
+    expect(cancelled.orders[0].orderStatus).toBe('Cancelled');
+    expect(cancelled.products[0].stockQuantity).toBe(3);
     expect(() => cancelDemoOrder({ ...state, orders: [order] }, 5001, 302)).toThrow(/not found/);
     expect(() => cancelDemoOrder({ ...state, orders: [{ ...order, orderStatus: 'Shipped' }] }, 5001, 301)).toThrow(/cannot be cancelled/);
   });
