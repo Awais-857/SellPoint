@@ -149,6 +149,7 @@ function ProductListing() {
                 <div className={styles['header-links']}>
                     <span onClick={() => navigate(IS_DEMO_MODE ? '/demo/workspace' : '/dashboard')}>{IS_DEMO_MODE ? 'Demo Workspace' : 'My Dashboard'}</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
+                    {IS_DEMO_MODE && <span onClick={() => navigate('/stores')}>Stores 🏪</span>}
                     {IS_DEMO_MODE && <span onClick={() => navigate('/wishlist')}>Wishlist ♥</span>}
                 </div>
             </div>
