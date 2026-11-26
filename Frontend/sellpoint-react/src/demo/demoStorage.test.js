@@ -22,7 +22,7 @@ describe('demoStorage', () => {
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
 
     expect(state.products.length).toBeGreaterThan(0);
-    expect(stored.version).toBe(6);
+    expect(stored.version).toBe(7);
     expect(stored.data.products).toHaveLength(state.products.length);
   });
 
@@ -31,11 +31,23 @@ describe('demoStorage', () => {
     const recovered = getDemoState();
 
     expect(recovered.products.length).toBeGreaterThan(0);
-    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(6);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(7);
 
     saveDemoState({ products: [] });
     const unsupported = getDemoState();
     expect(unsupported.products.length).toBeGreaterThan(0);
+  });
+
+
+  test('migrates existing version 6 demo data without discarding visitor changes', () => {
+    const existing = getDemoState();
+    existing.products[0].productName = 'Visitor custom product name';
+    window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 6, data: existing }));
+    const migrated = getDemoState();
+    const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
+    expect(migrated.products[0].productName).toBe('Visitor custom product name');
+    expect(migrated.notifications).toEqual([]);
+    expect(stored.version).toBe(7);
   });
 
   test('seed data includes pending and rejected product submissions', () => {

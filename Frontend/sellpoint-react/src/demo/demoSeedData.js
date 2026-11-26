@@ -216,7 +216,8 @@ export const DEMO_SEED_DATA = {
   orders,
   reviews,
   disputes,
-  returnRequests: []
+  returnRequests: [],
+  notifications: []
 };
 
 export const createDemoState = () => JSON.parse(JSON.stringify(DEMO_SEED_DATA));
