@@ -21,6 +21,8 @@ function ProductListing() {
     const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+    const [minRating, setMinRating] = useState('');
+    const [inStock, setInStock] = useState(false);
     const [sortBy, setSortBy] = useState('CreatedDate');
     const [sortOrder, setSortOrder] = useState('DESC');
 
@@ -48,7 +50,7 @@ function ProductListing() {
     // Fetch products when filters change
     useEffect(() => {
         fetchProducts();
-    }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, sortBy, sortOrder, currentPage]);
+    }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, minRating, inStock, sortBy, sortOrder, currentPage]);
 
     const fetchCategories = async () => {
         try {
@@ -69,6 +71,7 @@ function ProductListing() {
                 searchTerm: appliedSearchTerm || undefined,
                 minPrice: minPrice ? parseFloat(minPrice) : undefined,
                 maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+                ...(IS_DEMO_MODE ? { minRating: minRating || undefined, inStock } : {}),
                 sortBy,
                 sortOrder,
                 pageNumber: currentPage,
@@ -110,6 +113,8 @@ function ProductListing() {
         setAppliedSearchTerm('');
         setMinPrice('');
         setMaxPrice('');
+        setMinRating('');
+        setInStock(false);
         setSortBy('CreatedDate');
         setSortOrder('DESC');
         setCurrentPage(1);
@@ -188,6 +193,23 @@ function ProductListing() {
                             Apply
                         </button>
                     </div>
+
+                    {IS_DEMO_MODE && (
+                        <>
+                            <div className={styles['filter-section']}>
+                                <h4>Minimum Rating</h4>
+                                <select value={minRating} onChange={e => { setMinRating(e.target.value); setCurrentPage(1); }}>
+                                    <option value="">Any rating</option>
+                                    <option value="4">4 stars & up</option>
+                                    <option value="3">3 stars & up</option>
+                                    <option value="2">2 stars & up</option>
+                                </select>
+                            </div>
+                            <div className={styles['filter-section']}>
+                                <label><input type="checkbox" checked={inStock} onChange={e => { setInStock(e.target.checked); setCurrentPage(1); }} /> In-stock products only</label>
+                            </div>
+                        </>
+                    )}
 
                     <div className={styles['filter-section']}>
                         <h4>Sort By</h4>
