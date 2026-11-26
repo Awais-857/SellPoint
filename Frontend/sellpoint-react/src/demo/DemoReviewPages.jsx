@@ -46,7 +46,7 @@ export function DemoCustomerReviewsPage() {
     <section className="demo-review-panel"><h2>Purchases waiting for your review</h2>
       {eligible.length ? <div className="demo-review-purchase-list">{eligible.map(item => <article className="demo-shop-card demo-review-purchase" key={item.orderItemId}>
         <div><strong>{item.productName}{item.variantName ? ` — ${item.variantName}` : ''}</strong><small>Order #{item.orderId} · Delivered {dateLabel(item.orderDate)}</small></div>
-        <button className="demo-primary-button" onClick={() => navigate(`/product/${item.productId}/review`, { state: { orderItemId: item.orderItemId } })}>Write a review</button>
+        <button className="demo-primary-button" onClick={() => navigate(`/product/${item.productId}/review?orderItemId=${item.orderItemId}`, { state: { orderItemId: item.orderItemId } })}>Write a review</button>
       </article>)}</div> : <div className="demo-shop-card demo-empty-state"><h3>No purchases waiting for a review</h3><p>Once an order item is marked delivered, you can share your experience here.</p><button className="demo-outline-button" onClick={() => navigate('/order-history')}>View my orders</button></div>}
     </section>
     <section className="demo-review-panel"><h2>Your submitted reviews</h2>
@@ -66,7 +66,7 @@ export function DemoReviewForm() {
   const location = useLocation();
   const navigate = useNavigate();
   const { session, demoState, updateDemoState } = useDemo();
-  const orderItemId = location.state?.orderItemId;
+  const orderItemId = new URLSearchParams(location.search).get('orderItemId') || location.state?.orderItemId;
   const purchase = getEligibleDemoReviewItems(demoState, session.userId).find(item =>
     Number(item.productId) === Number(id) && Number(item.orderItemId) === Number(orderItemId)
   );
@@ -81,8 +81,8 @@ export function DemoReviewForm() {
       setSuccess(true); setError('');
     } catch (err) { setError(err.message); }
   };
-  if (!purchase) return <main className="demo-shop-page"><ReviewHeader /><section className="demo-shop-content"><h1>Review unavailable</h1><p className="demo-shop-muted">A review requires a delivered purchase that has not already been reviewed.</p><button className="demo-outline-button" onClick={() => navigate('/customer/reviews')}>Back to my reviews</button></section></main>;
   if (success) return <main className="demo-shop-page"><ReviewHeader /><section className="demo-shop-content demo-review-success"><div className="demo-success-mark">✓</div><h1>Thank you for your review!</h1><p>Your review is saved and awaiting admin approval. It will appear publicly after moderation.</p><button className="demo-primary-button" onClick={() => navigate('/customer/reviews')}>View my reviews</button></section></main>;
+  if (!purchase) return <main className="demo-shop-page"><ReviewHeader /><section className="demo-shop-content"><h1>Review unavailable</h1><p className="demo-shop-muted">A review requires a delivered purchase that has not already been reviewed.</p><button className="demo-outline-button" onClick={() => navigate('/customer/reviews')}>Back to my reviews</button></section></main>;
   return <main className="demo-shop-page"><ReviewHeader /><section className="demo-shop-content">
     <p className="demo-shop-eyebrow">VERIFIED PURCHASE</p><h1>Write a product review</h1>
     <form className="demo-shop-card demo-review-form" onSubmit={submit}>
