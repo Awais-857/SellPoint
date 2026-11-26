@@ -16,6 +16,7 @@ function DemoHeader({ backLabel = 'Demo workspace', backTo = '/demo/workspace' }
       <nav>
         <button onClick={() => navigate('/products')}>Shop</button>
         <button onClick={() => navigate('/cart')}>Cart</button>
+        <button onClick={() => navigate('/wishlist')}>Wishlist</button>
         <button onClick={() => navigate('/order-history')}>My orders</button>
         <button onClick={() => navigate(backTo)}>{backLabel}</button>
       </nav>
@@ -91,7 +92,7 @@ export function DemoCheckout() {
           </section>
           <aside className="demo-shop-card demo-summary-card">
             <h2>Order summary</h2>
-            {items.map(item => <div className="demo-summary-item" key={item.productId}><span>{item.productName} × {item.quantity}</span><strong>{money(item.itemTotal)}</strong></div>)}
+            {items.map(item => <div className="demo-summary-item" key={item.cartId || `${item.productId}-${item.variantId || 'default'}`}><span>{item.productName}{item.variantName ? ` — ${item.variantName}` : ''} × {item.quantity}</span><strong>{money(item.itemTotal)}</strong></div>)}
             <div className="demo-summary-line"><span>Subtotal</span><strong>{money(summary.subtotal)}</strong></div>
             <div className="demo-summary-line"><span>Shipping</span><strong>{money(summary.shipping)}</strong></div>
             <div className="demo-summary-line"><span>Tax (10%)</span><strong>{money(summary.tax)}</strong></div>
@@ -189,7 +190,7 @@ export function DemoOrderDetail() {
         <div className="demo-shop-card demo-detail-card">
           <div className="demo-detail-grid"><div><span>Status</span><strong>{order.orderStatus}</strong></div><div><span>Payment</span><strong>{order.paymentStatus}</strong></div><div><span>Placed</span><strong>{formatDate(order.orderDate)}</strong></div><div><span>Total</span><strong>{money(order.totalAmount)}</strong></div></div>
           <h2>Items</h2>
-          {order.items.map(item => <div className="demo-summary-item" key={item.orderItemId}><span>{item.productName} × {item.quantity}</span><strong>{money(item.itemTotal)}</strong></div>)}
+          {order.items.map(item => <div className="demo-summary-item" key={item.orderItemId}><span>{item.productName}{item.variantName ? ` — ${item.variantName}` : ''} × {item.quantity}</span><strong>{money(item.itemTotal)}</strong></div>)}
           <h2>Shipping address</h2><p>{order.shippingAddress || [order.addressLine1, order.addressLine2, order.city, order.state, order.zipCode, order.country].filter(Boolean).join(', ')}</p>
           <h2>Summary</h2><div className="demo-summary-line"><span>Subtotal</span><strong>{money(order.subtotal)}</strong></div><div className="demo-summary-line"><span>Shipping</span><strong>{money(order.shipping)}</strong></div><div className="demo-summary-line"><span>Tax</span><strong>{money(order.tax)}</strong></div><div className="demo-summary-line demo-summary-total"><span>Total</span><strong>{money(order.totalAmount)}</strong></div>
         </div>
