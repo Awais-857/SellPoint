@@ -22,7 +22,7 @@ describe('demoStorage', () => {
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
 
     expect(state.products.length).toBeGreaterThan(0);
-    expect(stored.version).toBe(2);
+    expect(stored.version).toBe(3);
     expect(stored.data.products).toHaveLength(state.products.length);
   });
 
@@ -36,6 +36,12 @@ describe('demoStorage', () => {
     saveDemoState({ products: [] });
     const unsupported = getDemoState();
     expect(unsupported.products.length).toBeGreaterThan(0);
+  });
+
+  test('seed data includes pending and rejected product submissions', () => {
+    const state = getDemoState();
+    expect(state.products.some(product => product.moderationStatus === 'Pending')).toBe(true);
+    expect(state.products.some(product => product.moderationStatus === 'Rejected' && product.moderationReason)).toBe(true);
   });
 
   test('seed data includes product imagery and a multi-vendor parent order', () => {
