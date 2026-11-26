@@ -2,7 +2,7 @@ import { createDemoState } from './demoSeedData';
 
 export const DEMO_STATE_STORAGE_KEY = 'sellpoint_demo_state_v1';
 export const DEMO_SESSION_STORAGE_KEY = 'sellpoint_demo_session_v1';
-export const DEMO_STATE_VERSION = 1;
+export const DEMO_STATE_VERSION = 2;
 export const DEMO_CART_STORAGE_KEY = 'sellpoint_demo_cart_v1';
 
 const readJson = (key) => {
