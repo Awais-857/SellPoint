@@ -23,6 +23,7 @@ function AdminHeader({ active }) {
     ['orders', 'Orders', '/admin/orders'],
     ['disputes', 'Disputes', '/admin/disputes'],
     ['reviews', 'Reviews', '/admin/reviews'],
+    ['returns', 'Returns', '/admin/returns'],
     ['reports', 'Reports', '/admin/reports']
   ];
   return <header className="demo-admin-header"><button className="demo-admin-brand" onClick={() => navigate('/admin-dashboard')}>SellPoint <span>ADMIN DEMO</span></button><nav>{links.map(([key,label,path]) => <button key={key} className={active === key ? 'active' : ''} onClick={() => navigate(path)}>{label}</button>)}<button onClick={leave}>Switch role</button></nav></header>;
