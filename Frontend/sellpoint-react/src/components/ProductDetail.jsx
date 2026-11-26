@@ -156,6 +156,7 @@ function ProductDetail() {
                 <div className={styles['header-links']}>
                     <span onClick={() => navigate('/products')}>Continue Shopping</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
+                    {IS_DEMO_MODE && <span onClick={() => navigate('/wishlist')}>Wishlist ♥</span>}
                     <span onClick={() => navigate(IS_DEMO_MODE ? '/demo/workspace' : '/dashboard')}>My Account</span>
                 </div>
             </div>
@@ -205,7 +206,7 @@ function ProductDetail() {
                     <div className={styles['product-price-section']}>
                         {hasDiscount ? (
                             <>
-                                <span className={styles['original-price-large']}>${product.price.toFixed(2)}</span>
+                                <span className={styles['original-price-large']}>${displayedPrice.toFixed(2)}</span>
                                 <span className={styles['discounted-price-large']}>${discountedPrice.toFixed(2)}</span>
                                 <span className={styles['savings']}>You save: ${savings.toFixed(2)}</span>
                             </>
