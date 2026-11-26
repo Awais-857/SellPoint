@@ -161,6 +161,10 @@ const reviews = Array.from({ length: 24 }, (_, index) => {
     rating: (index % 5) + 1,
     comment: ['Great quality and value.', 'Works exactly as expected.', 'Good product and quick delivery.', 'Decent quality; happy with the purchase.', 'Would recommend this item.'][index % 5],
     status: index % 6 === 0 ? 'Pending' : 'Approved',
+    vendorId: product.vendorId,
+    vendorName: product.businessName,
+    verifiedPurchase: false,
+    vendorResponse: null,
     createdAt: '2026-03-20'
   };
 });
