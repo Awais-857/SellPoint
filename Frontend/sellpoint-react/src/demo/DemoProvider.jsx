@@ -16,8 +16,8 @@ export function DemoProvider({ children }) {
   const [session, setSession] = useState(() => getDemoSession());
   const [demoState, setDemoState] = useState(() => getDemoState());
 
-  const beginSession = useCallback((role) => {
-    const nextSession = startDemoSession(role);
+  const beginSession = useCallback((role, vendorId) => {
+    const nextSession = startDemoSession(role, vendorId);
     setSession(nextSession);
     return nextSession;
   }, []);
