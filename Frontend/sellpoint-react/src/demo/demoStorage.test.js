@@ -31,7 +31,7 @@ describe('demoStorage', () => {
     const recovered = getDemoState();
 
     expect(recovered.products.length).toBeGreaterThan(0);
-    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(2);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(3);
 
     saveDemoState({ products: [] });
     const unsupported = getDemoState();
