@@ -2,7 +2,7 @@ import { createDemoState } from './demoSeedData';
 
 export const DEMO_STATE_STORAGE_KEY = 'sellpoint_demo_state_v1';
 export const DEMO_SESSION_STORAGE_KEY = 'sellpoint_demo_session_v1';
-export const DEMO_STATE_VERSION = 5;
+export const DEMO_STATE_VERSION = 6;
 export const DEMO_CART_STORAGE_KEY = 'sellpoint_demo_cart_v1';
 
 const readJson = (key) => {
@@ -27,7 +27,7 @@ const writeJson = (key, value) => {
 const isValidDemoState = (data) => {
   const collectionNames = [
     'categories', 'vendors', 'customers', 'addresses', 'products',
-    'orders', 'reviews', 'disputes'
+    'orders', 'reviews', 'disputes', 'returnRequests'
   ];
   return Boolean(data) && collectionNames.every(name => Array.isArray(data[name]));
 };
