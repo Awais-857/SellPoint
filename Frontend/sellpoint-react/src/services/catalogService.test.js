@@ -6,6 +6,11 @@ jest.mock('../demo/demoStorage', () => ({
 }));
 
 const demoState = {
+  vendors: [
+    { vendorId: 101, status: 'Approved', isActive: true },
+    { vendorId: 102, status: 'Approved', isActive: true },
+    { vendorId: 103, status: 'Pending', isActive: true }
+  ],
   categories: [
     { categoryId: 1, categoryName: 'Electronics', isActive: true },
     { categoryId: 2, categoryName: 'Home', isActive: true },
@@ -13,28 +18,34 @@ const demoState = {
   ],
   products: [
     {
-      productId: 1, productName: 'Wireless Headphones', categoryId: 1,
+      productId: 1, productName: 'Wireless Headphones', categoryId: 1, vendorId: 101,
       price: 80, isActive: true, createdAt: '2026-01-02',
       description: 'Bluetooth audio', businessName: 'Nova Tech',
       categoryName: 'Electronics'
     },
     {
-      productId: 2, productName: 'Smart Watch', categoryId: 1,
+      productId: 2, productName: 'Smart Watch', categoryId: 1, vendorId: 101,
       price: 120, isActive: true, createdAt: '2026-01-03',
       description: 'Wearable technology', businessName: 'Nova Tech',
       categoryName: 'Electronics'
     },
     {
-      productId: 3, productName: 'Desk Lamp', categoryId: 2,
+      productId: 3, productName: 'Desk Lamp', categoryId: 2, vendorId: 102,
       price: 35, isActive: true, createdAt: '2026-01-01',
       description: 'Home lighting', businessName: 'Urban Home',
       categoryName: 'Home'
     },
     {
-      productId: 4, productName: 'Hidden Product', categoryId: 2,
+      productId: 4, productName: 'Hidden Product', categoryId: 2, vendorId: 102,
       price: 15, isActive: false, createdAt: '2026-01-04',
       description: 'Not listed', businessName: 'Urban Home',
       categoryName: 'Home'
+    },
+    {
+      productId: 5, productName: 'Pending Vendor Product', categoryId: 1, vendorId: 103,
+      price: 50, isActive: true, stockQuantity: 10, createdAt: '2026-01-05',
+      description: 'Not public until vendor approval', businessName: 'Pending Shop',
+      categoryName: 'Electronics'
     }
   ],
   reviews: [
@@ -75,6 +86,19 @@ describe('demoCatalogService', () => {
     });
 
     expect(result.products.map(product => product.price)).toEqual([35, 80, 120]);
+  });
+
+  test('hides active products from pending vendors in lists and details', async () => {
+    const result = await demoCatalogService.listProducts();
+    expect(result.products.some(product => product.productId === 5)).toBe(false);
+    await expect(demoCatalogService.getProductById(5)).resolves.toBeNull();
+  });
+
+  test('filters by minimum rating and available stock', async () => {
+    const rated = await demoCatalogService.listProducts({ minRating: 4 });
+    expect(rated.products.map(product => product.productId)).toEqual([1]);
+    const inStock = await demoCatalogService.listProducts({ inStock: true });
+    expect(inStock.products.every(product => product.stockQuantity > 0)).toBe(true);
   });
 
   test('returns only active categories', async () => {
