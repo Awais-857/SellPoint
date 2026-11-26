@@ -297,6 +297,8 @@ function ProductDetail() {
                                     </span>
                                 </div>
                                 <p className={styles['review-comment']}>{review.comment}</p>
+                                {review.verifiedPurchase && <span className="demo-review-verified">✓ Verified purchase</span>}
+                                {review.vendorResponse && <div className="demo-product-vendor-response"><strong>Response from {review.vendorResponse.vendorName}</strong><p>{review.vendorResponse.comment}</p><small>{new Date(review.vendorResponse.respondedAt).toLocaleDateString()}</small></div>}
                             </div>
                         ))}
                     </div>
