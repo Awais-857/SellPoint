@@ -33,6 +33,7 @@ import { IS_DEMO_MODE } from './config/appConfig';
 import { DemoProvider, useDemo } from './demo/DemoProvider';
 import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
 import { DemoWishlistPage } from './demo/DemoWishlistPages';
+import { DemoCustomerProfilePage, DemoCustomerAddressesPage } from './demo/DemoCustomerAccountPages';
 import { DemoCheckout, DemoOrderConfirmation, DemoOrderHistory, DemoOrderDetail, DemoOrderTracking } from './demo/DemoCustomerPages';
 import { DemoVendorDashboard, DemoVendorProducts, DemoVendorOrders, DemoVendorRevenue } from './demo/DemoVendorPages';
 import { DemoAdminDashboard, DemoAdminVendors, DemoAdminProducts, DemoAdminCategories, DemoAdminOrders, DemoAdminDisputes, DemoAdminReviews, DemoAdminReports } from './demo/DemoAdminPages';
@@ -109,6 +110,8 @@ function App() {
               <Route path="/product/:id" element={<DemoCustomerRoute><ProductDetail /></DemoCustomerRoute>} />
               <Route path="/cart" element={<DemoCustomerRoute><Cart /></DemoCustomerRoute>} />
               <Route path="/wishlist" element={<DemoCustomerRoute><DemoWishlistPage /></DemoCustomerRoute>} />
+              <Route path="/customer/profile" element={<DemoCustomerRoute><DemoCustomerProfilePage /></DemoCustomerRoute>} />
+              <Route path="/customer/addresses" element={<DemoCustomerRoute><DemoCustomerAddressesPage /></DemoCustomerRoute>} />
               <Route path="/checkout" element={<DemoCustomerRoute><DemoCheckout /></DemoCustomerRoute>} />
               <Route path="/order-confirmation/:id" element={<DemoCustomerRoute><DemoOrderConfirmation /></DemoCustomerRoute>} />
               <Route path="/order-history" element={<DemoCustomerRoute><DemoOrderHistory /></DemoCustomerRoute>} />
