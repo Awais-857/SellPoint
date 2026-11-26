@@ -1,5 +1,7 @@
 import {
   DEMO_SESSION_STORAGE_KEY,
+  DEMO_CART_STORAGE_KEY,
+  clearDemoStorage,
   DEMO_STATE_STORAGE_KEY,
   clearDemoSession,
   getDemoSession,
@@ -50,6 +52,29 @@ describe('demoStorage', () => {
     expect(session.role).toBe('Customer');
     expect(getDemoSession().userId).toBe(session.userId);
     expect(JSON.parse(window.localStorage.getItem(DEMO_SESSION_STORAGE_KEY)).role).toBe('Customer');
+  });
+
+  test('supports selecting approved, pending, rejected and suspended vendor identities', () => {
+    const rejected = startDemoSession('Vendor', 106);
+    expect(rejected).toMatchObject({ vendorId: 106, businessName: 'Fashion Corner', displayName: 'Noor Fatima' });
+    const suspended = startDemoSession('Vendor', 105);
+    expect(suspended).toMatchObject({ vendorId: 105, businessName: 'Pixel Gaming' });
+    expect(() => startDemoSession('Vendor', 999)).toThrow(/valid demo vendor/);
+  });
+
+  test('clears all demo-only storage, including cart, without touching API storage', () => {
+    window.localStorage.setItem(DEMO_CART_STORAGE_KEY, JSON.stringify([{ productId: 1 }]));
+    window.localStorage.setItem('sellpoint_demo_wishlist_v1', JSON.stringify([1]));
+    window.localStorage.setItem('token', 'api-token');
+    window.localStorage.setItem('guestCart', JSON.stringify([{ productId: 2 }]));
+
+    clearDemoStorage();
+
+    expect(window.localStorage.getItem(DEMO_CART_STORAGE_KEY)).toBeNull();
+    expect(window.localStorage.getItem('sellpoint_demo_wishlist_v1')).toBeNull();
+    expect(window.localStorage.getItem(DEMO_SESSION_STORAGE_KEY)).toBeNull();
+    expect(window.localStorage.getItem('token')).toBe('api-token');
+    expect(window.localStorage.getItem('guestCart')).not.toBeNull();
   });
 
   test('rejects invalid roles and clears the current demo session', () => {
