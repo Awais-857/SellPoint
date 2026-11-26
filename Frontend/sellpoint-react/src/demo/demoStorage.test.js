@@ -22,7 +22,7 @@ describe('demoStorage', () => {
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
 
     expect(state.products.length).toBeGreaterThan(0);
-    expect(stored.version).toBe(4);
+    expect(stored.version).toBe(5);
     expect(stored.data.products).toHaveLength(state.products.length);
   });
 
@@ -31,7 +31,7 @@ describe('demoStorage', () => {
     const recovered = getDemoState();
 
     expect(recovered.products.length).toBeGreaterThan(0);
-    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(4);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(5);
 
     saveDemoState({ products: [] });
     const unsupported = getDemoState();
@@ -42,6 +42,15 @@ describe('demoStorage', () => {
     const state = getDemoState();
     expect(state.products.some(product => product.moderationStatus === 'Pending')).toBe(true);
     expect(state.products.some(product => product.moderationStatus === 'Rejected' && product.moderationReason)).toBe(true);
+  });
+
+  test('seed data includes a default saved delivery address for every customer', () => {
+    const state = getDemoState();
+    state.customers.forEach(customer => {
+      const addresses = state.addresses.filter(address => address.customerId === customer.userId);
+      expect(addresses.length).toBeGreaterThan(0);
+      expect(addresses.filter(address => address.isDefault)).toHaveLength(1);
+    });
   });
 
   test('seed data includes separately stocked product variants', () => {
