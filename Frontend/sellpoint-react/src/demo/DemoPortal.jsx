@@ -115,6 +115,7 @@ export function DemoWorkspace() {
             <button className="demo-secondary-button" onClick={() => navigate('/wishlist')}>My wishlist</button>
             <button className="demo-secondary-button" onClick={() => navigate('/customer/profile')}>My profile & addresses</button>
             <button className="demo-secondary-button" onClick={() => navigate('/customer/reviews')}>My product reviews</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/customer/returns')}>Returns & refunds</button>
             <button className="demo-secondary-button" onClick={() => navigate('/order-history')}>My demo orders</button>
           </div>
         )}
@@ -124,6 +125,7 @@ export function DemoWorkspace() {
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/products')}>Manage products</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/orders')}>Manage orders</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/reviews')}>Product reviews</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/vendor/returns')}>Return requests</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/revenue')}>Revenue overview</button>
           </div>
         )}
@@ -133,6 +135,7 @@ export function DemoWorkspace() {
             <button className="demo-secondary-button" onClick={() => navigate('/admin/vendors')}>Manage vendors</button>
             <button className="demo-secondary-button" onClick={() => navigate('/admin/orders')}>Manage orders</button>
             <button className="demo-secondary-button" onClick={() => navigate('/admin/reports')}>Marketplace reports</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/admin/returns')}>Return escalations</button>
           </div>
         )}
 
