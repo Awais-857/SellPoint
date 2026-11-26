@@ -83,9 +83,11 @@ export function DemoWorkspace() {
         </div>
 
         {session.role === 'Customer' && (
-          <button className="demo-secondary-button" onClick={() => navigate('/products')}>
-            Browse sample products
-          </button>
+          <div className="demo-customer-actions">
+            <button className="demo-secondary-button" onClick={() => navigate('/products')}>Browse sample products</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/cart')}>Shopping cart</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/order-history')}>My demo orders</button>
+          </div>
         )}
 
         <h2>Sample marketplace data</h2>

@@ -10,6 +10,7 @@ import {
     clearCart
 } from '../services/cartHelper';
 import styles from './Cart.module.css';
+import { IS_DEMO_MODE } from '../config/appConfig';
 
 function Cart() {
     const navigate = useNavigate();
@@ -26,6 +27,7 @@ function Cart() {
     });
 
     const loggedIn = isLoggedIn();
+    const demoMode = IS_DEMO_MODE;
 
     useEffect(() => {
         fetchCart();
@@ -163,7 +165,7 @@ function Cart() {
             <div className={styles['cart-main']}>
                 <h2>Shopping Cart</h2>
 
-                {!loggedIn && cartItems.length > 0 && (
+                {!loggedIn && !demoMode && cartItems.length > 0 && (
                     <div className={styles['guest-banner']} style={{
                         background: '#fff3cd',
                         border: '1px solid #ffc107',
@@ -305,7 +307,7 @@ function Cart() {
                                 onClick={handleProceedToCheckout}
                                 disabled={updating || cartItems.length === 0}
                             >
-                                {loggedIn ? 'Proceed to Checkout' : 'Log in to Checkout'}
+                                {loggedIn || demoMode ? 'Proceed to Checkout' : 'Log in to Checkout'}
                             </button>
                             <button
                                 className={styles['continue-shopping-btn']}

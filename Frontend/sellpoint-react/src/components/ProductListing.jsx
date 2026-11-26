@@ -5,6 +5,7 @@ import { catalogService } from '../services/catalogService';
 import ProductCard from './ProductCard';
 import styles from './ProductListing.module.css';
 import { addToCart } from '../services/cartHelper';
+import { IS_DEMO_MODE } from '../config/appConfig';
 
 function ProductListing() {
     const navigate = useNavigate();
@@ -137,7 +138,7 @@ function ProductListing() {
             <div className={styles['listing-header']}>
                 <h1>SellPoint</h1>
                 <div className={styles['header-links']}>
-                    <span onClick={() => navigate('/dashboard')}>My Dashboard</span>
+                    <span onClick={() => navigate(IS_DEMO_MODE ? '/demo/workspace' : '/dashboard')}>{IS_DEMO_MODE ? 'Demo Workspace' : 'My Dashboard'}</span>
                     <span onClick={() => navigate('/cart')}>Cart 🛒</span>
                 </div>
             </div>

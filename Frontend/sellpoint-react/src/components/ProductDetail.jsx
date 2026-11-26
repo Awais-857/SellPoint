@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { catalogService } from '../services/catalogService';
 import styles from './ProductDetail.module.css';
 import { addToCart } from '../services/cartHelper';
+import { IS_DEMO_MODE } from '../config/appConfig';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -103,7 +104,9 @@ function ProductDetail() {
 
     const handleBuyNow = async () => {
         await handleAddToCart();
-        if (!localStorage.getItem('token')) {
+        if (IS_DEMO_MODE) {
+            navigate('/cart');
+        } else if (!localStorage.getItem('token')) {
             // Guest → send them to login, then they can go to cart
             navigate('/login', { state: { from: 'checkout' } });
         } else {

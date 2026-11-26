@@ -32,6 +32,7 @@ import './App.css';
 import { IS_DEMO_MODE } from './config/appConfig';
 import { DemoProvider, useDemo } from './demo/DemoProvider';
 import { DemoPortal, DemoWorkspace } from './demo/DemoPortal';
+import { DemoCheckout, DemoOrderConfirmation, DemoOrderHistory, DemoOrderDetail, DemoOrderTracking } from './demo/DemoCustomerPages';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
@@ -85,6 +86,12 @@ function App() {
               <Route path="/demo/workspace" element={<DemoWorkspace />} />
               <Route path="/products" element={<DemoCustomerRoute><ProductListing /></DemoCustomerRoute>} />
               <Route path="/product/:id" element={<DemoCustomerRoute><ProductDetail /></DemoCustomerRoute>} />
+              <Route path="/cart" element={<DemoCustomerRoute><Cart /></DemoCustomerRoute>} />
+              <Route path="/checkout" element={<DemoCustomerRoute><DemoCheckout /></DemoCustomerRoute>} />
+              <Route path="/order-confirmation/:id" element={<DemoCustomerRoute><DemoOrderConfirmation /></DemoCustomerRoute>} />
+              <Route path="/order-history" element={<DemoCustomerRoute><DemoOrderHistory /></DemoCustomerRoute>} />
+              <Route path="/order-detail/:id" element={<DemoCustomerRoute><DemoOrderDetail /></DemoCustomerRoute>} />
+              <Route path="/order-tracking/:id" element={<DemoCustomerRoute><DemoOrderTracking /></DemoCustomerRoute>} />
               <Route path="/" element={<Navigate to="/demo" replace />} />
               <Route path="*" element={<Navigate to="/demo" replace />} />
             </Routes>
