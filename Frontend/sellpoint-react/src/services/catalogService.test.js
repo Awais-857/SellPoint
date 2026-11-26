@@ -56,7 +56,7 @@ const demoState = {
     },
     {
       productId: 7, productName: 'Awaiting Approval', categoryId: 1, vendorId: 101,
-      price: 45, isActive: false, moderationStatus: 'Pending', stockQuantity: 5, createdAt: '2026-01-07',
+      price: 45, isActive: true, moderationStatus: 'Pending', stockQuantity: 5, createdAt: '2026-01-07',
       description: 'Not public before admin approval', businessName: 'Nova Tech', categoryName: 'Electronics'
     }
   ],
@@ -108,7 +108,7 @@ describe('demoCatalogService', () => {
   });
 
   test('hides pending and rejected product submissions from lists and details', async () => {
-    const stateWithRejected = { ...demoState, products: [...demoState.products, { ...demoState.products[4], productId: 8, moderationStatus: 'Rejected', isActive: false }] };
+    const stateWithRejected = { ...demoState, products: [...demoState.products, { ...demoState.products[0], productId: 8, moderationStatus: 'Rejected', isActive: true }] };
     getDemoState.mockReturnValue(stateWithRejected);
     const result = await demoCatalogService.listProducts();
     expect(result.products.some(product => [7, 8].includes(product.productId))).toBe(false);
