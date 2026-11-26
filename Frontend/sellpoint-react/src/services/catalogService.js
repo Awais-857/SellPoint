@@ -79,7 +79,7 @@ const demoCatalogService = {
       CreatedDate: 'createdAt',
       Price: 'price',
       Name: 'productName',
-      Popularity: 'averageRating'
+      Popularity: 'reviewCount'
     };
     const field = sortFields[options.sortBy] || 'createdAt';
     const direction = options.sortOrder === 'ASC' ? 1 : -1;
