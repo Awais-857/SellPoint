@@ -77,6 +77,25 @@ export const recordDemoRefund = (demoState, orderId, amount, reference, now = ne
   return { ...demoState, payments: demoState.payments.map(item => Number(item.paymentId) === Number(payment.paymentId) ? updatedPayment : item) };
 };
 
+
+export const recordDemoCashCollection = (demoState, orderId, now = new Date()) => {
+  const order = (demoState.orders || []).find(item => Number(item.orderId) === Number(orderId));
+  const payment = (demoState.payments || []).find(item => Number(item.orderId) === Number(orderId));
+  if (!order || !payment) throw new Error('Order payment record not found.');
+  if (!['CashOnDelivery', 'Cash on delivery'].includes(payment.method)) throw new Error('This order does not use cash on delivery.');
+  if (payment.status !== 'Pending') throw new Error('This cash payment is no longer awaiting collection.');
+  if (order.orderStatus !== 'Delivered') throw new Error('Cash can be marked as collected only after the order is delivered.');
+  const timestamp = new Date(now).toISOString();
+  return {
+    ...demoState,
+    payments: demoState.payments.map(item => Number(item.paymentId) === Number(payment.paymentId)
+      ? { ...item, status: 'Paid', paidAt: timestamp, updatedAt: timestamp,
+          transactions: [...(item.transactions || []), { type: 'Cash collected on delivery', amount: item.amount, createdAt: timestamp }] }
+      : item),
+    orders: demoState.orders.map(item => Number(item.orderId) === Number(orderId) ? { ...item, paymentStatus: 'Paid' } : item)
+  };
+};
+
 export const getOrderDemoPayment = (demoState, orderId, customerId) =>
   (demoState.payments || []).find(item => Number(item.orderId) === Number(orderId) &&
     (customerId == null || Number(item.customerId) === Number(customerId))) || null;
