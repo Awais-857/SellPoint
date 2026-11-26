@@ -1,4 +1,4 @@
-import { createDemoPayment, getOrderDemoPayment, recordDemoRefund, simulateDemoCardPayment } from './demoPaymentService';
+import { createDemoPayment, getOrderDemoPayment, recordDemoCashCollection, recordDemoRefund, simulateDemoCardPayment } from './demoPaymentService';
 
 const baseOrder = { orderId: 5001, customerId: 301, totalAmount: 203, paymentMethod: 'Demo Card (no charge)',
   items: [{ productId: 1, quantity: 2, variantId: 11 }] };
@@ -44,6 +44,18 @@ describe('demoPaymentService', () => {
     const full = recordDemoRefund(partial, 5001, 123, 'return-2');
     expect(full.payments[0]).toMatchObject({ status: 'Refunded', refundedAmount: 203 });
     expect(() => recordDemoRefund(full, 5001, 1, 'return-3')).toThrow(/no more than 0.00/);
+  });
+
+  test('allows admin cash collection only after delivery', () => {
+    const order = { ...baseOrder, paymentMethod: 'CashOnDelivery', orderStatus: 'Processing' };
+    const payment = createDemoPayment(order, [], new Date('2026-11-27T10:00:00Z'));
+    const state = { ...baseState(), orders: [order], payments: [payment] };
+    expect(() => recordDemoCashCollection(state, 5001)).toThrow(/only after the order is delivered/);
+    const delivered = { ...state, orders: [{ ...order, orderStatus: 'Delivered' }] };
+    const collected = recordDemoCashCollection(delivered, 5001, new Date('2026-11-27T12:00:00Z'));
+    expect(collected.payments[0]).toMatchObject({ status: 'Paid', paidAt: '2026-11-27T12:00:00.000Z' });
+    expect(collected.orders[0].paymentStatus).toBe('Paid');
+    expect(() => recordDemoCashCollection(collected, 5001)).toThrow(/no longer awaiting/);
   });
 
   test('returns payment only to the matching customer', () => {
