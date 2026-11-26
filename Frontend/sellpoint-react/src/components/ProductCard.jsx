@@ -2,6 +2,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './ProductListing.module.css';
+import { IS_DEMO_MODE } from '../config/appConfig';
+import { DemoWishlistButton } from '../demo/DemoWishlistPages';
 
 function ProductCard({ product, onAddToCart }) {
     const navigate = useNavigate();
@@ -33,6 +35,7 @@ function ProductCard({ product, onAddToCart }) {
                 </h3>
 
                 <p className={styles['product-vendor']}>{product.businessName}</p>
+                {IS_DEMO_MODE && <DemoWishlistButton product={product} />}
 
                 <div className={styles['product-rating']}>
                     {'★'.repeat(Math.floor(product.averageRating || 0))}
