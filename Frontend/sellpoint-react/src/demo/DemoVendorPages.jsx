@@ -62,7 +62,7 @@ export function DemoVendorDashboard() {
         </div>
         <div className="demo-vendor-section-heading"><h2>Store management</h2><p>Manage your own products, customer orders and sales activity.</p></div>
         <div className="demo-vendor-action-grid">
-          <button onClick={() => navigate('/vendor/products')}><span>📦</span><strong>Manage products</strong><small>Add, edit, remove or pause listings</small></button>
+          <button onClick={() => navigate('/vendor/products')}><span>📦</span><strong>Manage products</strong><small>View product options and each variant's available stock; add, edit or pause listings</small></button>
           <button onClick={() => navigate('/vendor/orders')}><span>🧾</span><strong>Customer orders</strong><small>Review orders and update item status</small></button>
           <button onClick={() => navigate('/vendor/revenue')}><span>📈</span><strong>Revenue overview</strong><small>Review sales, payments and trends</small></button>
         </div>
