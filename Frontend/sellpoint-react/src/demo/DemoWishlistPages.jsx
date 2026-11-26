@@ -80,7 +80,7 @@ export function DemoWishlistPage() {
             {item.isVisible ? <p>{item.businessName}</p> : <p>This product is no longer publicly available.</p>}
             {item.isAvailable ? <strong>${Number(item.price * (1 - (item.discountPercent || 0) / 100)).toFixed(2)}</strong> : <span className="demo-wishlist-status">Unavailable</span>}
             <div className="demo-wishlist-actions">
-              {item.isAvailable && <button className="demo-primary-button" onClick={() => moveToCart(item)}>Move to cart</button>}
+              {item.isAvailable && (item.variants?.length ? <button className="demo-primary-button" onClick={() => navigate(`/product/${item.productId}`)}>Choose options</button> : <button className="demo-primary-button" onClick={() => moveToCart(item)}>Move to cart</button>)}
               <button className="demo-outline-button" onClick={() => remove(item.productId)}>Remove</button>
             </div>
           </div>
