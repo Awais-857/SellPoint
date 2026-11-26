@@ -1,4 +1,4 @@
-import { getAdminOverview, getAdminReport, getAdminTopProducts, getAdminTopVendors, moderateAdminProduct, moderateAdminProduct, moderateAdminReview, saveAdminCategory, toggleCategoryActive, toggleVendorActive, updateAdminDispute, updateAdminOrderStatus, updateVendorApproval } from './demoAdminService';
+import { getAdminOverview, getAdminReport, getAdminTopProducts, getAdminTopVendors, moderateAdminProduct, moderateAdminReview, saveAdminCategory, toggleCategoryActive, toggleVendorActive, updateAdminDispute, updateAdminOrderStatus, updateVendorApproval } from './demoAdminService';
 import { createDemoState } from './demoSeedData';
 
 describe('demoAdminService', () => {
