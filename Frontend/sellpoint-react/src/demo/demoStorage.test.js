@@ -22,7 +22,7 @@ describe('demoStorage', () => {
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
 
     expect(state.products.length).toBeGreaterThan(0);
-    expect(stored.version).toBe(1);
+    expect(stored.version).toBe(2);
     expect(stored.data.products).toHaveLength(state.products.length);
   });
 
@@ -31,7 +31,7 @@ describe('demoStorage', () => {
     const recovered = getDemoState();
 
     expect(recovered.products.length).toBeGreaterThan(0);
-    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(1);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(2);
 
     saveDemoState({ products: [] });
     const unsupported = getDemoState();
