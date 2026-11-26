@@ -1,4 +1,4 @@
-import { deleteVendorProduct, getVendorOrders, getVendorProducts, getVendorRevenue, saveVendorProduct, toggleVendorProduct, updateVendorOrderItemStatus } from './demoVendorService';
+import { deleteVendorProduct, getVendorOrders, getVendorProducts, getVendorRevenue, saveVendorProduct, toggleVendorProduct, updateVendorOrderItemStatus, updateVendorVariantStock } from './demoVendorService';
 
 const vendor = { vendorId: 101, userId: 201, businessName: 'Nova Tech Store', ownerName: 'Hamza Ali', email: 'nova@example.demo', status: 'Approved', isActive: true };
 const product = { productId: 1001, productName: 'Headphones', categoryId: 1, categoryName: 'Electronics', vendorId: 101, businessName: vendor.businessName, price: 100, stockQuantity: 5, discountPercent: 0, isActive: true };
@@ -28,6 +28,29 @@ describe('demoVendorService', () => {
     const edited = saveVendorProduct(variantState, 101, { productName: 'Headphones', categoryId: '1', price: '120', stockQuantity: '99' }, 1001);
     expect(edited.products[0].stockQuantity).toBe(5);
     expect(edited.products[0].variants.map(item => item.stockQuantity)).toEqual([2, 3]);
+  });
+
+  test('updates individual variant inventory and recalculates aggregate stock', () => {
+    const variantProduct = { ...product, variants: [
+      { variantId: 11, variantName: 'Black', stockQuantity: 2 },
+      { variantId: 12, variantName: 'White', stockQuantity: 3 }
+    ] };
+    const variantState = { ...state, products: [variantProduct] };
+    const updated = updateVendorVariantStock(variantState, 101, 1001, { 11: '8', 12: '4' });
+    expect(updated.products[0].variants.map(item => item.stockQuantity)).toEqual([8, 4]);
+    expect(updated.products[0].stockQuantity).toBe(12);
+    expect(variantState.products[0].variants.map(item => item.stockQuantity)).toEqual([2, 3]);
+  });
+
+  test('validates vendor ownership, approval and whole-number variant stock', () => {
+    const variantProduct = { ...product, variants: [{ variantId: 11, variantName: 'Black', stockQuantity: 2 }] };
+    const variantState = { ...state, products: [variantProduct] };
+    expect(() => updateVendorVariantStock(variantState, 102, 1001, { 11: '4' })).toThrow(/not found/);
+    expect(() => updateVendorVariantStock({ ...variantState, vendors: [{ ...vendor, isActive: false }] }, 101, 1001, { 11: '4' })).toThrow(/not approved/);
+    expect(() => updateVendorVariantStock({ ...variantState, products: [{ ...variantProduct, moderationStatus: 'Pending' }] }, 101, 1001, { 11: '4' })).toThrow(/Only approved/);
+    expect(() => updateVendorVariantStock(variantState, 101, 1001, { 11: '-1' })).toThrow(/whole number/);
+    expect(() => updateVendorVariantStock(variantState, 101, 1001, { 11: '1.5' })).toThrow(/whole number/);
+    expect(() => updateVendorVariantStock(variantState, 101, 1001, { 11: '' })).toThrow(/Enter a stock quantity/);
   });
 
   test('resubmits rejected products for approval and blocks activation before approval', () => {
