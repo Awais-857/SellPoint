@@ -82,7 +82,8 @@ export function DemoWorkspace() {
     ['Customers', demoState.customers.length],
     ['Orders', demoState.orders.length],
     ['Reviews', demoState.reviews.length],
-    ['Disputes', demoState.disputes.length]
+    ['Disputes', demoState.disputes.length],
+    ['Returns', (demoState.returnRequests || []).length]
   ];
 
   const leaveDemo = () => {
