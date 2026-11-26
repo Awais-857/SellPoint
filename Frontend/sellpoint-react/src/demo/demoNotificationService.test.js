@@ -24,6 +24,17 @@ describe('demoNotificationService', () => {
     expect(getDemoNotifications(next, { role: 'Admin', userId: 1 })).toHaveLength(1);
   });
 
+  test('notifies the customer, vendor and admin when a payment succeeds', () => {
+    const payment = { paymentId: 1, orderId: 5001, customerId: 301, status: 'Pending', amount: 50 };
+    const nextPayment = { ...payment, status: 'Paid' };
+    const next = createNotificationsForStateChange({ ...base, payments: [payment] }, {
+      ...base, payments: [nextPayment], orders: [{ orderId: 5001, customerId: 301, items: [{ vendorId: 101 }] }]
+    });
+    expect(getDemoNotifications(next, { role: 'Customer', userId: 301 }).some(item => item.type === 'payment-success')).toBe(true);
+    expect(getDemoNotifications(next, { role: 'Vendor', vendorId: 101 }).some(item => item.type === 'payment-success')).toBe(true);
+    expect(getDemoNotifications(next, { role: 'Admin', userId: 1 }).some(item => item.type === 'payment-success')).toBe(true);
+  });
+
   test('notifies only the relevant vendor when a product is submitted', () => {
     const product = { productId: 9, vendorId: 102, productName: 'New item', moderationStatus: 'Pending' };
     const next = createNotificationsForStateChange(base, { ...base, products: [product] });
