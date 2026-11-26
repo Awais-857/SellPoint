@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import {
   clearDemoSession,
+  clearDemoStorage,
   getDemoSession,
   getDemoState,
   resetDemoState,
@@ -34,6 +35,7 @@ export function DemoProvider({ children }) {
   }, [demoState]);
 
   const resetWorkspace = useCallback(() => {
+    clearDemoStorage();
     const nextState = resetDemoState();
     setDemoState(nextState);
 
