@@ -86,7 +86,8 @@ describe('demoReviewService', () => {
       vendorName: 'Nova Tech Store',
       respondedAt: fixedDate.toISOString()
     });
-    expect(() => respondToDemoReview(state, 101, 7001, 'Reply')).toThrow(/after the review is approved/);
+    const pendingState = { ...state, reviews: state.reviews.map(review => review.reviewId === 7001 ? { ...review, status: 'Pending' } : review) };
+    expect(() => respondToDemoReview(pendingState, 101, 7001, 'Reply')).toThrow(/after the review is approved/);
     expect(() => respondToDemoReview(approvedState, 102, 7003, 'Wrong vendor')).toThrow(/does not belong/);
     expect(() => respondToDemoReview({ ...approvedState, vendors: [{ ...state.vendors[0], isActive: false }] }, 101, 7003, 'Reply')).toThrow(/approved and active/);
     expect(() => respondToDemoReview(approvedState, 101, 7003, '  ')).toThrow(/Enter a response/);
