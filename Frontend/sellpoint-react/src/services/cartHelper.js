@@ -122,6 +122,9 @@ export const updateQuantity = async (cartIdOrProductId, newQuantity) => {
     } else {
         const item = items.find(i => i.cartId === cartIdOrProductId || i.productId === cartIdOrProductId);
         if (item) {
+            if (Number(item.stockQuantity) > 0 && newQuantity > Number(item.stockQuantity)) {
+                throw new Error(`Only ${item.stockQuantity} unit(s) are available for this option.`);
+            }
             item.quantity = newQuantity;
             recalcItem(item);
         }
