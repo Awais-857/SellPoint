@@ -38,6 +38,14 @@ describe('demoStorage', () => {
     expect(unsupported.products.length).toBeGreaterThan(0);
   });
 
+  test('seed data includes product imagery and a multi-vendor parent order', () => {
+    const state = getDemoState();
+    const multiVendorOrder = state.orders.find(order => order.orderId === 5016);
+    expect(state.products.every(product => Boolean(product.imageUrl))).toBe(true);
+    expect(new Set(multiVendorOrder.items.map(item => item.vendorId)).size).toBe(2);
+    expect(multiVendorOrder.orderStatus).toBe('Processing');
+  });
+
   test('reset restores the original baseline dataset', () => {
     const initial = getDemoState();
     saveDemoState({ ...initial, products: [] });
