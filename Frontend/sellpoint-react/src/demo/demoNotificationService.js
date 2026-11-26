@@ -21,9 +21,13 @@ export const createNotificationsForStateChange = (previous, next, now = new Date
     const old = oldOrders.get(Number(order.orderId));
     if (!old) {
       add('Customer', order.customerId, 'order-placed', 'Order placed', `Your order #${order.orderId} has been placed successfully.`, `/order-detail/${order.orderId}`);
-      [...new Set((order.items || []).map(item => Number(item.vendorId)))].forEach(vendorId => {
-        add('Vendor', vendorId, 'new-order', 'New order received', `Order #${order.orderId} includes products from your store.`, '/vendor/orders');
-      });
+      const payment = (next.payments || []).find(item => Number(item.orderId) === Number(order.orderId));
+      const awaitingCardPayment = payment?.method === 'Demo Card (no charge)' && payment.status === 'Pending';
+      if (!awaitingCardPayment) {
+        [...new Set((order.items || []).map(item => Number(item.vendorId)))].forEach(vendorId => {
+          add('Vendor', vendorId, 'new-order', 'New order received', `Order #${order.orderId} includes products from your store.`, '/vendor/orders');
+        });
+      }
       add('Admin', null, 'new-order', 'New marketplace order', `Order #${order.orderId} was placed by ${order.customerName || 'a customer'}.`, '/admin/orders');
       return;
     }
