@@ -82,9 +82,9 @@ const products = productTemplates.map((item, index) => ({
     'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80',
     'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=800&q=80'
   ][index % 5],
-  moderationStatus: index === 10 ? 'Pending' : index === 11 ? 'Rejected' : 'Approved',
-  moderationReason: index === 11 ? 'Please add clearer product photos and a more complete description.' : null,
-  isActive: index !== 9 && index !== 27 && index !== 10 && index !== 11,
+  moderationStatus: index === 3 ? 'Pending' : index === 4 ? 'Rejected' : 'Approved',
+  moderationReason: index === 4 ? 'Please add clearer product photos and a more complete description.' : null,
+  isActive: index !== 9 && index !== 27 && index !== 3 && index !== 4,
   createdAt: '2026-03-15'
 }));
 
