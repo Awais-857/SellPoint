@@ -20,6 +20,7 @@ function DemoHeader({ backLabel = 'Demo workspace', backTo = '/demo/workspace' }
         <button onClick={() => navigate('/cart')}>Cart</button>
         <button onClick={() => navigate('/wishlist')}>Wishlist</button>
         <button onClick={() => navigate('/order-history')}>My orders</button>
+        <button onClick={() => navigate('/customer/reviews')}>My reviews</button>
         <button onClick={() => navigate('/customer/profile')}>My account</button>
         <button onClick={() => navigate(backTo)}>{backLabel}</button>
       </nav>
