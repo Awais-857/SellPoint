@@ -31,7 +31,7 @@ describe('demoStorage', () => {
     const recovered = getDemoState();
 
     expect(recovered.products.length).toBeGreaterThan(0);
-    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(7);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(8);
 
     saveDemoState({ products: [] });
     const unsupported = getDemoState();
@@ -42,7 +42,7 @@ describe('demoStorage', () => {
   test('migrates existing version 6 demo data without discarding visitor changes', () => {
     const existing = getDemoState();
     existing.products[0].productName = 'Visitor custom product name';
-    window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 7, data: existing }));
+    window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 6, data: existing }));
     const migrated = getDemoState();
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
     expect(migrated.products[0].productName).toBe('Visitor custom product name');
