@@ -59,7 +59,7 @@ function ProductCard({ product, onAddToCart }) {
                     onClick={() => onAddToCart(product)}
                     disabled={product.stockQuantity === 0}
                 >
-                    {product.stockQuantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+                    {product.stockQuantity === 0 ? 'Out of Stock' : IS_DEMO_MODE && product.variants?.length ? 'Choose options' : 'Add to Cart'}
                 </button>
             </div>
         </div>
