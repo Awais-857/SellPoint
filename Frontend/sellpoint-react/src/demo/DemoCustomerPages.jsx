@@ -177,7 +177,18 @@ export function DemoOrderDetail() {
     try {
       for (const item of order.items) {
         const product = demoState.products.find(product => product.productId === item.productId && product.isActive);
-        if (product && product.stockQuantity > 0) await addToCart(product, Math.min(item.quantity, product.stockQuantity));
+        if (!product) continue;
+        if (Array.isArray(product.variants) && product.variants.length) {
+          if (item.variantId == null) {
+            setError(`Please choose an option again for ${product.productName}.`);
+            navigate(`/product/${product.productId}`);
+            return;
+          }
+          const variant = product.variants.find(entry => Number(entry.variantId) === Number(item.variantId));
+          if (variant && variant.stockQuantity > 0) await addToCart(product, Math.min(item.quantity, variant.stockQuantity), variant);
+        } else if (product.stockQuantity > 0) {
+          await addToCart(product, Math.min(item.quantity, product.stockQuantity));
+        }
       }
       navigate('/cart');
     } catch (err) { setError(err.message || 'Unable to reorder these items.'); }
