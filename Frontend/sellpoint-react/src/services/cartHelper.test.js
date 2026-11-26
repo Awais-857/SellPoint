@@ -29,6 +29,7 @@ describe('cartHelper Demo variant support', () => {
   test('updates and removes only the selected variant cart line', async () => {
     await addToCart(product, 1, product.variants[0]);
     await addToCart(product, 2, product.variants[1]);
+    await expect(updateQuantity('10:102', 4)).rejects.toThrow(/Only 3 unit/);
     await updateQuantity('10:102', 1);
     await removeItem('10:101');
     expect(await getCart()).toMatchObject([{ cartId: '10:102', variantId: 102, quantity: 1, itemTotal: 90 }]);
