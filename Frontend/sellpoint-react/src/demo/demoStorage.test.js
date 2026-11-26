@@ -42,6 +42,7 @@ describe('demoStorage', () => {
   test('migrates existing version 6 demo data without discarding visitor changes', () => {
     const existing = getDemoState();
     existing.products[0].productName = 'Visitor custom product name';
+    delete existing.payments;
     window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 6, data: existing }));
     const migrated = getDemoState();
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
@@ -55,11 +56,14 @@ describe('demoStorage', () => {
     const existing = getDemoState();
     existing.notifications = [{ notificationId: 1, recipientRole: 'Customer', recipientId: 301, title: 'Existing notification' }];
     existing.products[0].productName = 'Saved visitor edit';
+    delete existing.payments;
+    existing.returnRequests = [{ returnId: 1, orderId: 5017, refundAmount: 10, refundStatus: 'Simulated refund recorded', createdAt: '2026-11-26T10:00:00.000Z' }];
     window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 7, data: existing }));
     const migrated = getDemoState();
     expect(migrated.products[0].productName).toBe('Saved visitor edit');
     expect(migrated.notifications).toEqual(existing.notifications);
     expect(migrated.payments.length).toBe(migrated.orders.length);
+    expect(migrated.payments.find(payment => payment.orderId === 5017)).toMatchObject({ status: 'Partially Refunded', refundedAmount: 10 });
     expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(8);
   });
 
