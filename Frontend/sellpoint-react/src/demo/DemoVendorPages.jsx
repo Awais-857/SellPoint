@@ -68,6 +68,7 @@ export function DemoVendorDashboard() {
           <button onClick={() => navigate('/vendor/products')}><span>📦</span><strong>Manage products</strong><small>View product options and each variant's available stock; add, edit or pause listings</small></button>
           <button onClick={() => navigate('/vendor/orders')}><span>🧾</span><strong>Customer orders</strong><small>Review orders and update item status</small></button>
           <button onClick={() => navigate('/vendor/revenue')}><span>📈</span><strong>Revenue overview</strong><small>Review sales, payments and trends</small></button>
+          <button onClick={() => navigate('/vendor/returns')}><span>↩️</span><strong>Returns & refunds</strong><small>Review customer return requests and record simulated refunds</small></button>
         </div>
         <div className="demo-vendor-shop-card"><div><h2>Store information</h2><p>Business owner: {vendor.ownerName}</p><p>Contact: {vendor.email}</p><p>Joined: {dateLabel(vendor.joinedAt)}</p></div><div><span>Store status</span><strong>{vendor.isActive ? 'Active' : 'Inactive'}</strong></div></div>
       </section>
