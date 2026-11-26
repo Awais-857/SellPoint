@@ -9,7 +9,8 @@ const demoState = {
   vendors: [
     { vendorId: 101, status: 'Approved', isActive: true },
     { vendorId: 102, status: 'Approved', isActive: true },
-    { vendorId: 103, status: 'Pending', isActive: true }
+    { vendorId: 103, status: 'Pending', isActive: true },
+    { vendorId: 104, status: 'Approved', isActive: false }
   ],
   categories: [
     { categoryId: 1, categoryName: 'Electronics', isActive: true },
@@ -45,6 +46,12 @@ const demoState = {
       productId: 5, productName: 'Pending Vendor Product', categoryId: 1, vendorId: 103,
       price: 50, isActive: true, stockQuantity: 10, createdAt: '2026-01-05',
       description: 'Not public until vendor approval', businessName: 'Pending Shop',
+      categoryName: 'Electronics'
+    },
+    {
+      productId: 6, productName: 'Suspended Vendor Product', categoryId: 1, vendorId: 104,
+      price: 60, isActive: true, stockQuantity: 10, createdAt: '2026-01-06',
+      description: 'Hidden while vendor is suspended', businessName: 'Suspended Shop',
       categoryName: 'Electronics'
     }
   ],
@@ -90,8 +97,9 @@ describe('demoCatalogService', () => {
 
   test('hides active products from pending vendors in lists and details', async () => {
     const result = await demoCatalogService.listProducts();
-    expect(result.products.some(product => product.productId === 5)).toBe(false);
+    expect(result.products.some(product => [5, 6].includes(product.productId))).toBe(false);
     await expect(demoCatalogService.getProductById(5)).resolves.toBeNull();
+    await expect(demoCatalogService.getProductById(6)).resolves.toBeNull();
   });
 
   test('filters by minimum rating and available stock', async () => {
