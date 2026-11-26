@@ -31,13 +31,13 @@ const toGuestItem = (product, quantity) => {
         cartId: product.productId,               // guests use productId as identifier
         productId: product.productId,
         productName: product.productName,
-        price: product.price,
+        price: basePrice,
         discountPercent: discount,
         imageUrl: product.imageUrl || null,
         quantity,
         vendorName: product.businessName || product.vendorName || 'Unknown Vendor',
         vendorId: product.vendorId,
-        stockQuantity: product.stockQuantity ?? 999,
+        stockQuantity: variant?.stockQuantity ?? product.stockQuantity ?? 999,
         categoryName: product.categoryName || null,
         itemTotal: unitPrice * quantity
     };
@@ -60,18 +60,26 @@ export const getCart = async () => {
     return readGuestCart();
 };
 
-export const addToCart = async (product, quantity = 1) => {
+export const addToCart = async (product, quantity = 1, selectedVariant = null) => {
+    let variant = selectedVariant;
     if (IS_DEMO_MODE) {
-        if (!product || !product.isActive || Number(product.stockQuantity) <= 0) {
+        if (!product || !product.isActive) {
             throw new Error('This product is currently unavailable.');
         }
+        if (Array.isArray(product.variants) && product.variants.length) {
+            variant = product.variants.find(item => Number(item.variantId) === Number(selectedVariant?.variantId));
+            if (!variant) throw new Error('Please select a product option.');
+        }
+        const availableStock = Number(variant?.stockQuantity ?? product.stockQuantity);
+        if (availableStock <= 0) throw new Error('This product option is currently out of stock.');
         if (!Number.isInteger(quantity) || quantity < 1) {
             throw new Error('Choose a valid quantity.');
         }
-        const existingItem = readGuestCart().find((item) => item.productId === product.productId);
+        const cartId = variant ? `${product.productId}:${variant.variantId}` : product.productId;
+        const existingItem = readGuestCart().find(item => item.cartId === cartId || (!variant && item.productId === product.productId && !item.variantId));
         const requestedQuantity = (existingItem?.quantity || 0) + quantity;
-        if (requestedQuantity > Number(product.stockQuantity)) {
-            throw new Error(`Only ${product.stockQuantity} unit(s) are available.`);
+        if (requestedQuantity > availableStock) {
+            throw new Error(`Only ${availableStock} unit(s) are available for this option.`);
         }
     }
 
@@ -82,12 +90,13 @@ export const addToCart = async (product, quantity = 1) => {
     }
 
     const items = readGuestCart();
-    const existing = items.find((i) => i.productId === product.productId);
+    const newItem = toGuestItem(product, quantity, IS_DEMO_MODE ? variant : null);
+    const existing = items.find(item => item.cartId === newItem.cartId);
     if (existing) {
         existing.quantity += quantity;   // (A) increment like Amazon
         recalcItem(existing);
     } else {
-        items.push(toGuestItem(product, quantity));
+        items.push(newItem);
     }
     writeGuestCart(items);
 };
@@ -105,9 +114,9 @@ export const updateQuantity = async (cartIdOrProductId, newQuantity) => {
 
     let items = readGuestCart();
     if (newQuantity < 1) {
-        items = items.filter((i) => i.productId !== cartIdOrProductId);
+        items = items.filter(i => i.cartId !== cartIdOrProductId && i.productId !== cartIdOrProductId);
     } else {
-        const item = items.find((i) => i.productId === cartIdOrProductId);
+        const item = items.find(i => i.cartId === cartIdOrProductId || i.productId === cartIdOrProductId);
         if (item) {
             item.quantity = newQuantity;
             recalcItem(item);
@@ -122,7 +131,7 @@ export const removeItem = async (cartIdOrProductId) => {
         window.dispatchEvent(new Event('cartUpdated'));
         return;
     }
-    const items = readGuestCart().filter((i) => i.productId !== cartIdOrProductId);
+    const items = readGuestCart().filter(i => i.cartId !== cartIdOrProductId && i.productId !== cartIdOrProductId);
     writeGuestCart(items);
 };
 
