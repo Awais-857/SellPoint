@@ -22,7 +22,7 @@ export const getPublicDemoStores = state => (state.vendors || [])
     );
     const reviews = (state.reviews || []).filter(review => {
       const product = (state.products || []).find(item => item.productId === review.productId);
-      return Number(review.vendorId ?? product?.vendorId) === Number(vendor.vendorId) && review.status === 'Approved';
+      return Number(review.vendorId ?? product?.vendorId) === Number(vendor.vendorId) && review.status === 'Approved' && isPublicDemoProduct(state, product);
     });
     const averageRating = reviews.length
       ? Number((reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / reviews.length).toFixed(1))
@@ -85,7 +85,7 @@ export const getPublicDemoStoreReviews = (state, vendorId) => {
   return (state.reviews || [])
     .filter(review => {
       const product = (state.products || []).find(item => item.productId === review.productId);
-      return Number(review.vendorId ?? product?.vendorId) === Number(vendorId) && review.status === 'Approved';
+      return Number(review.vendorId ?? product?.vendorId) === Number(vendorId) && review.status === 'Approved' && isPublicDemoProduct(state, product);
     })
     .map(review => ({ ...review }))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
