@@ -53,6 +53,11 @@ const demoState = {
       price: 60, isActive: true, stockQuantity: 10, createdAt: '2026-01-06',
       description: 'Hidden while vendor is suspended', businessName: 'Suspended Shop',
       categoryName: 'Electronics'
+    },
+    {
+      productId: 7, productName: 'Awaiting Approval', categoryId: 1, vendorId: 101,
+      price: 45, isActive: false, moderationStatus: 'Pending', stockQuantity: 5, createdAt: '2026-01-07',
+      description: 'Not public before admin approval', businessName: 'Nova Tech', categoryName: 'Electronics'
     }
   ],
   reviews: [
@@ -100,6 +105,15 @@ describe('demoCatalogService', () => {
     expect(result.products.some(product => [5, 6].includes(product.productId))).toBe(false);
     await expect(demoCatalogService.getProductById(5)).resolves.toBeNull();
     await expect(demoCatalogService.getProductById(6)).resolves.toBeNull();
+  });
+
+  test('hides pending and rejected product submissions from lists and details', async () => {
+    const stateWithRejected = { ...demoState, products: [...demoState.products, { ...demoState.products[4], productId: 8, moderationStatus: 'Rejected', isActive: false }] };
+    getDemoState.mockReturnValue(stateWithRejected);
+    const result = await demoCatalogService.listProducts();
+    expect(result.products.some(product => [7, 8].includes(product.productId))).toBe(false);
+    await expect(demoCatalogService.getProductById(7)).resolves.toBeNull();
+    await expect(demoCatalogService.getProductById(8)).resolves.toBeNull();
   });
 
   test('filters by minimum rating and available stock', async () => {
