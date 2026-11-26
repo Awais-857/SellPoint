@@ -20,9 +20,10 @@ export const getPublicDemoStores = state => (state.vendors || [])
     const products = (state.products || []).filter(product =>
       product.vendorId === vendor.vendorId && isPublicDemoProduct(state, product)
     );
-    const reviews = (state.reviews || []).filter(review =>
-      Number(review.vendorId) === Number(vendor.vendorId) && review.status === 'Approved'
-    );
+    const reviews = (state.reviews || []).filter(review => {
+      const product = (state.products || []).find(item => item.productId === review.productId);
+      return Number(review.vendorId ?? product?.vendorId) === Number(vendor.vendorId) && review.status === 'Approved';
+    });
     const averageRating = reviews.length
       ? Number((reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / reviews.length).toFixed(1))
       : 0;
@@ -82,7 +83,10 @@ export const getPublicDemoStoreProducts = (state, vendorId, filters = {}) => {
 export const getPublicDemoStoreReviews = (state, vendorId) => {
   if (!getPublicDemoStore(state, vendorId)) return [];
   return (state.reviews || [])
-    .filter(review => Number(review.vendorId) === Number(vendorId) && review.status === 'Approved')
+    .filter(review => {
+      const product = (state.products || []).find(item => item.productId === review.productId);
+      return Number(review.vendorId ?? product?.vendorId) === Number(vendorId) && review.status === 'Approved';
+    })
     .map(review => ({ ...review }))
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 };
