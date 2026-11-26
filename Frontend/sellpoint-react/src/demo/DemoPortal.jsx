@@ -97,6 +97,14 @@ export function DemoWorkspace() {
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/revenue')}>Revenue overview</button>
           </div>
         )}
+        {session.role === 'Admin' && (
+          <div className="demo-customer-actions">
+            <button className="demo-secondary-button" onClick={() => navigate('/admin-dashboard')}>Admin dashboard</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/admin/vendors')}>Manage vendors</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/admin/orders')}>Manage orders</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/admin/reports')}>Marketplace reports</button>
+          </div>
+        )}
 
         <h2>Sample marketplace data</h2>
         <div className="demo-stats-grid">
