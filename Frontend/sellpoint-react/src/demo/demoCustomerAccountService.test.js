@@ -60,6 +60,12 @@ describe('demoCustomerAccountService', () => {
     expect(defaultAddress).toBeTruthy();
   });
 
+  test('reassigns the default when editing the current default address', () => {
+    const updated = saveDemoCustomerAddress(state, 301, { ...state.addresses[0], isDefault: false }, 6001);
+    expect(getDemoCustomerAddresses(updated, 301).filter(item => item.isDefault)).toHaveLength(1);
+    expect(getDemoCustomerAddresses(updated, 301).find(item => item.isDefault).addressId).toBe(6002);
+  });
+
   test('deletes addresses and selects a replacement default when necessary', () => {
     const updated = deleteDemoCustomerAddress(state, 301, 6001);
     expect(getDemoCustomerAddresses(updated, 301)).toHaveLength(1);
