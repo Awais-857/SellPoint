@@ -82,6 +82,12 @@ function DemoCustomerRoute({ children }) {
   return children;
 }
 
+function DemoSessionRoute({ children }) {
+  const { session } = useDemo();
+  if (!session) return <Navigate to="/demo" replace />;
+  return children;
+}
+
 function DemoVendorRoute({ children }) {
   const { session } = useDemo();
 
@@ -110,9 +116,9 @@ function App() {
               <Route path="/demo" element={<DemoPortal />} />
               <Route path="/demo/workspace" element={<DemoWorkspace />} />
               <Route path="/products" element={<DemoCustomerRoute><ProductListing /></DemoCustomerRoute>} />
-              <Route path="/stores" element={<DemoCustomerRoute><DemoPublicStoresPage /></DemoCustomerRoute>} />
-              <Route path="/store/:vendorId" element={<DemoCustomerRoute><DemoPublicStorePage /></DemoCustomerRoute>} />
-              <Route path="/product/:id" element={<DemoCustomerRoute><ProductDetail /></DemoCustomerRoute>} />
+              <Route path="/stores" element={<DemoSessionRoute><DemoPublicStoresPage /></DemoSessionRoute>} />
+              <Route path="/store/:vendorId" element={<DemoSessionRoute><DemoPublicStorePage /></DemoSessionRoute>} />
+              <Route path="/product/:id" element={<DemoSessionRoute><ProductDetail /></DemoSessionRoute>} />
               <Route path="/cart" element={<DemoCustomerRoute><Cart /></DemoCustomerRoute>} />
               <Route path="/wishlist" element={<DemoCustomerRoute><DemoWishlistPage /></DemoCustomerRoute>} />
               <Route path="/customer/profile" element={<DemoCustomerRoute><DemoCustomerProfilePage /></DemoCustomerRoute>} />
