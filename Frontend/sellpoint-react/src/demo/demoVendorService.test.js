@@ -34,9 +34,11 @@ describe('demoVendorService', () => {
   test('filters orders by vendor and updates only its order item', () => {
     expect(getVendorOrders(state, 101)).toHaveLength(1);
     expect(getVendorOrders(state, 102)).toHaveLength(0);
-    const updated = updateVendorOrderItemStatus(state, 101, 8001, 'Shipped');
+    const unrelatedOrder = { ...order, orderId: 5002, orderStatus: 'Delivered', items: [{ ...order.items[0], orderItemId: 8002, vendorId: 102 }] };
+    const updated = updateVendorOrderItemStatus({ ...state, orders: [order, unrelatedOrder] }, 101, 8001, 'Shipped');
     expect(updated.orders[0].items[0].itemStatus).toBe('Shipped');
     expect(updated.orders[0].orderStatus).toBe('Shipped');
+    expect(updated.orders[1]).toBe(unrelatedOrder);
     expect(() => updateVendorOrderItemStatus(state, 102, 8001, 'Delivered')).toThrow(/not found/);
   });
 

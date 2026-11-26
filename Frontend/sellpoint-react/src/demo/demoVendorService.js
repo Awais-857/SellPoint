@@ -91,12 +91,14 @@ export const updateVendorOrderItemStatus = (state, vendorId, orderItemId, status
   let found = false;
 
   const orders = state.orders.map(order => {
+    let orderItemFound = false;
     const items = (order.items || []).map(item => {
       if (Number(item.orderItemId) !== Number(orderItemId) || item.vendorId !== vendorId) return item;
       found = true;
+      orderItemFound = true;
       return { ...item, itemStatus: status };
     });
-    if (!found || items === order.items) return order;
+    if (!orderItemFound) return order;
 
     const statuses = items.map(item => item.itemStatus || order.orderStatus);
     let orderStatus = 'Pending';
