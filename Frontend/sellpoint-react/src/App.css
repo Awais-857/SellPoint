@@ -16,3 +16,5 @@ body {
 .App {
   min-height: 100vh;
 }
+
+.demo-review-verified{display:inline-block;margin:5px 0;padding:4px 8px;border-radius:20px;background:#eaf6ee;color:#247849;font-size:11px;font-weight:750}.demo-product-vendor-response{margin-top:12px;padding:12px 14px;border-left:3px solid #8bb5dc;background:#f3f7fb;border-radius:5px}.demo-product-vendor-response p{margin:6px 0;color:#526278;line-height:1.55}.demo-product-vendor-response small{color:#7b899a}
