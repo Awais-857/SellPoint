@@ -82,6 +82,7 @@ export function DemoVendorProducts() {
   const [showForm, setShowForm] = useState(false);
   const products = getVendorProducts(demoState, vendorId);
   const categories = demoState.categories.filter(item => item.isActive);
+  const editingProductHasVariants = Boolean(products.find(item => item.productId === editing)?.variants?.length);
 
   const openNew = () => { setEditing(null); setForm(emptyForm); setError(''); setShowForm(true); };
   const openEdit = product => {
@@ -115,7 +116,7 @@ export function DemoVendorProducts() {
           <label>Product name<input required value={form.productName} onChange={e => setForm({ ...form, productName: e.target.value })} /></label>
           <label>Category<select required value={form.categoryId} onChange={e => setForm({ ...form, categoryId: e.target.value })}><option value="">Choose category</option>{categories.map(category => <option key={category.categoryId} value={category.categoryId}>{category.categoryName}</option>)}</select></label>
           <label>Price (USD)<input required type="number" min="0.01" step="0.01" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /></label>
-          <label>Stock quantity<input required type="number" min="0" step="1" value={form.stockQuantity} onChange={e => setForm({ ...form, stockQuantity: e.target.value })} /></label>
+          <label>Stock quantity<input required type="number" min="0" step="1" value={form.stockQuantity} disabled={editingProductHasVariants} onChange={e => setForm({ ...form, stockQuantity: e.target.value })} />{editingProductHasVariants && <small>Stock is calculated from the product's individual options.</small>}</label>
           <label>Discount (%)<input type="number" min="0" max="90" value={form.discountPercent} onChange={e => setForm({ ...form, discountPercent: e.target.value })} /></label>
           <label>SKU<input value={form.sku} onChange={e => setForm({ ...form, sku: e.target.value })} /></label>
           <label className="wide">Image URL<input type="url" value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} placeholder="https://example.com/product.jpg" /></label>
@@ -124,7 +125,7 @@ export function DemoVendorProducts() {
       </form>}
       {products.length === 0 ? <div className="demo-vendor-empty">No products in this store yet. Add your first product.</div> :
         <div className="demo-vendor-table-wrap"><table className="demo-vendor-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-          {products.map(product => <tr key={product.productId}><td><strong>{product.productName}</strong><small>{product.sku || 'No SKU'}</small></td><td>{product.categoryName}</td><td>{money(product.price)}</td><td>{product.stockQuantity}</td><td><span className={`demo-vendor-pill ${product.moderationStatus.toLowerCase()}`}>{product.moderationStatus}</span><small>{product.moderationStatus === 'Approved' ? (product.isActive ? 'Public listing active' : 'Paused by vendor') : product.moderationReason || 'Awaiting admin review'}</small></td><td><div className="demo-vendor-row-actions"><button onClick={() => openEdit(product)}>{product.moderationStatus === 'Rejected' ? 'Edit & resubmit' : 'Edit'}</button>{product.moderationStatus === 'Approved' && <button onClick={() => toggle(product.productId)}>{product.isActive ? 'Pause' : 'Activate'}</button>}<button className="danger" onClick={() => remove(product.productId)}>Delete</button></div></td></tr>)}
+          {products.map(product => <tr key={product.productId}><td><strong>{product.productName}</strong><small>{product.sku || 'No SKU'}</small></td><td>{product.categoryName}</td><td>{money(product.price)}</td><td>{product.stockQuantity}{product.variants?.length > 0 && <small>{product.variants.map(variant => `${variant.variantName}: ${variant.stockQuantity}`).join(' · ')}</small>}</td><td><span className={`demo-vendor-pill ${product.moderationStatus.toLowerCase()}`}>{product.moderationStatus}</span><small>{product.moderationStatus === 'Approved' ? (product.isActive ? 'Public listing active' : 'Paused by vendor') : product.moderationReason || 'Awaiting admin review'}</small></td><td><div className="demo-vendor-row-actions"><button onClick={() => openEdit(product)}>{product.moderationStatus === 'Rejected' ? 'Edit & resubmit' : 'Edit'}</button>{product.moderationStatus === 'Approved' && <button onClick={() => toggle(product.productId)}>{product.isActive ? 'Pause' : 'Activate'}</button>}<button className="danger" onClick={() => remove(product.productId)}>Delete</button></div></td></tr>)}
         </tbody></table></div>}
     </section></main>
   );
