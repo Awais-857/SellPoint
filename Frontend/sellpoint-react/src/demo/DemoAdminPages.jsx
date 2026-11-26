@@ -186,11 +186,26 @@ export function DemoAdminReviews() {
   const [filter,setFilter]=useState('Pending');
   const [message,setMessage]=useState('');
   const reviews=demoState.reviews.filter(r=>filter==='All'||r.status===filter);
-  const decide=(id,status)=>{try{updateDemoState(moderateAdminReview(demoState,id,status));setMessage(`Review ${status.toLowerCase()}.`);}catch(e){setMessage(e.message);}};
-  return <AdminPage active="reviews" eyebrow="CONTENT MODERATION" title="Review moderation" description="Approve or reject customer-submitted product reviews.">
-    <div className="demo-admin-filter">{['Pending','Approved','Rejected','All'].map(x=><button key={x} className={filter===x?'active':''} onClick={()=>setFilter(x)}>{x}</button>)}</div>
+  const decide=(id,status)=>{
+    let reason='';
+    if(status==='Rejected'){
+      reason=window.prompt('Optional reason for rejecting this review:')||'';
+    }
+    try{
+      updateDemoState(moderateAdminReview(demoState,id,status,reason));
+      setMessage(status==='Removed'?'Review removed from the public marketplace.':`Review ${status.toLowerCase()}.`);
+    }catch(e){setMessage(e.message);}
+  };
+  return <AdminPage active="reviews" eyebrow="CONTENT MODERATION" title="Review moderation" description="Approve or reject customer-submitted reviews, or remove previously moderated content.">
+    <div className="demo-admin-filter">{['Pending','Approved','Rejected','Removed','All'].map(x=><button key={x} className={filter===x?'active':''} onClick={()=>setFilter(x)}>{x}</button>)}</div>
     {message&&<p className="demo-admin-message" role="status">{message}</p>}
-    <div className="demo-admin-review-list">{reviews.map(r=><article key={r.reviewId}><div><strong>{r.productName}</strong><span>{'★'.repeat(r.rating)}{'☆'.repeat(5-r.rating)}</span><small>{r.customerName} · {dateLabel(r.createdAt)}</small></div><p>{r.comment||'No comment provided.'}</p><div className="demo-admin-review-actions"><span className="demo-admin-pill">{r.status}</span>{r.status==='Pending'&&<><button onClick={()=>decide(r.reviewId,'Approved')}>Approve</button><button className="danger" onClick={()=>decide(r.reviewId,'Rejected')}>Reject</button></>}</div></article>)}</div>
+    <div className="demo-admin-review-list">{reviews.map(r=><article key={r.reviewId}>
+      <div><strong>{r.productName}</strong><span>{'★'.repeat(r.rating)}{'☆'.repeat(5-r.rating)}</span><small>{r.customerName} · {dateLabel(r.createdAt)} · {r.verifiedPurchase?'Verified purchase':'Seeded sample review'}</small></div>
+      <p>{r.comment||'No comment provided.'}</p>
+      {r.vendorResponse&&<div className="demo-vendor-review-response"><strong>Vendor response · {r.vendorResponse.vendorName}</strong><p>{r.vendorResponse.comment}</p></div>}
+      {r.moderationReason&&<small>{r.moderationReason}</small>}
+      <div className="demo-admin-review-actions"><span className="demo-admin-pill">{r.status}</span>{r.status==='Pending'&&<><button onClick={()=>decide(r.reviewId,'Approved')}>Approve</button><button className="danger" onClick={()=>decide(r.reviewId,'Rejected')}>Reject</button></>}{['Approved','Rejected'].includes(r.status)&&<button className="danger" onClick={()=>decide(r.reviewId,'Removed')}>Remove</button>}</div>
+    </article>)}</div>
   </AdminPage>;
 }
 
