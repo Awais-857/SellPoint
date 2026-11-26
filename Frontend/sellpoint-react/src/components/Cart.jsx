@@ -138,7 +138,7 @@ function Cart() {
                     <div className={styles['header-links']}>
                         <span onClick={() => navigate('/products')}>Continue Shopping</span>
                         {demoMode
-                            ? <span onClick={() => navigate('/demo/workspace')}>Demo Workspace</span>
+                            ? <><span onClick={() => navigate('/wishlist')}>Wishlist ♥</span><span onClick={() => navigate('/demo/workspace')}>Demo Workspace</span></>
                             : loggedIn
                                 ? <span onClick={() => navigate('/dashboard')}>My Account</span>
                                 : <span onClick={() => navigate('/login')}>Login</span>}
