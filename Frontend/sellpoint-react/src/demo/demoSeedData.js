@@ -13,9 +13,9 @@ const categories = [
 ];
 
 const vendors = [
-  { vendorId: 101, userId: 201, businessName: 'Nova Tech Store', ownerName: 'Hamza Ali', email: 'nova@example.demo', status: 'Approved', isActive: true, joinedAt: '2026-01-12' },
-  { vendorId: 102, userId: 202, businessName: 'Urban Home', ownerName: 'Sara Khan', email: 'urban@example.demo', status: 'Approved', isActive: true, joinedAt: '2026-02-03' },
-  { vendorId: 103, userId: 203, businessName: 'Peak Sports', ownerName: 'Usman Raza', email: 'peak@example.demo', status: 'Approved', isActive: true, joinedAt: '2026-02-18' },
+  { vendorId: 101, userId: 201, businessName: 'Nova Tech Store', ownerName: 'Hamza Ali', email: 'nova@example.demo', status: 'Approved', isActive: true, tagline: 'Everyday technology, made simple', description: 'Explore useful electronics and accessories selected for work, learning and everyday life.', publicEmail: 'hello@novatech.example.demo', publicPhone: '+92 300 111 0101', city: 'Lahore', country: 'Pakistan', joinedAt: '2026-01-12' },
+  { vendorId: 102, userId: 202, businessName: 'Urban Home', ownerName: 'Sara Khan', email: 'urban@example.demo', status: 'Approved', isActive: true, tagline: 'Thoughtful essentials for comfortable spaces', description: 'Find practical home, kitchen and personal care products for a more comfortable everyday routine.', publicEmail: 'hello@urbanhome.example.demo', city: 'Karachi', country: 'Pakistan', joinedAt: '2026-02-03' },
+  { vendorId: 103, userId: 203, businessName: 'Peak Sports', ownerName: 'Usman Raza', email: 'peak@example.demo', status: 'Approved', isActive: true, tagline: 'Gear up, move more, feel better', description: 'Discover training and outdoor essentials to support your active lifestyle.', publicEmail: 'hello@peaksports.example.demo', city: 'Islamabad', country: 'Pakistan', joinedAt: '2026-02-18' },
   { vendorId: 104, userId: 204, businessName: 'The Style Corner', ownerName: 'Ayesha Noor', email: 'style@example.demo', status: 'Pending', isActive: true, joinedAt: '2026-03-04' },
   { vendorId: 105, userId: 205, businessName: 'Pixel Gaming', ownerName: 'Bilal Ahmed', email: 'pixel@example.demo', status: 'Approved', isActive: false, joinedAt: '2026-03-11' },
   { vendorId: 106, userId: 206, businessName: 'Fashion Corner', ownerName: 'Noor Fatima', email: 'fashion@example.demo', status: 'Rejected', isActive: false, rejectionReason: 'Please provide complete business verification details.', joinedAt: '2026-03-14' }
