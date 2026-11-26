@@ -220,4 +220,22 @@ export const DEMO_SEED_DATA = {
   notifications: []
 };
 
-export const createDemoState = () => JSON.parse(JSON.stringify(DEMO_SEED_DATA));
+export const createDemoState = () => {
+  const state = JSON.parse(JSON.stringify(DEMO_SEED_DATA));
+  state.payments = state.orders.map((order, index) => ({
+    paymentId: 20001 + index,
+    orderId: order.orderId,
+    customerId: order.customerId,
+    amount: Number(order.totalAmount || 0),
+    currency: 'USD',
+    method: order.paymentMethod || 'Cash on delivery',
+    status: order.paymentStatus === 'Refunded' ? 'Refunded' : order.paymentStatus === 'Paid' ? 'Paid' : order.paymentStatus === 'Failed' ? 'Failed' : 'Pending',
+    refundedAmount: order.paymentStatus === 'Refunded' ? Number(order.totalAmount || 0) : 0,
+    refundStatus: order.paymentStatus === 'Refunded' ? 'Refunded' : 'Not refunded',
+    refunds: [],
+    transactions: [],
+    createdAt: order.orderDate,
+    paidAt: order.paymentStatus === 'Paid' || order.paymentStatus === 'Refunded' ? order.orderDate : null
+  }));
+  return state;
+};
