@@ -4,6 +4,7 @@ import { useDemo } from './DemoProvider';
 import { addToCart, clearCart, getCart } from '../services/cartHelper';
 import { addDemoDispute, buildDemoOrder, calculateDemoCartSummary, cancelDemoOrder } from './demoOrderService';
 import './demoCustomer.css';
+import { getDemoCustomerAddresses } from './demoCustomerAccountService';
 
 const money = value => `$${Number(value || 0).toFixed(2)}`;
 const formatDate = value => new Date(value).toLocaleString();
@@ -18,6 +19,7 @@ function DemoHeader({ backLabel = 'Demo workspace', backTo = '/demo/workspace' }
         <button onClick={() => navigate('/cart')}>Cart</button>
         <button onClick={() => navigate('/wishlist')}>Wishlist</button>
         <button onClick={() => navigate('/order-history')}>My orders</button>
+        <button onClick={() => navigate('/customer/profile')}>My account</button>
         <button onClick={() => navigate(backTo)}>{backLabel}</button>
       </nav>
     </header>
@@ -32,9 +34,9 @@ export function DemoCheckout() {
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('CashOnDelivery');
-  const [address, setAddress] = useState({
-    addressLine1: '', addressLine2: '', city: '', state: '', zipCode: '', country: 'Pakistan'
-  });
+  const addresses = getDemoCustomerAddresses(demoState, session.userId);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const selectedAddress = addresses.find(item => item.addressId === Number(selectedAddressId)) || addresses.find(item => item.isDefault) || addresses[0] || null;
 
   useEffect(() => {
     getCart().then(setItems).catch(() => setError('Unable to load your demo cart.')).finally(() => setLoading(false));
@@ -42,17 +44,15 @@ export function DemoCheckout() {
 
   const summary = useMemo(() => calculateDemoCartSummary(items), [items]);
 
-  const updateAddress = event => setAddress(current => ({ ...current, [event.target.name]: event.target.value }));
-
   const placeOrder = () => {
-    if (!address.addressLine1.trim() || !address.city.trim() || !address.state.trim() || !address.zipCode.trim()) {
-      setError('Please complete your shipping address before placing the order.');
+    if (!selectedAddress) {
+      setError('Please add a delivery address to your account before placing the order.');
       return;
     }
     setPlacing(true);
     setError('');
     try {
-      const result = buildDemoOrder(demoState, session, items, address, paymentMethod);
+      const result = buildDemoOrder(demoState, session, items, selectedAddress, paymentMethod);
       updateDemoState(result.nextState);
       clearCart();
       navigate(`/order-confirmation/${result.order.orderId}`);
@@ -76,15 +76,11 @@ export function DemoCheckout() {
         {error && <div className="demo-shop-error" role="alert">{error}</div>}
         <div className="demo-checkout-grid">
           <section className="demo-shop-card">
-            <h2>Shipping address</h2>
-            <div className="demo-address-grid">
-              <label>Address line 1<input name="addressLine1" value={address.addressLine1} onChange={updateAddress} placeholder="Street and house number" /></label>
-              <label>Address line 2 <span>(optional)</span><input name="addressLine2" value={address.addressLine2} onChange={updateAddress} placeholder="Apartment, suite, etc." /></label>
-              <label>City<input name="city" value={address.city} onChange={updateAddress} placeholder="City" /></label>
-              <label>State / Province<input name="state" value={address.state} onChange={updateAddress} placeholder="State or province" /></label>
-              <label>Postal code<input name="zipCode" value={address.zipCode} onChange={updateAddress} placeholder="Postal code" /></label>
-              <label>Country<input name="country" value={address.country} onChange={updateAddress} /></label>
-            </div>
+            <div className="demo-account-section-heading"><h2>Delivery address</h2><button className="demo-outline-button" type="button" onClick={() => navigate('/customer/addresses')}>Manage addresses</button></div>
+            {addresses.length ? <div className="demo-checkout-address-list">{addresses.map(item => <label className={selectedAddress?.addressId === item.addressId ? 'selected' : ''} key={item.addressId}>
+              <input type="radio" name="shippingAddress" checked={selectedAddress?.addressId === item.addressId} onChange={() => setSelectedAddressId(item.addressId)} />
+              <span><strong>{item.label}{item.isDefault ? ' · Default' : ''}</strong><small>{item.recipientName} · {item.phone}</small><small>{item.addressLine1}{item.addressLine2 ? `, ${item.addressLine2}` : ''}, {item.city}, {item.state} {item.zipCode}, {item.country}</small></span>
+            </label>)}</div> : <div className="demo-shop-feedback">You haven't saved a delivery address yet. <button className="demo-inline-link" type="button" onClick={() => navigate('/customer/addresses')}>Add an address</button> before checkout.</div>}
             <h2 className="demo-payment-heading">Payment method</h2>
             <label className="demo-payment-choice"><input type="radio" checked={paymentMethod === 'CashOnDelivery'} onChange={() => setPaymentMethod('CashOnDelivery')} /> Cash on delivery</label>
             <label className="demo-payment-choice"><input type="radio" checked={paymentMethod === 'DemoCard'} onChange={() => setPaymentMethod('DemoCard')} /> Simulated card payment <span>(no card details or charge)</span></label>
