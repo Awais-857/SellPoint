@@ -22,7 +22,8 @@ describe('demoVendorService', () => {
   test('rejects invalid category, price and non-owned product edits', () => {
     expect(() => saveVendorProduct(state, 101, { productName: 'Bad', categoryId: '9', price: '10', stockQuantity: '1' })).toThrow(/active product category/);
     expect(() => saveVendorProduct(state, 101, { productName: 'Bad', categoryId: '1', price: '-1', stockQuantity: '1' })).toThrow(/valid product price/);
-    expect(() => saveVendorProduct(state, 102, { productName: 'Bad', categoryId: '1', price: '10', stockQuantity: '1' }, 1001)).toThrow(/not found/);
+    const otherVendor = { ...vendor, vendorId: 102, userId: 202, businessName: 'Other Store' };
+    expect(() => saveVendorProduct({ ...state, vendors: [vendor, otherVendor] }, 102, { productName: 'Bad', categoryId: '1', price: '10', stockQuantity: '1' }, 1001)).toThrow(/not found/);
   });
 
   test('toggles and deletes only owned products', () => {
