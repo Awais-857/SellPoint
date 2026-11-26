@@ -1,4 +1,4 @@
-import { getAdminOverview, getAdminReport, getAdminTopProducts, getAdminTopVendors, moderateAdminReview, saveAdminCategory, toggleCategoryActive, toggleVendorActive, updateAdminDispute, updateAdminOrderStatus, updateVendorApproval } from './demoAdminService';
+import { getAdminOverview, getAdminReport, getAdminTopProducts, getAdminTopVendors, moderateAdminProduct, moderateAdminReview, saveAdminCategory, toggleCategoryActive, toggleVendorActive, updateAdminDispute, updateAdminOrderStatus, updateVendorApproval } from './demoAdminService';
 import { createDemoState } from './demoSeedData';
 
 describe('demoAdminService', () => {
@@ -8,7 +8,7 @@ describe('demoAdminService', () => {
   test('calculates marketplace overview counts and revenue', () => {
     const overview = getAdminOverview(state);
     expect(overview.totalCustomers).toBe(4);
-    expect(overview.totalVendors).toBe(5);
+    expect(overview.totalVendors).toBe(6);
     expect(overview.totalProducts).toBe(32);
     expect(overview.pendingVendors).toBe(1);
     expect(overview.pendingReviews).toBe(4);
@@ -21,6 +21,18 @@ describe('demoAdminService', () => {
     expect(rejected.vendors.find(v => v.vendorId === 104).isActive).toBe(false);
     const suspended = toggleVendorActive(state, 101);
     expect(suspended.vendors.find(v => v.vendorId === 101).isActive).toBe(false);
+  });
+
+  test('approves and rejects pending product listings', () => {
+    const pending = state.products.find(product => product.moderationStatus === 'Pending');
+    const approved = moderateAdminProduct(state, pending.productId, 'Approved');
+    expect(approved.products.find(product => product.productId === pending.productId)).toMatchObject({ moderationStatus: 'Approved', isActive: true, moderationReason: '' });
+
+    const rejectedProduct = state.products.find(product => product.moderationStatus === 'Pending');
+    const rejected = moderateAdminProduct(state, rejectedProduct.productId, 'Rejected', 'Please improve the photos.');
+    expect(rejected.products.find(product => product.productId === rejectedProduct.productId)).toMatchObject({ moderationStatus: 'Rejected', isActive: false, moderationReason: 'Please improve the photos.' });
+    expect(() => moderateAdminProduct(state, rejectedProduct.productId, 'Rejected')).toThrow(/reason/);
+    expect(() => moderateAdminProduct(approved, pending.productId, 'Rejected', 'Duplicate')).toThrow(/Only pending/);
   });
 
   test('creates, edits and validates categories', () => {
