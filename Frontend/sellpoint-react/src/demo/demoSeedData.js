@@ -113,8 +113,8 @@ const orders = Array.from({ length: 15 }, (_, index) => {
 const firstMultiVendorProduct = products.find(product => product.productId === 1001);
 const secondMultiVendorProduct = products.find(product => product.productId === 1006);
 const multiVendorItems = [
-  { orderItemId: 8101, productId: firstMultiVendorProduct.productId, productName: firstMultiVendorProduct.productName, vendorId: firstMultiVendorProduct.vendorId, quantity: 1, unitPrice: firstMultiVendorProduct.price, itemTotal: firstMultiVendorProduct.price, itemStatus: 'Shipped' },
-  { orderItemId: 8102, productId: secondMultiVendorProduct.productId, productName: secondMultiVendorProduct.productName, vendorId: secondMultiVendorProduct.vendorId, quantity: 2, unitPrice: secondMultiVendorProduct.price, itemTotal: Number((secondMultiVendorProduct.price * 2).toFixed(2)), itemStatus: 'Processing' }
+  { orderItemId: 8101, productId: firstMultiVendorProduct.productId, productName: firstMultiVendorProduct.productName, vendorId: firstMultiVendorProduct.vendorId, quantity: 1, unitPrice: Number((firstMultiVendorProduct.price * (1 - firstMultiVendorProduct.discountPercent / 100)).toFixed(2)), itemTotal: Number((firstMultiVendorProduct.price * (1 - firstMultiVendorProduct.discountPercent / 100)).toFixed(2)), itemStatus: 'Shipped' },
+  { orderItemId: 8102, productId: secondMultiVendorProduct.productId, productName: secondMultiVendorProduct.productName, vendorId: secondMultiVendorProduct.vendorId, quantity: 2, unitPrice: Number((secondMultiVendorProduct.price * (1 - secondMultiVendorProduct.discountPercent / 100)).toFixed(2)), itemTotal: Number((secondMultiVendorProduct.price * (1 - secondMultiVendorProduct.discountPercent / 100) * 2).toFixed(2)), itemStatus: 'Processing' }
 ];
 const multiVendorSubtotal = multiVendorItems.reduce((sum, item) => sum + item.itemTotal, 0);
 orders.push({
