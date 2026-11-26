@@ -198,7 +198,7 @@ export function DemoOrderDetail() {
           <div className="demo-detail-grid"><div><span>Status</span><strong>{order.orderStatus}</strong></div><div><span>Payment</span><strong>{order.paymentStatus}</strong></div><div><span>Placed</span><strong>{formatDate(order.orderDate)}</strong></div><div><span>Total</span><strong>{money(order.totalAmount)}</strong></div></div>
           <h2>Items</h2>
           {order.items.map(item => <div className="demo-summary-item" key={item.orderItemId}><span>{item.productName}{item.variantName ? ` — ${item.variantName}` : ''} × {item.quantity}</span><strong>{money(item.itemTotal)}</strong></div>)}
-          <h2>Shipping address</h2><p>{order.shippingAddress || [order.addressLine1, order.addressLine2, order.city, order.state, order.zipCode, order.country].filter(Boolean).join(', ')}</p>
+          <h2>Shipping address</h2><p><strong>{order.shippingAddressSnapshot?.recipientName || order.recipientName || order.customerName}</strong>{order.recipientPhone ? ` · ${order.recipientPhone}` : ''}</p><p>{order.shippingAddress || [order.addressLine1, order.addressLine2, order.city, order.state, order.zipCode, order.country].filter(Boolean).join(', ')}</p>
           <h2>Summary</h2><div className="demo-summary-line"><span>Subtotal</span><strong>{money(order.subtotal)}</strong></div><div className="demo-summary-line"><span>Shipping</span><strong>{money(order.shipping)}</strong></div><div className="demo-summary-line"><span>Tax</span><strong>{money(order.tax)}</strong></div><div className="demo-summary-line demo-summary-total"><span>Total</span><strong>{money(order.totalAmount)}</strong></div>
         </div>
         {error && <p className="demo-shop-feedback" role="status">{error}</p>}
