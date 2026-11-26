@@ -13,9 +13,10 @@ export const getReturnEligibility = (demoState, orderId, orderItemId, customerId
   if (status !== 'Delivered' || !deliveredAt) return { eligible: false, reason: 'Only delivered items can be returned.' };
   const deliveredDate = new Date(deliveredAt);
   if (Number.isNaN(deliveredDate.getTime())) return { eligible: false, reason: 'The delivery date is unavailable.' };
-  const ageDays = Math.floor((new Date(now).getTime() - deliveredDate.getTime()) / 86400000);
-  if (ageDays < 0) return { eligible: false, reason: 'The delivery date is in the future.' };
-  if (ageDays > RETURN_WINDOW_DAYS) return { eligible: false, reason: 'The 30-day return window has expired.' };
+  const elapsedMs = new Date(now).getTime() - deliveredDate.getTime();
+  if (elapsedMs < 0) return { eligible: false, reason: 'The delivery date is in the future.' };
+  if (elapsedMs > RETURN_WINDOW_DAYS * 86400000) return { eligible: false, reason: 'The 30-day return window has expired.' };
+  const ageDays = Math.floor(elapsedMs / 86400000);
   if ((demoState.returnRequests || []).some(request => Number(request.orderItemId) === Number(orderItemId))) {
     return { eligible: false, reason: 'A return request already exists for this order item.' };
   }
