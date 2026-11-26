@@ -112,6 +112,7 @@ export function DemoWorkspace() {
         {session.role === 'Customer' && (
           <div className="demo-customer-actions">
             <button className="demo-secondary-button" onClick={() => navigate('/products')}>Browse sample products</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/stores')}>Explore public stores</button>
             <button className="demo-secondary-button" onClick={() => navigate('/cart')}>Shopping cart</button>
             <button className="demo-secondary-button" onClick={() => navigate('/wishlist')}>My wishlist</button>
             <button className="demo-secondary-button" onClick={() => navigate('/customer/profile')}>My profile & addresses</button>
@@ -124,6 +125,7 @@ export function DemoWorkspace() {
           <div className="demo-customer-actions">
             <button className="demo-secondary-button" onClick={() => navigate('/vendor-dashboard')}>Vendor dashboard</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/products')}>Manage products</button>
+            <button className="demo-secondary-button" onClick={() => navigate('/vendor/store-profile')}>Public store profile</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/orders')}>Manage orders</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/reviews')}>Product reviews</button>
             <button className="demo-secondary-button" onClick={() => navigate('/vendor/returns')}>Return requests</button>
