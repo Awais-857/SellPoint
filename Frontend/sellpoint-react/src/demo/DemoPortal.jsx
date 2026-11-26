@@ -81,6 +81,7 @@ export function DemoWorkspace() {
     ['Vendors', demoState.vendors.length],
     ['Customers', demoState.customers.length],
     ['Orders', demoState.orders.length],
+    ['Payments', (demoState.payments || []).length],
     ['Reviews', demoState.reviews.length],
     ['Disputes', demoState.disputes.length],
     ['Returns', (demoState.returnRequests || []).length]
