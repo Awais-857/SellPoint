@@ -1,3 +1,5 @@
+import { recordDemoRefund } from './demoPaymentService';
+
 const RETURN_WINDOW_DAYS = 30;
 
 const nextId = (requests) => Math.max(10000, ...requests.map(item => Number(item.returnId) || 0)) + 1;
@@ -77,7 +79,8 @@ export const decideDemoReturnAsVendor = (demoState, returnId, vendorId, decision
     updated.refundedAt = new Date(now).toISOString();
     updated.restocked = false;
   }
-  const next = { ...demoState, returnRequests: demoState.returnRequests.map(entry => entry.returnId === request.returnId ? updated : entry) };
+  let next = { ...demoState, returnRequests: demoState.returnRequests.map(entry => entry.returnId === request.returnId ? updated : entry) };
+  if (decision === 'Approved') next = recordDemoRefund(next, request.orderId, request.refundAmount, `return-${request.returnId}`, now);
   return decision === 'Approved' && restock ? restockReturnedItem(next, updated) : next;
 };
 
@@ -127,7 +130,8 @@ export const decideDemoReturnAsAdmin = (demoState, returnId, decision, { restock
     updated.refundStatus = 'Simulated refund recorded';
     updated.refundedAt = new Date(now).toISOString();
   }
-  const next = { ...demoState, returnRequests: demoState.returnRequests.map(entry => entry.returnId === request.returnId ? updated : entry) };
+  let next = { ...demoState, returnRequests: demoState.returnRequests.map(entry => entry.returnId === request.returnId ? updated : entry) };
+  if (decision === 'Approved') next = recordDemoRefund(next, request.orderId, request.refundAmount, `return-${request.returnId}`, now);
   return decision === 'Approved' && restock ? restockReturnedItem(next, updated) : next;
 };
 
