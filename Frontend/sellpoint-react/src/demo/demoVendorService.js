@@ -101,11 +101,13 @@ export const updateVendorOrderItemStatus = (state, vendorId, orderItemId, status
     if (!orderItemFound) return order;
 
     const statuses = items.map(item => item.itemStatus || order.orderStatus);
+    const nonCancelledStatuses = statuses.filter(value => value !== 'Cancelled');
     let orderStatus = 'Pending';
-    if (statuses.every(value => value === 'Delivered')) orderStatus = 'Delivered';
-    else if (statuses.some(value => value === 'Shipped')) orderStatus = 'Shipped';
-    else if (statuses.some(value => value === 'Processing')) orderStatus = 'Processing';
-    else if (statuses.every(value => value === 'Cancelled')) orderStatus = 'Cancelled';
+    if (nonCancelledStatuses.length === 0) orderStatus = 'Cancelled';
+    else if (nonCancelledStatuses.every(value => value === 'Delivered')) orderStatus = 'Delivered';
+    else if (nonCancelledStatuses.some(value => value === 'Pending')) orderStatus = 'Pending';
+    else if (nonCancelledStatuses.some(value => value === 'Processing')) orderStatus = 'Processing';
+    else if (nonCancelledStatuses.some(value => ['Shipped', 'Delivered'].includes(value))) orderStatus = 'Shipped';
     return { ...order, items, orderStatus };
   });
 
