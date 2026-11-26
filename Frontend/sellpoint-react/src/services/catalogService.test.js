@@ -137,6 +137,18 @@ describe('demoCatalogService', () => {
     expect(product.reviewCount).toBe(2);
   });
 
+  test('updates public rating aggregates only when a review is approved', async () => {
+    const pendingReview = { reviewId: 4, productId: 1, rating: 5, status: 'Pending' };
+    getDemoState.mockReturnValue({ ...demoState, reviews: [...demoState.reviews, pendingReview] });
+    const beforeApproval = await demoCatalogService.getProductById(1);
+    expect(beforeApproval.averageRating).toBe(4);
+    expect(beforeApproval.reviewCount).toBe(2);
+    getDemoState.mockReturnValue({ ...demoState, reviews: [...demoState.reviews, { ...pendingReview, status: 'Approved' }] });
+    const afterApproval = await demoCatalogService.getProductById(1);
+    expect(afterApproval.averageRating).toBe(4.3);
+    expect(afterApproval.reviewCount).toBe(3);
+  });
+
   test('does not return inactive or missing products', async () => {
     await expect(demoCatalogService.getProductById(4)).resolves.toBeNull();
     await expect(demoCatalogService.getProductById(999)).resolves.toBeNull();
