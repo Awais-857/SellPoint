@@ -88,6 +88,7 @@ export const updateVendorVariantStock = (state, vendorId, productId, stockUpdate
   const variants = product.variants.map(variant => {
     const rawValue = stockUpdates[variant.variantId];
     if (rawValue === undefined) return variant;
+    if (String(rawValue).trim() === '') throw new Error(`Enter a stock quantity for ${variant.variantName}.`);
     const quantity = Number(rawValue);
     if (!Number.isInteger(quantity) || quantity < 0) {
       throw new Error(`Stock for ${variant.variantName} must be a whole number of zero or more.`);
