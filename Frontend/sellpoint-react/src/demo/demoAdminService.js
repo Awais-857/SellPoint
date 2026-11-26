@@ -126,13 +126,17 @@ export const moderateAdminProduct = (state, productId, decision, reason = '') =>
   };
 };
 
-export const moderateAdminReview = (state, reviewId, decision) => {
-  if (!['Approved', 'Rejected'].includes(decision)) throw new Error('Choose a valid review decision.');
+export const moderateAdminReview = (state, reviewId, decision, reason = '') => {
+  if (!['Approved', 'Rejected', 'Removed'].includes(decision)) throw new Error('Choose a valid review decision.');
   const review = state.reviews.find(item => item.reviewId === Number(reviewId));
   if (!review) throw new Error('Review not found.');
+  if (review.status !== 'Pending' && decision !== 'Removed') throw new Error('Only pending reviews can be approved or rejected.');
+  const moderationReason = decision === 'Rejected' ? String(reason || '').trim() : '';
   return {
     ...state,
-    reviews: state.reviews.map(item => item.reviewId === review.reviewId ? { ...item, status: decision } : item)
+    reviews: state.reviews.map(item => item.reviewId === review.reviewId
+      ? { ...item, status: decision, moderationReason }
+      : item)
   };
 };
 
