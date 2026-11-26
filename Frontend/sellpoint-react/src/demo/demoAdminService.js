@@ -1,7 +1,8 @@
 const money = value => Number(Number(value || 0).toFixed(2));
 
 export const getAdminOverview = state => {
-  const activeProducts = state.products.filter(item => item.isActive);
+  const activeProducts = state.products.filter(item => item.isActive && (item.moderationStatus || 'Approved') === 'Approved');
+  const pendingProducts = state.products.filter(item => (item.moderationStatus || 'Approved') === 'Pending');
   const pendingVendors = state.vendors.filter(item => item.status === 'Pending');
   const pendingReviews = state.reviews.filter(item => item.status === 'Pending');
   const openDisputes = state.disputes.filter(item => !['Resolved', 'Rejected'].includes(item.status));
@@ -14,6 +15,7 @@ export const getAdminOverview = state => {
     pendingVendors: pendingVendors.length,
     totalProducts: state.products.length,
     activeProducts: activeProducts.length,
+    pendingProducts: pendingProducts.length,
     totalOrders: state.orders.length,
     pendingOrders: state.orders.filter(item => ['Pending', 'Processing'].includes(item.orderStatus)).length,
     totalRevenue: money(revenueOrders.reduce((sum, order) => sum + Number(order.totalAmount || 0), 0)),
@@ -102,6 +104,21 @@ export const updateAdminDispute = (state, disputeId, status, adminNotes) => {
     ...state,
     disputes: state.disputes.map(item => item.disputeId === dispute.disputeId
       ? { ...item, status, adminNotes: String(adminNotes).trim(), resolvedAt: ['Resolved', 'Rejected'].includes(status) ? new Date().toISOString() : null }
+      : item)
+  };
+};
+
+export const moderateAdminProduct = (state, productId, decision, reason = '') => {
+  if (!['Approved', 'Rejected'].includes(decision)) throw new Error('Choose a valid product decision.');
+  const product = state.products.find(item => item.productId === Number(productId));
+  if (!product) throw new Error('Product not found.');
+  if ((product.moderationStatus || 'Approved') !== 'Pending') throw new Error('Only pending products can be moderated.');
+  const moderationReason = decision === 'Rejected' ? String(reason || '').trim() : '';
+  if (decision === 'Rejected' && !moderationReason) throw new Error('Add a reason when rejecting a product.');
+  return {
+    ...state,
+    products: state.products.map(item => item.productId === product.productId
+      ? { ...item, moderationStatus: decision, moderationReason, isActive: decision === 'Approved' }
       : item)
   };
 };
