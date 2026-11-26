@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDemo } from './DemoProvider';
 import {
   getAdminOverview, getAdminReport, getAdminTopProducts, getAdminTopVendors,
-  moderateAdminReview, saveAdminCategory, toggleCategoryActive, toggleVendorActive,
+  moderateAdminProduct, moderateAdminReview, saveAdminCategory, toggleCategoryActive, toggleVendorActive,
   updateAdminDispute, updateAdminOrderStatus, updateVendorApproval
 } from './demoAdminService';
 import './demoAdmin.css';
@@ -18,6 +18,7 @@ function AdminHeader({ active }) {
   const links = [
     ['dashboard', 'Overview', '/admin-dashboard'],
     ['vendors', 'Vendors', '/admin/vendors'],
+    ['products', 'Products', '/admin/products'],
     ['categories', 'Categories', '/admin/categories'],
     ['orders', 'Orders', '/admin/orders'],
     ['disputes', 'Disputes', '/admin/disputes'],
@@ -46,6 +47,7 @@ export function DemoAdminDashboard() {
   const stats = getAdminOverview(demoState);
   const actions = [
     ['Vendors','Approve applications and manage seller accounts','/admin/vendors','🏪'],
+    ['Products','Review vendor product submissions','/admin/products','📦'],
     ['Categories','Organize the marketplace catalogue','/admin/categories','🗂️'],
     ['Orders','Monitor all marketplace orders','/admin/orders','📦'],
     ['Disputes','Review and record dispute decisions','/admin/disputes','⚖️'],
@@ -56,7 +58,7 @@ export function DemoAdminDashboard() {
     <StatCards items={[
       ['Customers',stats.totalCustomers,'Demo customer accounts'],
       ['Vendors',stats.totalVendors,`${stats.approvedVendors} approved · ${stats.pendingVendors} pending`],
-      ['Products',stats.totalProducts,`${stats.activeProducts} active listings`],
+      ['Products',stats.totalProducts,`${stats.activeProducts} active · ${stats.pendingProducts} pending approval`],
       ['Orders',stats.totalOrders,`${stats.pendingOrders} pending or processing`],
       ['Marketplace sales',money(stats.totalRevenue),'Excludes cancelled and refunded orders'],
       ['Open disputes',stats.openDisputes,'Need admin attention'],
@@ -85,6 +87,48 @@ export function DemoAdminVendors() {
 }
 
 const emptyCategory = {categoryName:'',description:''};
+export function DemoAdminProducts() {
+  const { demoState, updateDemoState } = useAdminState();
+  const [filter, setFilter] = useState('Pending');
+  const [message, setMessage] = useState('');
+  const products = demoState.products
+    .map(product => ({ ...product, moderationStatus: product.moderationStatus || 'Approved' }))
+    .filter(product => filter === 'All' || product.moderationStatus === filter)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const decide = (productId, decision) => {
+    let reason = '';
+    if (decision === 'Rejected') {
+      reason = window.prompt('Enter a reason for rejecting this product:') || '';
+      if (!reason.trim()) {
+        setMessage('A rejection reason is required. No changes were made.');
+        return;
+      }
+    }
+    try {
+      updateDemoState(moderateAdminProduct(demoState, productId, decision, reason));
+      setMessage(`Product ${decision.toLowerCase()}.`);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  };
+
+  return <AdminPage active="products" eyebrow="PRODUCT LISTING REVIEW" title="Product moderation" description="Review vendor submissions before they become visible in the public marketplace.">
+    <div className="demo-admin-filter">{['Pending','Approved','Rejected','All'].map(value => <button key={value} className={filter === value ? 'active' : ''} onClick={() => setFilter(value)}>{value}</button>)}</div>
+    {message && <p className="demo-admin-message" role="status">{message}</p>}
+    {products.length === 0 ? <div className="demo-admin-empty">No products match this filter.</div> :
+      <div className="demo-admin-table-wrap"><table className="demo-admin-table"><thead><tr><th>Product</th><th>Vendor</th><th>Category</th><th>Price</th><th>Stock</th><th>Moderation</th><th>Reason</th><th>Actions</th></tr></thead><tbody>
+        {products.map(product => <tr key={product.productId}>
+          <td><strong>{product.productName}</strong><small>#{product.productId}</small></td>
+          <td>{product.businessName}</td><td>{product.categoryName}</td><td>{money(product.price)}</td><td>{product.stockQuantity}</td>
+          <td><span className={`demo-admin-pill ${product.moderationStatus.toLowerCase()}`}>{product.moderationStatus}</span></td>
+          <td>{product.moderationReason || '—'}</td>
+          <td><div className="demo-admin-row-actions">{product.moderationStatus === 'Pending' && <><button onClick={() => decide(product.productId, 'Approved')}>Approve</button><button className="danger" onClick={() => decide(product.productId, 'Rejected')}>Reject</button></>}</div></td>
+        </tr>)}
+      </tbody></table></div>}
+  </AdminPage>;
+}
+
 export function DemoAdminCategories() {
   const {demoState,updateDemoState}=useAdminState();
   const [form,setForm]=useState(emptyCategory);
