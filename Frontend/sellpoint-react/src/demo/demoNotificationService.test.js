@@ -24,6 +24,14 @@ describe('demoNotificationService', () => {
     expect(getDemoNotifications(next, { role: 'Admin', userId: 1 })).toHaveLength(1);
   });
 
+  test('does not alert vendors about a card order before payment succeeds', () => {
+    const order = { orderId: 6002, customerId: 301, customerName: 'Mariam', items: [{ vendorId: 101 }] };
+    const payment = { paymentId: 2, orderId: 6002, customerId: 301, method: 'Demo Card (no charge)', status: 'Pending' };
+    const next = createNotificationsForStateChange(base, { ...base, orders: [order], payments: [payment] });
+    expect(getDemoNotifications(next, { role: 'Vendor', vendorId: 101 })).toHaveLength(0);
+    expect(getDemoNotifications(next, { role: 'Customer', userId: 301 })).toHaveLength(1);
+  });
+
   test('notifies the customer, vendor and admin when a payment succeeds', () => {
     const payment = { paymentId: 1, orderId: 5001, customerId: 301, status: 'Pending', amount: 50 };
     const nextPayment = { ...payment, status: 'Paid' };
