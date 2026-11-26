@@ -59,6 +59,15 @@ describe('demoOrderService', () => {
     expect(() => cancelDemoOrder({ ...state, orders: [{ ...order, orderStatus: 'Shipped' }] }, 5001, 301)).toThrow(/Only pending or confirmed orders can be cancelled/);
   });
 
+  test('records a simulated refund when cancelling an already-paid pending order', () => {
+    const order = { orderId: 5002, customerId: 301, orderStatus: 'Pending', paymentStatus: 'Paid', totalAmount: 50, items: [{ productId: 1, quantity: 1 }] };
+    const payment = { paymentId: 20002, orderId: 5002, customerId: 301, amount: 50, status: 'Paid', refundedAmount: 0, refunds: [] };
+    const cancelled = cancelDemoOrder({ ...state, orders: [order], payments: [payment], products: [{ ...product, stockQuantity: 4 }] }, 5002, 301);
+    expect(cancelled.orders[0].paymentStatus).toBe('Refunded');
+    expect(cancelled.payments[0]).toMatchObject({ status: 'Refunded', refundedAmount: 50 });
+    expect(cancelled.payments[0].refunds[0].reference).toBe('cancellation-5002');
+  });
+
   test('adds a dispute for an order owned by the customer', () => {
     const order = { orderId: 5001, customerId: 301 };
     const result = addDemoDispute({ ...state, orders: [order] }, 5001, 301, 'Item arrived damaged');
