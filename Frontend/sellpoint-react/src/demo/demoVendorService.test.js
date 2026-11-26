@@ -14,9 +14,17 @@ describe('demoVendorService', () => {
   test('creates and edits products for the current vendor', () => {
     const created = saveVendorProduct(state, 101, { productName: 'USB Hub', categoryId: '1', price: '25.5', stockQuantity: '10', discountPercent: '5' });
     expect(created.products).toHaveLength(2);
-    expect(created.products[1]).toMatchObject({ vendorId: 101, businessName: vendor.businessName, price: 25.5, isActive: true });
+    expect(created.products[1]).toMatchObject({ vendorId: 101, businessName: vendor.businessName, price: 25.5, moderationStatus: 'Pending', isActive: false });
     const edited = saveVendorProduct(created, 101, { productName: 'USB-C Hub', categoryId: '1', price: '30', stockQuantity: '12', discountPercent: '0' }, created.products[1].productId);
     expect(edited.products[1].productName).toBe('USB-C Hub');
+  });
+
+  test('resubmits rejected products for approval and blocks activation before approval', () => {
+    const rejected = { ...product, moderationStatus: 'Rejected', moderationReason: 'Improve images', isActive: false };
+    const rejectedState = { ...state, products: [rejected] };
+    expect(() => toggleVendorProduct(rejectedState, 101, 1001)).toThrow(/Only approved products/);
+    const resubmitted = saveVendorProduct(rejectedState, 101, { productName: 'Updated Headphones', categoryId: '1', price: '110', stockQuantity: '4' }, 1001);
+    expect(resubmitted.products[0]).toMatchObject({ moderationStatus: 'Pending', moderationReason: null, isActive: false });
   });
 
   test('rejects invalid category, price and non-owned product edits', () => {
