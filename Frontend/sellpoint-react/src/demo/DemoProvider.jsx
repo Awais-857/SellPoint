@@ -27,12 +27,11 @@ export function DemoProvider({ children }) {
   }, []);
 
   const updateDemoState = useCallback((updater) => {
-    setDemoState(currentState => {
-      const nextState = typeof updater === 'function' ? updater(currentState) : updater;
-      saveDemoState(nextState);
-      return nextState;
-    });
-  }, []);
+    const nextState = typeof updater === 'function' ? updater(demoState) : updater;
+    saveDemoState(nextState);
+    setDemoState(nextState);
+    return nextState;
+  }, [demoState]);
 
   const resetWorkspace = useCallback(() => {
     const nextState = resetDemoState();
