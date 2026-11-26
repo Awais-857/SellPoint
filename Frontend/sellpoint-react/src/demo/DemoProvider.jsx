@@ -35,13 +35,11 @@ export function DemoProvider({ children }) {
   }, [demoState]);
 
   const updateSessionProfile = useCallback((changes) => {
-    setSession(current => {
-      if (!current || current.role !== 'Customer') return current;
-      const next = { ...current, displayName: changes.displayName ?? current.displayName, email: changes.email ?? current.email };
-      saveDemoSession(next);
-      return next;
-    });
-  }, []);
+    if (!session || session.role !== 'Customer') return;
+    const next = { ...session, displayName: changes.displayName ?? session.displayName, email: changes.email ?? session.email };
+    saveDemoSession(next);
+    setSession(next);
+  }, [session]);
 
   const resetWorkspace = useCallback(() => {
     clearDemoStorage();
