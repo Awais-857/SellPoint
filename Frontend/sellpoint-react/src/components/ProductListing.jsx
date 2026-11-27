@@ -43,14 +43,10 @@ function ProductListing() {
     }, [location]);
 
     // Fetch categories on load
-    useEffect(() => {
-        fetchCategories();
-    }, [fetchCategories]);
+
 
     // Fetch products when filters change
-    useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+
 
     const fetchCategories = useCallback(async () => {
         try {
@@ -88,6 +84,14 @@ function ProductListing() {
             setLoading(false);
         }
     }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, minRating, inStock, sortBy, sortOrder, currentPage]);
+
+    useEffect(() => {
+        fetchCategories();
+    }, [fetchCategories]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
     const handleSearch = (e) => {
         e.preventDefault();
