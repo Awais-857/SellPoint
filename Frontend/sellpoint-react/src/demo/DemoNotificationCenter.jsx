@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDemo } from './DemoProvider';
+import { Bell } from 'lucide-react';
 import { getDemoNotifications, markAllDemoNotificationsRead, markDemoNotificationRead } from './demoNotificationService';
 import './demoNotifications.css';
 
@@ -24,7 +25,7 @@ export function DemoNotificationCenter() {
   return (
     <div className="demo-notification-center">
       <button className="demo-notification-trigger" type="button" aria-expanded={open} onClick={() => setOpen(value => !value)}>
-        <span aria-hidden="true">♧</span> Notifications
+        <Bell aria-hidden="true" size={18} strokeWidth={1.9} /> Notifications
         {unreadCount > 0 && <span className="demo-notification-count">{unreadCount > 99 ? '99+' : unreadCount}</span>}
       </button>
       {open && <section className="demo-notification-panel" aria-label="Notifications">

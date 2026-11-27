@@ -29,7 +29,7 @@
 .demo-dashboard-overlay{display:none}
 .demo-vendor-page,.demo-admin-page{box-sizing:border-box;padding-top:72px;padding-left:var(--sp-sidebar-expanded-width);transition:padding-left var(--sp-transition-normal)}
 .demo-vendor-page:has(.demo-dashboard-chrome.is-collapsed),.demo-admin-page:has(.demo-dashboard-chrome.is-collapsed){padding-left:var(--sp-sidebar-collapsed-width)}
-.demo-notification-center{position:fixed;z-index:36;top:17px;right:265px}
+.demo-notification-center{position:fixed;z-index:36;top:17px;right:265px;bottom:auto;box-sizing:border-box}
 @media(max-width:760px){
  .demo-dashboard-topbar{left:0!important;padding:0 13px;gap:9px}
  .demo-dashboard-menu{display:flex;flex:0 0 auto}
@@ -44,5 +44,5 @@
  .demo-dashboard-collapse{display:none}
  .demo-dashboard-overlay{position:fixed;z-index:41;inset:0;display:block;border:0;background:var(--sp-overlay)}
  .demo-vendor-page,.demo-admin-page,.demo-vendor-page:has(.demo-dashboard-chrome.is-collapsed),.demo-admin-page:has(.demo-dashboard-chrome.is-collapsed){padding-left:0;padding-top:72px}
- .demo-notification-center{top:17px;right:105px}
+ .demo-notification-center{top:17px;right:105px;bottom:auto;box-sizing:border-box}
 }
