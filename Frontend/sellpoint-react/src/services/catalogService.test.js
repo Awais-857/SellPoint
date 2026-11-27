@@ -3,7 +3,7 @@ import { demoCatalogService } from './catalogService';
 import { getDemoState } from '../demo/demoStorage';
 
 vi.mock('../demo/demoStorage', () => ({
-  getDemoState: jest.fn()
+  getDemoState: vi.fn()
 }));
 
 const demoState = {
