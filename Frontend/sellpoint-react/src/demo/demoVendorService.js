@@ -181,7 +181,6 @@ export const getVendorRevenue = (state, vendorId, period = 'monthly') => {
 
   const totalSales = roundMoney(transactions.reduce((sum, item) => sum + item.amount, 0));
   const pendingPayments = roundMoney(transactions.filter(item => item.paymentStatus === 'Pending').reduce((sum, item) => sum + item.amount, 0));
-  const vendorOrderCount = eligibleOrders.length;
   const statusCount = status => orders.filter(order => order.orderStatus.toLowerCase() === status.toLowerCase()).length;
 
   const groups = {};
