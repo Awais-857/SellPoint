@@ -1,3 +1,4 @@
+import { releaseDemoCoupon } from './demoCouponService';
 const roundMoney = value => Number(Number(value || 0).toFixed(2));
 const nextPaymentId = payments => Math.max(20000, ...(payments || []).map(item => Number(item.paymentId) || 0)) + 1;
 
@@ -49,12 +50,14 @@ export const simulateDemoCardPayment = (demoState, orderId, customerId, outcome,
     });
   }
 
-  return {
+  let nextState = {
     ...demoState,
     products,
     payments,
     orders: demoState.orders.map(item => Number(item.orderId) === Number(orderId) ? updatedOrder : item)
   };
+  if (!succeeded) nextState = releaseDemoCoupon(nextState, order);
+  return nextState;
 };
 
 export const recordDemoRefund = (demoState, orderId, amount, reference, now = new Date()) => {
