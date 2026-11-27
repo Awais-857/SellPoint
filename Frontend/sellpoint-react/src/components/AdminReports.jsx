@@ -27,24 +27,7 @@ function AdminReports() {
         toDate: new Date().toISOString().split('T')[0]
     });
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Admin') {
-            navigate('/dashboard');
-            return;
-        }
-
-        fetchReports();
-        fetchTopVendors();
-        fetchTopProducts();
-        fetchDashboardStats();
-    }, [reportType, dateRange, navigate, fetchReports, fetchTopVendors, fetchTopProducts, fetchDashboardStats]);
 
     const fetchReports = useCallback(async () => {
         setLoading(true);
@@ -159,6 +142,25 @@ function AdminReports() {
         if (maxRevenue === 0) return '0%';
         return `${(revenue / maxRevenue) * 100}%`;
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Admin') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchReports();
+        fetchTopVendors();
+        fetchTopProducts();
+        fetchDashboardStats();
+    }, [reportType, dateRange, navigate, fetchReports, fetchTopVendors, fetchTopProducts, fetchDashboardStats]);
 
     if (loading && reportData.length === 0) {
         return (
