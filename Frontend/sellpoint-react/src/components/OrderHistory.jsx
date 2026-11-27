@@ -1,11 +1,10 @@
 // src/components/OrderHistory.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderHistory.module.css';
 
 function OrderHistory() {
-    const fetchOrdersRef = useRef(null);
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,10 +17,10 @@ function OrderHistory() {
             navigate('/login');
             return;
         }
-fetchOrdersRef.current?.();
-    }, [navigate]);
+        fetchOrders();
+    }, [navigate, fetchOrders]);
 
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -34,9 +33,7 @@ fetchOrdersRef.current?.();
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchOrdersRef.current = fetchOrders;
+    }, []);
 
     const handleViewOrder = (orderId) => {
         navigate(`/order-detail/${orderId}`);
@@ -65,7 +62,7 @@ fetchOrdersRef.current?.();
 
         try {
             await api.put(`/orders/${orderId}/cancel`);
-            fetchOrdersRef.current?.(); // Refresh orders
+            fetchOrders(); // Refresh orders
             alert('Order cancelled successfully');
         } catch (err) {
             console.error('Failed to cancel order', err);
@@ -111,7 +108,8 @@ fetchOrdersRef.current?.();
                 return 'payment-default';
         }
     };
-if (loading) {
+
+    if (loading) {
         return (
             <div className={styles['order-history-container']}>
                 <div className={styles['order-history-header']}>
