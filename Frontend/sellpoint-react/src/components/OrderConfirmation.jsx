@@ -1,5 +1,5 @@
 // src/components/OrderConfirmation.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderConfirmation.module.css';
@@ -48,6 +48,8 @@ function OrderConfirmation() {
     const handleViewOrders = () => {
         navigate('/order-history');
     };
+    fetchOrderDetailsRef.current = fetchOrderDetails;
+
 
     if (loading) {
         return (
