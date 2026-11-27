@@ -1,16 +1,21 @@
-name: PR and Portfolio Demo Checks
+name: Pull Request Checks
 
 on:
-  push:
-    branches:
-      - portfolio-demo
   pull_request:
     branches:
+      - portfolio-demo
       - main
+  workflow_dispatch:
+
+# Cancel older runs for the same PR or branch when newer commits arrive.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
