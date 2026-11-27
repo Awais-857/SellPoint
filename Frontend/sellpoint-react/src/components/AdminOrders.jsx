@@ -4,6 +4,7 @@ import api from '../services/api';
 import styles from './AdminOrders.module.css';
 
 function AdminOrders() {
+    const fetchOrdersRef = useRef(null);
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -36,6 +37,8 @@ function AdminOrders() {
             setLoading(false);
         }
     };
+
+    fetchOrdersRef.current = fetchOrders;
 
     const handleViewOrder = async (orderId) => {
         try {
