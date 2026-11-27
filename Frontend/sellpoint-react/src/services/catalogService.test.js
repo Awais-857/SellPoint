@@ -1,7 +1,8 @@
+import { vi } from 'vitest';
 import { demoCatalogService } from './catalogService';
 import { getDemoState } from '../demo/demoStorage';
 
-jest.mock('../demo/demoStorage', () => ({
+vi.mock('../demo/demoStorage', () => ({
   getDemoState: jest.fn()
 }));
 
