@@ -10,14 +10,7 @@ function OrderTracking() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchTracking();
-    }, [id, navigate, fetchTracking]);
+
 
     const fetchTracking = useCallback(async () => {
         setLoading(true);
@@ -30,6 +23,15 @@ function OrderTracking() {
             setLoading(false);
         }
     }, [id]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchTracking();
+    }, [id, navigate, fetchTracking]);
 
     const getStatusStep = (status) => {
         const steps = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
