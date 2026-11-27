@@ -37,8 +37,8 @@ function VendorRevenue() {
             return;
         }
 
-        fetchRevenueData();
-    }, [selectedPeriod]);
+        fetchRevenueDataRef.current?.();
+    }, [selectedPeriod, navigate];
 
     const fetchRevenueData = async () => {
         setLoading(true);
@@ -66,6 +66,8 @@ function VendorRevenue() {
         }
     };
 
+    fetchRevenueDataRef.current = fetchRevenueData;
+
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -90,9 +92,7 @@ function VendorRevenue() {
     };
 
     if (loading) {
-    fetchRevenueDataRef.current = fetchRevenueData;
-
-        return (
+return (
             <div className={styles['vendor-revenue-container']}>
                 <div className={styles['vendor-revenue-header']}>
                     <h1 onClick={() => navigate('/dashboard')}>SellPoint Vendor</h1>
