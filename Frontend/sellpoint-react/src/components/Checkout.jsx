@@ -51,7 +51,7 @@ function Checkout() {
             return;
         }
         fetchCheckoutDataRef.current?.();
-    }, [navigate];
+    }, [navigate]);
 
     const fetchCheckoutData = async () => {
     setLoading(true);
