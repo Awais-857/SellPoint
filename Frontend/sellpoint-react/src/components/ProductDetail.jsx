@@ -70,6 +70,8 @@ function ProductDetail() {
         }
     }, [id]);
 
+
+
     useEffect(() => {
         fetchProduct();
         fetchReviews();
