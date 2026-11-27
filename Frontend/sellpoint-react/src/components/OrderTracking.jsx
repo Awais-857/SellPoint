@@ -18,7 +18,7 @@ function OrderTracking() {
             return;
         }
         fetchTrackingRef.current?.();
-    }, [id, navigate];
+    }, [id, navigate]);
 
     const fetchTracking = async () => {
         setLoading(true);
