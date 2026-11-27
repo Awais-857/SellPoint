@@ -1,0 +1,35 @@
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --sp-bg: #f8fafc;
+  --sp-surface: #ffffff;
+  --sp-surface-muted: #f1f5f9;
+  --sp-text: #0f172a;
+  --sp-text-muted: #64748b;
+  --sp-border: #e2e8f0;
+  --sp-border-strong: #cbd5e1;
+  --sp-input-bg: #ffffff;
+  --sp-overlay: rgb(15 23 42 / 0.48);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --sp-bg: #0f172a;
+  --sp-surface: #1e293b;
+  --sp-surface-muted: #273449;
+  --sp-text: #f8fafc;
+  --sp-text-muted: #94a3b8;
+  --sp-border: #334155;
+  --sp-border-strong: #475569;
+  --sp-input-bg: #1e293b;
+  --sp-overlay: rgb(2 6 23 / 0.72);
+}
+
+/* Semantic badge surfaces adapt to the selected theme. */
+:root[data-theme="dark"] {
+  --sp-color-success-soft: rgb(21 128 61 / 0.22);
+  --sp-color-warning-soft: rgb(180 83 9 / 0.22);
+  --sp-color-danger-soft: rgb(185 28 28 / 0.22);
+  --sp-color-info-soft: rgb(29 78 216 / 0.24);
+  --sp-color-primary-soft: rgb(37 99 235 / 0.24);
+}

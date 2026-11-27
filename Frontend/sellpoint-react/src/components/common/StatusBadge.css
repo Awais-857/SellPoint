@@ -1,0 +1,46 @@
+.sp-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid transparent;
+  border-radius: var(--sp-radius-full, 9999px);
+  font-family: var(--sp-font-sans, sans-serif);
+  font-size: var(--sp-text-xs, 0.75rem);
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.sp-status-badge--success {
+  color: var(--sp-color-success, #15803d);
+  background: var(--sp-color-success-soft, #dcfce7);
+}
+
+.sp-status-badge--warning {
+  color: var(--sp-color-warning, #b45309);
+  background: var(--sp-color-warning-soft, #fef3c7);
+}
+
+.sp-status-badge--danger {
+  color: var(--sp-color-danger, #b91c1c);
+  background: var(--sp-color-danger-soft, #fee2e2);
+}
+
+.sp-status-badge--info {
+  color: var(--sp-color-info, #1d4ed8);
+  background: var(--sp-color-info-soft, #dbeafe);
+}
+
+.sp-status-badge--neutral {
+  color: var(--sp-color-slate-600, #475569);
+  background: var(--sp-color-slate-100, #f1f5f9);
+  border-color: var(--sp-color-slate-200, #e2e8f0);
+}
+
+:root[data-theme="dark"] .sp-status-badge--neutral {
+  color: #cbd5e1;
+  background: #334155;
+  border-color: #475569;
+}
