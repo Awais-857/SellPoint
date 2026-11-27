@@ -5,6 +5,7 @@ import api from '../services/api';
 import styles from './Checkout.module.css';
 
 function Checkout() {
+    const fetchCheckoutDataRef = useRef(null);
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
@@ -49,8 +50,8 @@ function Checkout() {
             navigate('/login');
             return;
         }
-        fetchCheckoutData();
-    }, []);
+        fetchCheckoutDataRef.current?.();
+    }, [navigate];
 
     const fetchCheckoutData = async () => {
     setLoading(true);
@@ -98,6 +99,8 @@ function Checkout() {
         setLoading(false);
     }
 };
+
+    fetchCheckoutDataRef.current = fetchCheckoutData;
 
     const handleAddAddress = async (e) => {
         e.preventDefault();
@@ -244,10 +247,7 @@ function Checkout() {
         groups[vendorKey].items.push(item);
         return groups;
     }, {});
-    fetchCheckoutDataRef.current = fetchCheckoutData;
-
-
-    if (loading) {
+if (loading) {
         return (
             <div className={styles['checkout-container']}>
                 <div className={styles['checkout-header']}>
