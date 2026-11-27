@@ -1,12 +1,10 @@
 // src/components/VendorProducts.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './VendorProducts.module.css';
 
 function VendorProducts() {
-    const fetchProductsRef = useRef(null);
-
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -40,11 +38,11 @@ function VendorProducts() {
             return;
         }
 
-        fetchProductsRef.current?.();
+        fetchProducts();
         fetchCategories();
-    }, [navigate]);
+    }, [navigate, fetchProducts, fetchCategories]);
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/vendor/products');
@@ -55,11 +53,9 @@ function VendorProducts() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    fetchProductsRef.current = fetchProducts;
-
-    const fetchCategories = async () => {
+    const fetchCategories = useCallback(async () => {
         try {
             console.log('Fetching categories from: /api/admin/public/categories');
             // Change this line to use the admin public endpoint
@@ -75,7 +71,7 @@ function VendorProducts() {
         } catch (err) {
             console.error('Failed to fetch categories:', err);
         }
-    };
+    }, []);
 
     const handleOpenAddModal = () => {
         setEditingProduct(null);
@@ -193,7 +189,7 @@ function VendorProducts() {
     };
 
     if (loading) {
-return (
+        return (
             <div className={styles['vendor-products-container']}>
                 <div className={styles['vendor-products-header']}>
                     <h1 onClick={() => navigate('/dashboard')}>SellPoint Vendor</h1>
