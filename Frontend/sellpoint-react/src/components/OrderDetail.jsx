@@ -1,5 +1,5 @@
 // src/components/OrderDetail.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderDetail.module.css';
@@ -143,6 +143,8 @@ function OrderDetail() {
                 return 'item-default';
         }
     };
+    fetchOrderDetailsRef.current = fetchOrderDetails;
+
 
     if (loading) {
         return (
