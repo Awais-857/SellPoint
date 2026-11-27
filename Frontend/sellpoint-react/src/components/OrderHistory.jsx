@@ -1,5 +1,5 @@
 // src/components/OrderHistory.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderHistory.module.css';
@@ -17,8 +17,8 @@ function OrderHistory() {
             navigate('/login');
             return;
         }
-        fetchOrders();
-    }, []);
+fetchOrdersRef.current?.();
+    }, [navigate]);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -108,6 +108,8 @@ function OrderHistory() {
                 return 'payment-default';
         }
     };
+    fetchOrdersRef.current = fetchOrders;
+
 
     if (loading) {
         return (
