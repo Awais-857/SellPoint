@@ -1,5 +1,5 @@
 // src/components/AdminReports.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminReports.module.css';
@@ -27,26 +27,9 @@ function AdminReports() {
         toDate: new Date().toISOString().split('T')[0]
     });
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Admin') {
-            navigate('/dashboard');
-            return;
-        }
 
-        fetchReports();
-        fetchTopVendors();
-        fetchTopProducts();
-        fetchDashboardStats();
-    }, [reportType, dateRange]);
-
-    const fetchReports = async () => {
+    const fetchReports = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/admin/reports/sales', {
@@ -63,9 +46,9 @@ function AdminReports() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [reportType, dateRange]);
 
-    const fetchTopVendors = async () => {
+    const fetchTopVendors = useCallback(async () => {
         try {
             const response = await api.get('/admin/reports/top-vendors', {
                 params: {
@@ -78,9 +61,9 @@ function AdminReports() {
         } catch (err) {
             console.error('Failed to fetch top vendors', err);
         }
-    };
+    }, [dateRange]);
 
-    const fetchTopProducts = async () => {
+    const fetchTopProducts = useCallback(async () => {
         try {
             const response = await api.get('/admin/reports/top-products', {
                 params: {
@@ -93,16 +76,16 @@ function AdminReports() {
         } catch (err) {
             console.error('Failed to fetch top products', err);
         }
-    };
+    }, [dateRange]);
 
-    const fetchDashboardStats = async () => {
+    const fetchDashboardStats = useCallback(async () => {
         try {
             const response = await api.get('/admin/dashboard/stats');
             setDashboardStats(response.data);
         } catch (err) {
             console.error('Failed to fetch dashboard stats', err);
         }
-    };
+    }, []);
 
     const handleExportCSV = () => {
         if (!reportData.length) {
@@ -159,6 +142,25 @@ function AdminReports() {
         if (maxRevenue === 0) return '0%';
         return `${(revenue / maxRevenue) * 100}%`;
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Admin') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchReports();
+        fetchTopVendors();
+        fetchTopProducts();
+        fetchDashboardStats();
+    }, [reportType, dateRange, navigate, fetchReports, fetchTopVendors, fetchTopProducts, fetchDashboardStats]);
 
     if (loading && reportData.length === 0) {
         return (

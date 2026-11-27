@@ -1,5 +1,5 @@
 // src/components/OrderHistory.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderHistory.module.css';
@@ -11,16 +11,9 @@ function OrderHistory() {
     const [error, setError] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchOrders();
-    }, []);
 
-    const fetchOrders = async () => {
+
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -33,7 +26,16 @@ function OrderHistory() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchOrders();
+    }, [navigate, fetchOrders]);
 
     const handleViewOrder = (orderId) => {
         navigate(`/order-detail/${orderId}`);

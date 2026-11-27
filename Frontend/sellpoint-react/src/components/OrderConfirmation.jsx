@@ -1,5 +1,5 @@
 // src/components/OrderConfirmation.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderConfirmation.module.css';
@@ -12,16 +12,9 @@ function OrderConfirmation() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchOrderDetails();
-    }, [id]);
 
-    const fetchOrderDetails = async () => {
+
+    const fetchOrderDetails = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -39,7 +32,16 @@ function OrderConfirmation() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchOrderDetails();
+    }, [id, navigate, fetchOrderDetails]);
 
     const handleContinueShopping = () => {
         navigate('/products');

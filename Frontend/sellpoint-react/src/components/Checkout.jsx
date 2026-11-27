@@ -1,5 +1,5 @@
 // src/components/Checkout.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './Checkout.module.css';
@@ -43,16 +43,9 @@ function Checkout() {
         cvv: ''
     });
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchCheckoutData();
-    }, []);
 
-    const fetchCheckoutData = async () => {
+
+    const fetchCheckoutData = useCallback(async () => {
     setLoading(true);
     setError('');
 
@@ -97,7 +90,16 @@ function Checkout() {
     } finally {
         setLoading(false);
     }
-};
+}, [navigate]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchCheckoutData();
+    }, [navigate, fetchCheckoutData]);
 
     const handleAddAddress = async (e) => {
         e.preventDefault();
@@ -258,19 +260,16 @@ function Checkout() {
                 </div>
             </div>
         );
-    }
-
-    const selectedAddress = addresses.find(a => a.addressId === selectedAddressId);
-
+    }
     return (
         <div className={styles['checkout-container']}>
             {/* Header */}
             <div className={styles['checkout-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                 <div className={styles['header-steps']}>
-                    <span className={styles['step']} className={styles['completed']}>Cart</span>
+                    <span className={`${styles['step']} ${styles['completed']}`}>Cart</span>
                     <span className={styles['step-separator']}>→</span>
-                    <span className={styles['step']} className={styles['active']}>Checkout</span>
+                    <span className={`${styles['step']} ${styles['active']}`}>Checkout</span>
                     <span className={styles['step-separator']}>→</span>
                     <span className={styles['step']}>Confirmation</span>
                 </div>
@@ -579,7 +578,7 @@ function Checkout() {
                                 <span>${cartSummary.tax.toFixed(2)}</span>
                             </div>
                             <div className={styles['summary-divider']}></div>
-                            <div className={styles['summary-row']} className={styles['total']}>
+                            <div className={`${styles['summary-row']} ${styles['total']}`}>
                                 <span>Total</span>
                                 <span>${cartSummary.total.toFixed(2)}</span>
                             </div>

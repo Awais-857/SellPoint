@@ -1,5 +1,5 @@
 // src/components/AdminCategories.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminCategories.module.css';
@@ -11,7 +11,6 @@ function AdminCategories() {
     const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
-    const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const [showInactive, setShowInactive] = useState(false);
     const [formData, setFormData] = useState({
@@ -21,23 +20,9 @@ function AdminCategories() {
         imageUrl: ''
     });
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Admin') {
-            navigate('/dashboard');
-            return;
-        }
 
-        fetchCategories();
-    }, [showInactive]);
-
-    const fetchCategories = async () => {
+    const fetchCategories = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get(`/admin/categories?includeInactive=${showInactive}`);
@@ -60,7 +45,23 @@ function AdminCategories() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showInactive, navigate]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Admin') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchCategories();
+    }, [showInactive, fetchCategories, navigate]);
 
     const handleOpenAddModal = () => {
         setEditingCategory(null);

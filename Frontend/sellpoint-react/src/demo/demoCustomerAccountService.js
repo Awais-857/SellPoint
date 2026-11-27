@@ -7,7 +7,7 @@ export const getDemoCustomerProfile = (state, customerId) => {
 };
 
 export const updateDemoCustomerProfile = (state, customerId, changes) => {
-  const customer = getDemoCustomerProfile(state, customerId);
+  getDemoCustomerProfile(state, customerId);
   const name = normalizeText(changes.name);
   const email = normalizeText(changes.email).toLowerCase();
   const phone = normalizeText(changes.phone);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminReviews.module.css';
@@ -9,17 +9,9 @@ function AdminReviews() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
-        if (!token || userType !== 'Admin') {
-            navigate('/login');
-            return;
-        }
-        fetchPendingReviews();
-    }, []);
 
-    const fetchPendingReviews = async () => {
+
+    const fetchPendingReviews = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/admin/reviews/pending');
@@ -29,7 +21,17 @@ function AdminReviews() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+        if (!token || userType !== 'Admin') {
+            navigate('/login');
+            return;
+        }
+        fetchPendingReviews();
+    }, [fetchPendingReviews, navigate]);
 
     const handleApprove = async (reviewId) => {
     try {

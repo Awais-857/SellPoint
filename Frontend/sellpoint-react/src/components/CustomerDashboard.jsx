@@ -1,5 +1,5 @@
 // src/components/CustomerDashboard.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './Dashboard.module.css';
@@ -18,23 +18,9 @@ function CustomerDashboard() {
     const [recentOrders, setRecentOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Customer') {
-            if (userType === 'Admin') navigate('/admin-dashboard');
-            else if (userType === 'Vendor') navigate('/vendor-dashboard');
-            else navigate('/dashboard');
-            return;
-        }
 
-        fetchCustomerData();
-    }, []);
 
-    const fetchCustomerData = async () => {
+    const fetchCustomerData = useCallback(async () => {
         setLoading(true);
         try {
             // Fetch orders to calculate stats
@@ -60,7 +46,23 @@ function CustomerDashboard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Customer') {
+            if (userType === 'Admin') navigate('/admin-dashboard');
+            else if (userType === 'Vendor') navigate('/vendor-dashboard');
+            else navigate('/dashboard');
+            return;
+        }
+
+        fetchCustomerData();
+    }, [navigate, userType, fetchCustomerData]);
 
     const handleLogout = () => {
         localStorage.clear();

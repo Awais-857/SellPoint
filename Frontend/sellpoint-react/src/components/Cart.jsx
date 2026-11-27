@@ -1,6 +1,6 @@
 // src/components/Cart.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     isLoggedIn,
@@ -29,34 +29,32 @@ function Cart() {
     const loggedIn = isLoggedIn();
     const demoMode = IS_DEMO_MODE;
 
-    useEffect(() => {
-        fetchCart();
-    }, []);
 
-    const fetchCart = async () => {
+
+    const fetchCart = useCallback(async () => {
         setLoading(true);
         setError('');
         try {
             const items = await getCart();
             setCartItems(items);
-            calculateSummary(items);
+            const subtotal = items.reduce((sum, item) => sum + item.itemTotal, 0);
+            const uniqueVendors = new Set(items.map(item => item.vendorId || item.vendorName));
+            const shipping = uniqueVendors.size * 5;
+            const tax = subtotal * 0.10;
+            const total = subtotal + shipping + tax;
+            const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+            setCartSummary({ subtotal, shipping, tax, total, itemCount });
         } catch (err) {
             console.error('Failed to fetch cart', err);
             setError('Failed to load cart. Please try again.');
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const calculateSummary = (items) => {
-        const subtotal = items.reduce((sum, item) => sum + item.itemTotal, 0);
-        const uniqueVendors = new Set(items.map(item => item.vendorId || item.vendorName));
-        const shipping = uniqueVendors.size * 5;
-        const tax = subtotal * 0.10;
-        const total = subtotal + shipping + tax;
-        const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-        setCartSummary({ subtotal, shipping, tax, total, itemCount });
-    };
+    useEffect(() => {
+        fetchCart();
+    }, [fetchCart]);
 
     const handleUpdateQuantity = async (cartId, newQuantity) => {
         if (newQuantity < 1) {

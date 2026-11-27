@@ -1,5 +1,5 @@
 // src/components/ProductListing.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { catalogService } from '../services/catalogService';
 import ProductCard from './ProductCard';
@@ -43,25 +43,21 @@ function ProductListing() {
     }, [location]);
 
     // Fetch categories on load
-    useEffect(() => {
-        fetchCategories();
-    }, []);
+
 
     // Fetch products when filters change
-    useEffect(() => {
-        fetchProducts();
-    }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, minRating, inStock, sortBy, sortOrder, currentPage]);
 
-    const fetchCategories = async () => {
+
+    const fetchCategories = useCallback(async () => {
         try {
             const categoriesData = await catalogService.getCategories();
             setCategories(categoriesData);
         } catch (err) {
             console.error('Failed to fetch categories', err);
         }
-    };
+    }, []);
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -87,7 +83,15 @@ function ProductListing() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, minRating, inStock, sortBy, sortOrder, currentPage]);
+
+    useEffect(() => {
+        fetchCategories();
+    }, [fetchCategories]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
     const handleSearch = (e) => {
         e.preventDefault();

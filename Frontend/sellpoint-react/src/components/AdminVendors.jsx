@@ -1,5 +1,5 @@
 // src/components/AdminVendors.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminVendors.module.css';
@@ -17,23 +17,9 @@ function AdminVendors() {
     const [rejectionReason, setRejectionReason] = useState('');
     const [actionLoading, setActionLoading] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Admin') {
-            navigate('/dashboard');
-            return;
-        }
 
-        fetchVendors();
-    }, []);
-
-    const fetchVendors = async () => {
+    const fetchVendors = useCallback(async () => {
         setLoading(true);
         setError('');
         try {
@@ -56,7 +42,23 @@ function AdminVendors() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Admin') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchVendors();
+    }, [fetchVendors, navigate]);
 
     const handleViewVendor = (vendor) => {
         setSelectedVendor(vendor);

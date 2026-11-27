@@ -1,5 +1,5 @@
 // src/components/VendorProducts.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './VendorProducts.module.css';
@@ -25,24 +25,9 @@ function VendorProducts() {
     const [submitting, setSubmitting] = useState(false);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Vendor') {
-            navigate('/dashboard');
-            return;
-        }
 
-        fetchProducts();
-        fetchCategories();
-    }, []);
-
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/vendor/products');
@@ -53,9 +38,9 @@ function VendorProducts() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
-    const fetchCategories = async () => {
+    const fetchCategories = useCallback(async () => {
         try {
             console.log('Fetching categories from: /api/admin/public/categories');
             // Change this line to use the admin public endpoint
@@ -71,7 +56,24 @@ function VendorProducts() {
         } catch (err) {
             console.error('Failed to fetch categories:', err);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Vendor') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchProducts();
+        fetchCategories();
+    }, [navigate, fetchProducts, fetchCategories]);
 
     const handleOpenAddModal = () => {
         setEditingProduct(null);

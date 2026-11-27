@@ -1,5 +1,5 @@
 // src/components/ProductDetail.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { catalogService } from '../services/catalogService';
 import styles from './ProductDetail.module.css';
@@ -22,12 +22,22 @@ function ProductDetail() {
     const availableStock = selectedVariant ? Number(selectedVariant.stockQuantity) : Number(product?.stockQuantity || 0);
     const displayedPrice = Number(selectedVariant?.price ?? product?.price ?? 0);
 
-    useEffect(() => {
-        fetchProduct();
-        fetchReviews();
-    }, [id]);
+    const fetchRelatedProducts = useCallback(async (categoryId, currentProductId) => {
+        try {
+            const result = await catalogService.listProducts({
+                categoryId,
+                pageSize: 5,
+                pageNumber: 1
+            });
+            // Filter out current product
+            const related = (result.products || []).filter(p => p.productId !== currentProductId);
+            setRelatedProducts(related.slice(0, 4));
+        } catch (err) {
+            console.error('Failed to fetch related products', err);
+        }
+    }, []);
 
-    const fetchProduct = async () => {
+    const fetchProduct = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -49,31 +59,23 @@ function ProductDetail() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id, fetchRelatedProducts]);
 
-    const fetchReviews = async () => {
+    const fetchReviews = useCallback(async () => {
         try {
             const reviewData = await catalogService.getProductReviews(id);
             setReviews(reviewData);
         } catch (err) {
             console.error('Failed to fetch reviews', err);
         }
-    };
+    }, [id]);
 
-    const fetchRelatedProducts = async (categoryId, currentProductId) => {
-        try {
-            const result = await catalogService.listProducts({
-                categoryId,
-                pageSize: 5,
-                pageNumber: 1
-            });
-            // Filter out current product
-            const related = (result.products || []).filter(p => p.productId !== currentProductId);
-            setRelatedProducts(related.slice(0, 4));
-        } catch (err) {
-            console.error('Failed to fetch related products', err);
-        }
-    };
+
+
+    useEffect(() => {
+        fetchProduct();
+        fetchReviews();
+    }, [fetchProduct, fetchReviews]);
 
     const handleQuantityChange = (e) => {
         const value = parseInt(e.target.value);

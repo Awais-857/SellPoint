@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminDisputes.module.css';
@@ -12,16 +12,9 @@ function AdminDisputes() {
     const [adminNotes, setAdminNotes] = useState('');
     const [action, setAction] = useState('Resolve');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token || localStorage.getItem('userType') !== 'Admin') {
-            navigate('/login');
-            return;
-        }
-        fetchDisputes();
-    }, [filterStatus]);
 
-    const fetchDisputes = async () => {
+
+    const fetchDisputes = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/admin/disputes', { params: { status: filterStatus !== 'all' ? filterStatus : undefined } });
@@ -31,7 +24,16 @@ function AdminDisputes() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filterStatus]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token || localStorage.getItem('userType') !== 'Admin') {
+            navigate('/login');
+            return;
+        }
+        fetchDisputes();
+    }, [filterStatus, fetchDisputes, navigate]);
 
     const handleResolve = async (disputeId) => {
         if (!adminNotes.trim()) {

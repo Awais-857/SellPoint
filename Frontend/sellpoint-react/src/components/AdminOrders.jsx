@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminOrders.module.css';
@@ -12,17 +12,9 @@ function AdminOrders() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
-        if (!token || userType !== 'Admin') {
-            navigate('/login');
-            return;
-        }
-        fetchOrders();
-    }, [filterStatus]);
 
-    const fetchOrders = async () => {
+
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/admin/orders', {
@@ -35,7 +27,17 @@ function AdminOrders() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [filterStatus]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+        if (!token || userType !== 'Admin') {
+            navigate('/login');
+            return;
+        }
+        fetchOrders();
+    }, [filterStatus, fetchOrders, navigate]);
 
     const handleViewOrder = async (orderId) => {
         try {

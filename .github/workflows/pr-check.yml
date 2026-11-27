@@ -51,5 +51,4 @@ jobs:
         working-directory: Frontend/sellpoint-react
         env:
           REACT_APP_DATA_MODE: demo
-          DISABLE_ESLINT_PLUGIN: 'true'
         run: npm run build

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderTracking.module.css';
@@ -10,16 +10,9 @@ function OrderTracking() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchTracking();
-    }, [id]);
 
-    const fetchTracking = async () => {
+
+    const fetchTracking = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get(`/orders/${id}/tracking`);
@@ -29,7 +22,16 @@ function OrderTracking() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchTracking();
+    }, [id, navigate, fetchTracking]);
 
     const getStatusStep = (status) => {
         const steps = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];

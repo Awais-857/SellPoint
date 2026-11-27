@@ -1,5 +1,5 @@
 // src/components/VendorRevenue.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './VendorRevenue.module.css';
@@ -22,23 +22,9 @@ function VendorRevenue() {
     const [monthlyRevenue, setMonthlyRevenue] = useState([]);
     const [selectedPeriod, setSelectedPeriod] = useState('monthly'); // 'monthly', 'yearly'
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Vendor') {
-            navigate('/dashboard');
-            return;
-        }
 
-        fetchRevenueData();
-    }, [selectedPeriod]);
-
-    const fetchRevenueData = async () => {
+    const fetchRevenueData = useCallback(async () => {
         setLoading(true);
         try {
             // Fetch revenue summary
@@ -62,7 +48,23 @@ function VendorRevenue() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedPeriod]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Vendor') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchRevenueData();
+    }, [selectedPeriod, navigate, fetchRevenueData]);
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
