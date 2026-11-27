@@ -97,6 +97,14 @@ describe('demoOrderService', () => {
     expect(cancelled.payments[0].refunds[0].reference).toBe('cancellation-5002');
   });
 
+  test('releases coupon usage when a customer cancels a pending coupon order', () => {
+    const coupon = { couponId: 1, code: 'SAVE5', usageCount: 1, redemptions: [{ orderId: 5001, customerId: 301 }] };
+    const order = { orderId: 5001, customerId: 301, couponCode: 'SAVE5', orderStatus: 'Pending', paymentStatus: 'Pending', items: [{ productId: 1, quantity: 1 }] };
+    const cancelled = cancelDemoOrder({ ...state, coupons: [coupon], orders: [order], products: [{ ...product, stockQuantity: 4 }] }, 5001, 301);
+    expect(cancelled.coupons[0]).toMatchObject({ usageCount: 0, redemptions: [] });
+    expect(cancelled.orders[0].couponUsageReleased).toBe(true);
+  });
+
   test('adds a dispute for an order owned by the customer', () => {
     const order = { orderId: 5001, customerId: 301 };
     const result = addDemoDispute({ ...state, orders: [order] }, 5001, 301, 'Item arrived damaged');
