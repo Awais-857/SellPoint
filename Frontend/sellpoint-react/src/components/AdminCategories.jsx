@@ -5,6 +5,7 @@ import api from '../services/api';
 import styles from './AdminCategories.module.css';
 
 function AdminCategories() {
+    const fetchCategoriesRef = useRef(null);
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -60,6 +61,8 @@ function AdminCategories() {
             setLoading(false);
         }
     };
+
+    fetchCategoriesRef.current = fetchCategories;
 
     const handleOpenAddModal = () => {
         setEditingCategory(null);
