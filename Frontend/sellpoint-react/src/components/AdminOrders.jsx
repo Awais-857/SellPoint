@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminOrders.module.css';
@@ -19,8 +19,8 @@ function AdminOrders() {
             navigate('/login');
             return;
         }
-        fetchOrders();
-    }, [filterStatus]);
+        fetchOrdersRef.current?.();
+    }, [filterStatus, navigate]);
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -57,6 +57,8 @@ function AdminOrders() {
             default: return '';
         }
     };
+    fetchOrdersRef.current = fetchOrders;
+
 
     if (loading) return <div className={styles['loading']}>Loading orders...</div>;
 
