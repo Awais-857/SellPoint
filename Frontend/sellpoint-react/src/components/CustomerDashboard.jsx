@@ -18,21 +18,7 @@ function CustomerDashboard() {
     const [recentOrders, setRecentOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Customer') {
-            if (userType === 'Admin') navigate('/admin-dashboard');
-            else if (userType === 'Vendor') navigate('/vendor-dashboard');
-            else navigate('/dashboard');
-            return;
-        }
 
-        fetchCustomerData();
-    }, [navigate, userType, fetchCustomerData]);
 
     const fetchCustomerData = useCallback(async () => {
         setLoading(true);
@@ -61,6 +47,22 @@ function CustomerDashboard() {
             setLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Customer') {
+            if (userType === 'Admin') navigate('/admin-dashboard');
+            else if (userType === 'Vendor') navigate('/vendor-dashboard');
+            else navigate('/dashboard');
+            return;
+        }
+
+        fetchCustomerData();
+    }, [navigate, userType, fetchCustomerData]);
 
     const handleLogout = () => {
         localStorage.clear();
