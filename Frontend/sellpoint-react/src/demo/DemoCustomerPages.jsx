@@ -7,6 +7,7 @@ import './demoCustomer.css';
 import { getDemoCustomerAddresses } from './demoCustomerAccountService';
 import { getDemoReviewableOrderItem } from './demoReviewService';
 import { simulateDemoCardPayment, getOrderDemoPayment } from './demoPaymentService';
+import { validateDemoCoupon } from './demoCouponService';
 
 const money = value => `$${Number(value || 0).toFixed(2)}`;
 const formatDate = value => new Date(value).toLocaleString();
@@ -39,6 +40,9 @@ export function DemoCheckout() {
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('CashOnDelivery');
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponMessage, setCouponMessage] = useState('');
   const addresses = getDemoCustomerAddresses(demoState, session.userId);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const selectedAddress = addresses.find(item => item.addressId === Number(selectedAddressId)) || addresses.find(item => item.isDefault) || addresses[0] || null;
@@ -47,7 +51,14 @@ export function DemoCheckout() {
     getCart().then(setItems).catch(() => setError('Unable to load your demo cart.')).finally(() => setLoading(false));
   }, []);
 
-  const summary = useMemo(() => calculateDemoCartSummary(items), [items]);
+  const couponValidation = appliedCoupon ? validateDemoCoupon(demoState, appliedCoupon, session.userId, items.reduce((sum, item) => sum + Number(item.itemTotal || 0), 0)) : null;
+  const summary = useMemo(() => calculateDemoCartSummary(items, couponValidation?.valid ? couponValidation.discountAmount : 0), [items, couponValidation?.valid, couponValidation?.discountAmount]);
+
+  const applyCoupon = () => {
+    const result = validateDemoCoupon(demoState, couponInput, session.userId, summary.subtotal);
+    setCouponMessage(result.message);
+    setAppliedCoupon(result.valid ? result.code : null);
+  };
 
   const placeOrder = () => {
     if (!selectedAddress) {
@@ -57,7 +68,7 @@ export function DemoCheckout() {
     setPlacing(true);
     setError('');
     try {
-      const result = buildDemoOrder(demoState, session, items, selectedAddress, paymentMethod);
+      const result = buildDemoOrder(demoState, session, items, selectedAddress, paymentMethod, appliedCoupon || '');
       updateDemoState(result.nextState);
       clearCart();
       navigate(`/order-confirmation/${result.order.orderId}`);
@@ -86,6 +97,9 @@ export function DemoCheckout() {
               <input type="radio" name="shippingAddress" checked={selectedAddress?.addressId === item.addressId} onChange={() => setSelectedAddressId(item.addressId)} />
               <span><strong>{item.label}{item.isDefault ? ' · Default' : ''}</strong><small>{item.recipientName} · {item.phone}</small><small>{item.addressLine1}{item.addressLine2 ? `, ${item.addressLine2}` : ''}, {item.city}, {item.state} {item.zipCode}, {item.country}</small></span>
             </label>)}</div> : <div className="demo-shop-feedback">You haven't saved a delivery address yet. <button className="demo-inline-link" type="button" onClick={() => navigate('/customer/addresses')}>Add an address</button> before checkout.</div>}
+            <h2 className="demo-payment-heading">Coupon code</h2>
+            <div className="demo-coupon-entry"><input aria-label="Coupon code" value={couponInput} onChange={event => setCouponInput(event.target.value)} placeholder="Enter coupon code" disabled={Boolean(appliedCoupon)} /><button className="demo-outline-button" type="button" onClick={applyCoupon} disabled={Boolean(appliedCoupon)}>Apply</button>{appliedCoupon && <button className="demo-inline-link" type="button" onClick={() => { setAppliedCoupon(null); setCouponMessage('Coupon removed.'); }}>Remove</button>}</div>
+            {couponMessage && <p className={appliedCoupon ? 'demo-coupon-success' : 'demo-shop-muted'} role="status">{couponMessage}</p>}
             <h2 className="demo-payment-heading">Payment method</h2>
             <label className="demo-payment-choice"><input type="radio" checked={paymentMethod === 'CashOnDelivery'} onChange={() => setPaymentMethod('CashOnDelivery')} /> Cash on delivery</label>
             <label className="demo-payment-choice"><input type="radio" checked={paymentMethod === 'DemoCard'} onChange={() => setPaymentMethod('DemoCard')} /> Simulated card payment <span>(no card details or charge)</span></label>
@@ -95,6 +109,7 @@ export function DemoCheckout() {
             <h2>Order summary</h2>
             {items.map(item => <div className="demo-summary-item" key={item.cartId || `${item.productId}-${item.variantId || 'default'}`}><span>{item.productName}{item.variantName ? ` — ${item.variantName}` : ''} × {item.quantity}</span><strong>{money(item.itemTotal)}</strong></div>)}
             <div className="demo-summary-line"><span>Subtotal</span><strong>{money(summary.subtotal)}</strong></div>
+            {summary.discount > 0 && <div className="demo-summary-line demo-coupon-discount"><span>Coupon discount{appliedCoupon ? ` (${appliedCoupon})` : ''}</span><strong>−{money(summary.discount)}</strong></div>}
             <div className="demo-summary-line"><span>Shipping</span><strong>{money(summary.shipping)}</strong></div>
             <div className="demo-summary-line"><span>Tax (10%)</span><strong>{money(summary.tax)}</strong></div>
             <div className="demo-summary-line demo-summary-total"><span>Total</span><strong>{money(summary.total)}</strong></div>
