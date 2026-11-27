@@ -12,14 +12,7 @@ function AdminDisputes() {
     const [adminNotes, setAdminNotes] = useState('');
     const [action, setAction] = useState('Resolve');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token || localStorage.getItem('userType') !== 'Admin') {
-            navigate('/login');
-            return;
-        }
-        fetchDisputes();
-    }, [filterStatus, fetchDisputes, navigate]);
+
 
     const fetchDisputes = useCallback(async () => {
         setLoading(true);
@@ -32,6 +25,15 @@ function AdminDisputes() {
             setLoading(false);
         }
     }, [filterStatus]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token || localStorage.getItem('userType') !== 'Admin') {
+            navigate('/login');
+            return;
+        }
+        fetchDisputes();
+    }, [filterStatus, fetchDisputes, navigate]);
 
     const handleResolve = async (disputeId) => {
         if (!adminNotes.trim()) {
