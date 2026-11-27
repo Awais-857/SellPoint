@@ -5,6 +5,7 @@ import api from '../services/api';
 import styles from './AdminVendors.module.css';
 
 function AdminVendors() {
+    const fetchVendorsRef = useRef(null);
     const navigate = useNavigate();
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -57,6 +58,8 @@ function AdminVendors() {
             setLoading(false);
         }
     };
+
+    fetchVendorsRef.current = fetchVendors;
 
     const handleViewVendor = (vendor) => {
         setSelectedVendor(vendor);
