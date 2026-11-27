@@ -22,6 +22,54 @@ function ProductDetail() {
     const availableStock = selectedVariant ? Number(selectedVariant.stockQuantity) : Number(product?.stockQuantity || 0);
     const displayedPrice = Number(selectedVariant?.price ?? product?.price ?? 0);
 
+    const fetchRelatedProducts = useCallback(async (categoryId, currentProductId) => {
+        try {
+            const result = await catalogService.listProducts({
+                categoryId,
+                pageSize: 5,
+                pageNumber: 1
+            });
+            // Filter out current product
+            const related = (result.products || []).filter(p => p.productId !== currentProductId);
+            setRelatedProducts(related.slice(0, 4));
+        } catch (err) {
+            console.error('Failed to fetch related products', err);
+        }
+    }, []);
+
+    const fetchProduct = useCallback(async () => {
+        setLoading(true);
+        setError('');
+
+        try {
+            const productData = await catalogService.getProductById(id);
+            if (!productData) {
+                setError('Product not found');
+                return;
+            }
+            setProduct(productData);
+
+            // Fetch related products from same category
+            if (productData.categoryId) {
+                fetchRelatedProducts(productData.categoryId, productData.productId);
+            }
+        } catch (err) {
+            console.error('Failed to fetch product', err);
+            setError('Product not found');
+        } finally {
+            setLoading(false);
+        }
+    }, [id, fetchRelatedProducts]);
+
+    const fetchReviews = useCallback(async () => {
+        try {
+            const reviewData = await catalogService.getProductReviews(id);
+            setReviews(reviewData);
+        } catch (err) {
+            console.error('Failed to fetch reviews', err);
+        }
+    }, [id]);
+
     useEffect(() => {
         fetchProduct();
         fetchReviews();
@@ -286,52 +334,4 @@ function ProductDetail() {
     );
 }
 
-export default ProductDetail    const fetchRelatedProducts = useCallback(async (categoryId, currentProductId) => {
-        try {
-            const result = await catalogService.listProducts({
-                categoryId,
-                pageSize: 5,
-                pageNumber: 1
-            });
-            // Filter out current product
-            const related = (result.products || []).filter(p => p.productId !== currentProductId);
-            setRelatedProducts(related.slice(0, 4));
-        } catch (err) {
-            console.error('Failed to fetch related products', err);
-        }
-    }, []);
-
-    const fetchProduct = useCallback(async () => {
-        setLoading(true);
-        setError('');
-
-        try {
-            const productData = await catalogService.getProductById(id);
-            if (!productData) {
-                setError('Product not found');
-                return;
-            }
-            setProduct(productData);
-
-            // Fetch related products from same category
-            if (productData.categoryId) {
-                fetchRelatedProducts(productData.categoryId, productData.productId);
-            }
-        } catch (err) {
-            console.error('Failed to fetch product', err);
-            setError('Product not found');
-        } finally {
-            setLoading(false);
-        }
-    }, [id, fetchRelatedProducts]);
-
-    const fetchReviews = useCallback(async () => {
-        try {
-            const reviewData = await catalogService.getProductReviews(id);
-            setReviews(reviewData);
-        } catch (err) {
-            console.error('Failed to fetch reviews', err);
-        }
-    }, [id]);
-
-;
+export default ProductDetail;
