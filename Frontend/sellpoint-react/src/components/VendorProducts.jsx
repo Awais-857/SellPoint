@@ -42,7 +42,7 @@ function VendorProducts() {
 
         fetchProductsRef.current?.();
         fetchCategories();
-    }, [navigate];
+    }, [navigate]);
 
     const fetchProducts = async () => {
         setLoading(true);
