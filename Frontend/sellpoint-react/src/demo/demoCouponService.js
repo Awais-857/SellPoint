@@ -18,7 +18,8 @@ export const validateDemoCoupon = (state, code, customerId, subtotal, now = new 
   if (!coupon.isActive) return { valid: false, message: 'This coupon is inactive.' };
   const timestamp = new Date(now).getTime();
   if (coupon.startsAt && timestamp < new Date(coupon.startsAt).getTime()) return { valid: false, message: 'This coupon is not active yet.' };
-  if (coupon.expiresAt && timestamp > new Date(coupon.expiresAt).getTime()) return { valid: false, message: 'This coupon has expired.' };
+  const expiry = coupon.expiresAt ? new Date(/^\\d{4}-\\d{2}-\\d{2}$/.test(coupon.expiresAt) ? `${coupon.expiresAt}T23:59:59.999` : coupon.expiresAt).getTime() : null;
+  if (expiry != null && timestamp > expiry) return { valid: false, message: 'This coupon has expired.' };
   const orderSubtotal = money(subtotal);
   if (orderSubtotal < Number(coupon.minimumSubtotal || 0)) return { valid: false, message: `Your subtotal must be at least $${Number(coupon.minimumSubtotal || 0).toFixed(2)}.` };
   const redemptions = coupon.redemptions || [];
