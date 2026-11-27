@@ -15,6 +15,12 @@
 # ========== Node / React ==========
 **/node_modules/
 **/build/
+**/dist/
+**/.env.development
+**/.env.development.local
+**/.env.production.local
+**/.env.test
+**/.env.test.local
 **/.env
 **/.env.local
 **/.env.production
