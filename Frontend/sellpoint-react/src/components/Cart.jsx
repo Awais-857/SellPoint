@@ -1,6 +1,6 @@
 // src/components/Cart.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     isLoggedIn,
@@ -14,6 +14,7 @@ import { IS_DEMO_MODE } from '../config/appConfig';
 
 function Cart() {
     const navigate = useNavigate();
+    const fetchCartRef = useRef(null);
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -30,7 +31,7 @@ function Cart() {
     const demoMode = IS_DEMO_MODE;
 
     useEffect(() => {
-        fetchCart();
+        fetchCartRef.current?.();
     }, []);
 
     const fetchCart = async () => {
@@ -129,6 +130,8 @@ function Cart() {
         groups[vendorKey].items.push(item);
         return groups;
     }, {});
+    fetchCartRef.current = fetchCart;
+
 
     if (loading) {
         return (
