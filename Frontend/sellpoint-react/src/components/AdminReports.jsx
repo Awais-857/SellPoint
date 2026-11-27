@@ -1,5 +1,5 @@
 // src/components/AdminReports.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminReports.module.css';
@@ -44,7 +44,7 @@ function AdminReports() {
         fetchTopVendors();
         fetchTopProducts();
         fetchDashboardStats();
-    }, [reportType, dateRange]);
+    }, [reportType, dateRange, navigate]);
 
     const fetchReports = async () => {
         setLoading(true);
@@ -161,6 +161,8 @@ function AdminReports() {
     };
 
     if (loading && reportData.length === 0) {
+    fetchReportsRef.current = fetchReports;
+
         return (
             <div className={styles['admin-reports-container']}>
                 <div className={styles['admin-reports-header']}>
