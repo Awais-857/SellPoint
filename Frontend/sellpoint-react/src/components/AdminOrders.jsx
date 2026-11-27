@@ -1,10 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminOrders.module.css';
 
 function AdminOrders() {
-    const fetchOrdersRef = useRef(null);
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -20,10 +19,10 @@ function AdminOrders() {
             navigate('/login');
             return;
         }
-        fetchOrdersRef.current?.();
-    }, [filterStatus, navigate]);
+        fetchOrders();
+    }, [filterStatus, fetchOrders, navigate]);
 
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/admin/orders', {
@@ -36,9 +35,7 @@ function AdminOrders() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchOrdersRef.current = fetchOrders;
+    }, [filterStatus]);
 
     const handleViewOrder = async (orderId) => {
         try {
@@ -60,8 +57,6 @@ function AdminOrders() {
             default: return '';
         }
     };
-    fetchOrdersRef.current = fetchOrders;
-
 
     if (loading) return <div className={styles['loading']}>Loading orders...</div>;
 
