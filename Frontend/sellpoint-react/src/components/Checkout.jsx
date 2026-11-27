@@ -43,14 +43,7 @@ function Checkout() {
         cvv: ''
     });
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchCheckoutData();
-    }, [navigate, fetchCheckoutData]);
+
 
     const fetchCheckoutData = useCallback(async () => {
     setLoading(true);
@@ -98,6 +91,15 @@ function Checkout() {
         setLoading(false);
     }
 }, [navigate]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchCheckoutData();
+    }, [navigate, fetchCheckoutData]);
 
     const handleAddAddress = async (e) => {
         e.preventDefault();
