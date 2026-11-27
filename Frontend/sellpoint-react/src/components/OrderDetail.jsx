@@ -23,7 +23,7 @@ function OrderDetail() {
             return;
         }
         fetchOrderDetailsRef.current?.();
-    }, [id, navigate];
+    }, [id, navigate]);
 
     const fetchOrderDetails = async () => {
         setLoading(true);
