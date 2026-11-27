@@ -25,22 +25,7 @@ function VendorProducts() {
     const [submitting, setSubmitting] = useState(false);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Vendor') {
-            navigate('/dashboard');
-            return;
-        }
-
-        fetchProducts();
-        fetchCategories();
-    }, [navigate, fetchProducts, fetchCategories]);
 
     const fetchProducts = useCallback(async () => {
         setLoading(true);
@@ -72,6 +57,23 @@ function VendorProducts() {
             console.error('Failed to fetch categories:', err);
         }
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Vendor') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchProducts();
+        fetchCategories();
+    }, [navigate, fetchProducts, fetchCategories]);
 
     const handleOpenAddModal = () => {
         setEditingProduct(null);
