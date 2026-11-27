@@ -17,21 +17,7 @@ function AdminVendors() {
     const [rejectionReason, setRejectionReason] = useState('');
     const [actionLoading, setActionLoading] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Admin') {
-            navigate('/dashboard');
-            return;
-        }
-
-        fetchVendors();
-    }, [fetchVendors, navigate]);
 
     const fetchVendors = useCallback(async () => {
         setLoading(true);
@@ -57,6 +43,22 @@ function AdminVendors() {
             setLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Admin') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchVendors();
+    }, [fetchVendors, navigate]);
 
     const handleViewVendor = (vendor) => {
         setSelectedVendor(vendor);
