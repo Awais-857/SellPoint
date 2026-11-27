@@ -1,11 +1,10 @@
 // src/components/AdminCategories.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminCategories.module.css';
 
 function AdminCategories() {
-    const fetchCategoriesRef = useRef(null);
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -34,10 +33,10 @@ function AdminCategories() {
             return;
         }
 
-        fetchCategoriesRef.current?.();
-    }, [showInactive, navigate]);
+        fetchCategories();
+    }, [showInactive, fetchCategories, navigate]);
 
-    const fetchCategories = async () => {
+    const fetchCategories = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get(`/admin/categories?includeInactive=${showInactive}`);
@@ -60,9 +59,7 @@ function AdminCategories() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchCategoriesRef.current = fetchCategories;
+    }, [showInactive, navigate]);
 
     const handleOpenAddModal = () => {
         setEditingCategory(null);
@@ -203,8 +200,6 @@ function AdminCategories() {
     };
 
     const hierarchicalCategories = buildCategoryTree();
-    fetchCategoriesRef.current = fetchCategories;
-
 
     if (loading) {
         return (
