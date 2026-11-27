@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminReviews.module.css';
@@ -16,8 +16,8 @@ function AdminReviews() {
             navigate('/login');
             return;
         }
-        fetchPendingReviews();
-    }, []);
+        fetchPendingReviewsRef.current?.();
+    }, [navigate]);
 
     const fetchPendingReviews = async () => {
         setLoading(true);
@@ -43,6 +43,8 @@ function AdminReviews() {
         alert(err.response?.data?.message || 'Failed to approve review');
     }
 };
+    fetchPendingReviewsRef.current = fetchPendingReviews;
+
 
     if (loading) return <div className={styles['loading']}>Loading pending reviews...</div>;
 
