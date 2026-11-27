@@ -1,5 +1,5 @@
 // src/components/Checkout.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './Checkout.module.css';
@@ -244,6 +244,8 @@ function Checkout() {
         groups[vendorKey].items.push(item);
         return groups;
     }, {});
+    fetchCheckoutDataRef.current = fetchCheckoutData;
+
 
     if (loading) {
         return (
