@@ -12,30 +12,13 @@ import {
   updateVendorOrderItemStatus
 } from './demoVendorService';
 import './demoVendor.css';
+import { DemoDashboardChrome } from './DemoDashboardChrome';
 
 const money = value => `$${Number(value || 0).toFixed(2)}`;
 const dateLabel = value => new Date(value).toLocaleDateString();
 
 function VendorHeader({ active }) {
-  const navigate = useNavigate();
-  const { endSession } = useDemo();
-  const leave = () => { endSession(); navigate('/demo', { replace: true }); };
-  return (
-    <header className="demo-vendor-header">
-      <button className="demo-vendor-brand" onClick={() => navigate('/vendor-dashboard')}>SellPoint <span>VENDOR DEMO</span></button>
-      <nav>
-        <button className={active === 'dashboard' ? 'active' : ''} onClick={() => navigate('/vendor-dashboard')}>Overview</button>
-        <button className={active === 'products' ? 'active' : ''} onClick={() => navigate('/vendor/products')}>Products</button>
-        <button className={active === 'store' ? 'active' : ''} onClick={() => navigate('/vendor/store-profile')}>Store profile</button>
-        <button className={active === 'orders' ? 'active' : ''} onClick={() => navigate('/vendor/orders')}>Orders</button>
-        <button className={active === 'reviews' ? 'active' : ''} onClick={() => navigate('/vendor/reviews')}>Reviews</button>
-        <button className={active === 'returns' ? 'active' : ''} onClick={() => navigate('/vendor/returns')}>Returns</button>
-        <button className={active === 'revenue' ? 'active' : ''} onClick={() => navigate('/vendor/revenue')}>Revenue</button>
-        <button onClick={() => navigate('/demo/workspace')}>Workspace</button>
-        <button onClick={leave}>Switch role</button>
-      </nav>
-    </header>
-  );
+  return <DemoDashboardChrome role="vendor" active={active} />;
 }
 
 function useVendorContext() {

@@ -7,6 +7,8 @@ import {
   updateAdminDispute, updateAdminOrderStatus, updateVendorApproval
 } from './demoAdminService';
 import './demoAdmin.css';
+import { DemoDashboardChrome } from './DemoDashboardChrome';
+import { PageHeading } from '../components/common/ui';
 import { recordDemoCashCollection } from './demoPaymentService';
 import { saveDemoCoupon, toggleDemoCouponActive } from './demoCouponService';
 
@@ -14,23 +16,7 @@ const money = value => `$${Number(value || 0).toFixed(2)}`;
 const dateLabel = value => value ? new Date(value).toLocaleDateString() : '—';
 
 function AdminHeader({ active }) {
-  const navigate = useNavigate();
-  const { endSession } = useDemo();
-  const leave = () => { endSession(); navigate('/demo', { replace: true }); };
-  const links = [
-    ['dashboard', 'Overview', '/admin-dashboard'],
-    ['vendors', 'Vendors', '/admin/vendors'],
-    ['products', 'Products', '/admin/products'],
-    ['categories', 'Categories', '/admin/categories'],
-    ['orders', 'Orders', '/admin/orders'],
-    ['payments', 'Payments', '/admin/payments'],
-    ['coupons', 'Coupons', '/admin/coupons'],
-    ['disputes', 'Disputes', '/admin/disputes'],
-    ['reviews', 'Reviews', '/admin/reviews'],
-    ['returns', 'Returns', '/admin/returns'],
-    ['reports', 'Reports', '/admin/reports']
-  ];
-  return <header className="demo-admin-header"><button className="demo-admin-brand" onClick={() => navigate('/admin-dashboard')}>SellPoint <span>ADMIN DEMO</span></button><nav>{links.map(([key,label,path]) => <button key={key} className={active === key ? 'active' : ''} onClick={() => navigate(path)}>{label}</button>)}<button onClick={leave}>Switch role</button></nav></header>;
+  return <DemoDashboardChrome role="admin" active={active} />;
 }
 
 function useAdminState() {
@@ -39,7 +25,7 @@ function useAdminState() {
 }
 
 function AdminPage({ active, eyebrow, title, description, children }) {
-  return <main className="demo-admin-page"><AdminHeader active={active}/><section className="demo-admin-content"><div className="demo-admin-page-heading"><div><p className="demo-admin-eyebrow">{eyebrow}</p><h1>{title}</h1><p>{description}</p></div></div>{children}</section></main>;
+  return <main className="demo-admin-page"><AdminHeader active={active}/><section className="demo-admin-content"><PageHeading eyebrow={eyebrow} title={title} description={description}/>{children}</section></main>;
 }
 
 function StatCards({ items }) {
