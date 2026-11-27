@@ -12,15 +12,7 @@ function AdminOrders() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
-        if (!token || userType !== 'Admin') {
-            navigate('/login');
-            return;
-        }
-        fetchOrders();
-    }, [filterStatus, fetchOrders, navigate]);
+
 
     const fetchOrders = useCallback(async () => {
         setLoading(true);
@@ -36,6 +28,16 @@ function AdminOrders() {
             setLoading(false);
         }
     }, [filterStatus]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+        if (!token || userType !== 'Admin') {
+            navigate('/login');
+            return;
+        }
+        fetchOrders();
+    }, [filterStatus, fetchOrders, navigate]);
 
     const handleViewOrder = async (orderId) => {
         try {
