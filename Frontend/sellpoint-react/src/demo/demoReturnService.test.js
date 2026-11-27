@@ -50,6 +50,15 @@ describe('demoReturnService', () => {
     expect(state.returnRequests[0].quantity).toBe(1);
     expect(state.returnRequests[0].refundAmount).toBe(80.99);
   });
+  test('refunds partial quantities using the coupon-discounted net line total', () => {
+    const discounted = fixture();
+    discounted.orders[0].items[0].itemTotal = 145.78;
+    discounted.orders[0].items[0].unitPrice = 72.89;
+    const requested = create(discounted, 1);
+    expect(requested.returnRequests[0]).toMatchObject({ unitPrice: 72.89, refundAmount: 72.89 });
+    const approved = decideDemoReturnAsVendor(requested, requested.returnRequests[0].returnId, 101, 'Approved', {}, now);
+    expect(approved.payments[0].refundedAmount).toBe(72.89);
+  });
   test('rejects quantity above purchased amount and blank reason', () => {
     expect(() => create(fixture(), 3)).toThrow(/between 1 and 2/);
     expect(() => createDemoReturnRequest(fixture(), { orderId: 5017, orderItemId: 8201, customerId: 301, quantity: 1, reason: ' ' }, now)).toThrow(/reason/);
