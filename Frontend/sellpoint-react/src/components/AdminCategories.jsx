@@ -20,21 +20,7 @@ function AdminCategories() {
         imageUrl: ''
     });
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Admin') {
-            navigate('/dashboard');
-            return;
-        }
-
-        fetchCategories();
-    }, [showInactive, fetchCategories, navigate]);
 
     const fetchCategories = useCallback(async () => {
         setLoading(true);
@@ -60,6 +46,22 @@ function AdminCategories() {
             setLoading(false);
         }
     }, [showInactive, navigate]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Admin') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchCategories();
+    }, [showInactive, fetchCategories, navigate]);
 
     const handleOpenAddModal = () => {
         setEditingCategory(null);
