@@ -1,10 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminDisputes.module.css';
 
 function AdminDisputes() {
-    const fetchDisputesRef = useRef(null);
     const navigate = useNavigate();
     const [disputes, setDisputes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -19,10 +18,10 @@ function AdminDisputes() {
             navigate('/login');
             return;
         }
-        fetchDisputesRef.current?.();
-    }, [filterStatus, navigate]);
+        fetchDisputes();
+    }, [filterStatus, fetchDisputes, navigate]);
 
-    const fetchDisputes = async () => {
+    const fetchDisputes = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/admin/disputes', { params: { status: filterStatus !== 'all' ? filterStatus : undefined } });
@@ -32,9 +31,7 @@ function AdminDisputes() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchDisputesRef.current = fetchDisputes;
+    }, [filterStatus]);
 
     const handleResolve = async (disputeId) => {
         if (!adminNotes.trim()) {
@@ -51,8 +48,6 @@ function AdminDisputes() {
             alert('Failed to resolve dispute');
         }
     };
-    fetchDisputesRef.current = fetchDisputes;
-
 
     if (loading) return <div className={styles['loading']}>Loading disputes...</div>;
 
