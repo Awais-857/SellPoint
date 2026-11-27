@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminDisputes.module.css';
@@ -18,8 +18,8 @@ function AdminDisputes() {
             navigate('/login');
             return;
         }
-        fetchDisputes();
-    }, [filterStatus]);
+        fetchDisputesRef.current?.();
+    }, [filterStatus, navigate]);
 
     const fetchDisputes = async () => {
         setLoading(true);
@@ -48,6 +48,8 @@ function AdminDisputes() {
             alert('Failed to resolve dispute');
         }
     };
+    fetchDisputesRef.current = fetchDisputes;
+
 
     if (loading) return <div className={styles['loading']}>Loading disputes...</div>;
 
