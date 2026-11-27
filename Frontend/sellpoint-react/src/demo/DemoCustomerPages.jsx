@@ -146,6 +146,7 @@ export function DemoOrderConfirmation() {
           <div><span>Order status</span><strong>{order.orderStatus}</strong></div>
           <div><span>Payment method</span><strong>{order.paymentMethod === 'Demo Card (no charge)' ? 'Simulated card' : 'Cash on delivery'}</strong></div>
           <div><span>Payment status</span><strong>{payment?.status || order.paymentStatus}</strong></div>
+          {order.couponCode && <div><span>Coupon discount · {order.couponCode}</span><strong>−{money(order.couponDiscount)}</strong></div>}
           <div><span>Total</span><strong>{money(order.totalAmount)}</strong></div>
         </div>
         {paymentMessage && <p className="demo-shop-feedback" role="status">{paymentMessage}</p>}
@@ -229,7 +230,7 @@ export function DemoOrderDetail() {
           <h2>Items</h2>
           {order.items.map(item => <div className="demo-summary-item" key={item.orderItemId}><span>{item.productName}{item.variantName ? ` — ${item.variantName}` : ''} × {item.quantity}</span><strong>{money(item.itemTotal)}</strong>{getDemoReviewableOrderItem(demoState, session.userId, item.productId, item.orderItemId) && <button className="demo-inline-link" onClick={() => navigate(`/product/${item.productId}/review?orderItemId=${item.orderItemId}`, { state: { orderItemId: item.orderItemId } })}>Write a review</button>}</div>)}
           <h2>Shipping address</h2><p><strong>{order.shippingAddressSnapshot?.recipientName || order.recipientName || order.customerName}</strong>{order.recipientPhone ? ` · ${order.recipientPhone}` : ''}</p><p>{order.shippingAddress || [order.addressLine1, order.addressLine2, order.city, order.state, order.zipCode, order.country].filter(Boolean).join(', ')}</p>
-          <h2>Summary</h2><div className="demo-summary-line"><span>Subtotal</span><strong>{money(order.subtotal)}</strong></div><div className="demo-summary-line"><span>Shipping</span><strong>{money(order.shipping)}</strong></div><div className="demo-summary-line"><span>Tax</span><strong>{money(order.tax)}</strong></div><div className="demo-summary-line demo-summary-total"><span>Total</span><strong>{money(order.totalAmount)}</strong></div>
+          <h2>Summary</h2><div className="demo-summary-line"><span>Subtotal</span><strong>{money(order.originalSubtotal ?? order.subtotal)}</strong></div>{order.couponDiscount > 0 && <div className="demo-summary-line demo-coupon-discount"><span>Coupon discount · {order.couponCode}</span><strong>−{money(order.couponDiscount)}</strong></div>}<div className="demo-summary-line"><span>Shipping</span><strong>{money(order.shipping)}</strong></div><div className="demo-summary-line"><span>Tax</span><strong>{money(order.tax)}</strong></div><div className="demo-summary-line demo-summary-total"><span>Total</span><strong>{money(order.totalAmount)}</strong></div>
         </div>
         {error && <p className="demo-shop-feedback" role="status">{error}</p>}
         <div className="demo-shop-actions">
