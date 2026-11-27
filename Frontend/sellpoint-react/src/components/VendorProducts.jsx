@@ -40,9 +40,9 @@ function VendorProducts() {
             return;
         }
 
-        fetchProducts();
+        fetchProductsRef.current?.();
         fetchCategories();
-    }, []);
+    }, [navigate];
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -56,6 +56,8 @@ function VendorProducts() {
             setLoading(false);
         }
     };
+
+    fetchProductsRef.current = fetchProducts;
 
     const fetchCategories = async () => {
         try {
@@ -191,9 +193,7 @@ function VendorProducts() {
     };
 
     if (loading) {
-    fetchProductsRef.current = fetchProducts;
-
-        return (
+return (
             <div className={styles['vendor-products-container']}>
                 <div className={styles['vendor-products-header']}>
                     <h1 onClick={() => navigate('/dashboard')}>SellPoint Vendor</h1>
