@@ -53,6 +53,7 @@ export function DemoCheckout() {
 
   const couponValidation = appliedCoupon ? validateDemoCoupon(demoState, appliedCoupon, session.userId, items.reduce((sum, item) => sum + Number(item.itemTotal || 0), 0)) : null;
   const summary = useMemo(() => calculateDemoCartSummary(items, couponValidation?.valid ? couponValidation.discountAmount : 0), [items, couponValidation?.valid, couponValidation?.discountAmount]);
+  const visibleCouponMessage = appliedCoupon && couponValidation && !couponValidation.valid ? couponValidation.message : couponMessage;
 
   const applyCoupon = () => {
     const result = validateDemoCoupon(demoState, couponInput, session.userId, summary.subtotal);
@@ -99,7 +100,7 @@ export function DemoCheckout() {
             </label>)}</div> : <div className="demo-shop-feedback">You haven't saved a delivery address yet. <button className="demo-inline-link" type="button" onClick={() => navigate('/customer/addresses')}>Add an address</button> before checkout.</div>}
             <h2 className="demo-payment-heading">Coupon code</h2>
             <div className="demo-coupon-entry"><input aria-label="Coupon code" value={couponInput} onChange={event => setCouponInput(event.target.value)} placeholder="Enter coupon code" disabled={Boolean(appliedCoupon)} /><button className="demo-outline-button" type="button" onClick={applyCoupon} disabled={Boolean(appliedCoupon)}>Apply</button>{appliedCoupon && <button className="demo-inline-link" type="button" onClick={() => { setAppliedCoupon(null); setCouponMessage('Coupon removed.'); }}>Remove</button>}</div>
-            {couponMessage && <p className={appliedCoupon ? 'demo-coupon-success' : 'demo-shop-muted'} role="status">{couponMessage}</p>}
+            {visibleCouponMessage && <p className={appliedCoupon && couponValidation?.valid ? 'demo-coupon-success' : 'demo-shop-muted'} role="status">{visibleCouponMessage}</p>}
             <h2 className="demo-payment-heading">Payment method</h2>
             <label className="demo-payment-choice"><input type="radio" checked={paymentMethod === 'CashOnDelivery'} onChange={() => setPaymentMethod('CashOnDelivery')} /> Cash on delivery</label>
             <label className="demo-payment-choice"><input type="radio" checked={paymentMethod === 'DemoCard'} onChange={() => setPaymentMethod('DemoCard')} /> Simulated card payment <span>(no card details or charge)</span></label>
