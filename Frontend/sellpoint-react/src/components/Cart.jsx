@@ -1,6 +1,6 @@
 // src/components/Cart.jsx
 
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     isLoggedIn,
@@ -14,7 +14,6 @@ import { IS_DEMO_MODE } from '../config/appConfig';
 
 function Cart() {
     const navigate = useNavigate();
-    const fetchCartRef = useRef(null);
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -31,35 +30,29 @@ function Cart() {
     const demoMode = IS_DEMO_MODE;
 
     useEffect(() => {
-        fetchCartRef.current?.();
-    }, [];
+        fetchCart();
+    }, [fetchCart]);
 
-    const fetchCart = async () => {
+    const fetchCart = useCallback(async () => {
         setLoading(true);
         setError('');
         try {
             const items = await getCart();
             setCartItems(items);
-            calculateSummary(items);
+            const subtotal = items.reduce((sum, item) => sum + item.itemTotal, 0);
+            const uniqueVendors = new Set(items.map(item => item.vendorId || item.vendorName));
+            const shipping = uniqueVendors.size * 5;
+            const tax = subtotal * 0.10;
+            const total = subtotal + shipping + tax;
+            const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+            setCartSummary({ subtotal, shipping, tax, total, itemCount });
         } catch (err) {
             console.error('Failed to fetch cart', err);
             setError('Failed to load cart. Please try again.');
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchCartRef.current = fetchCart;
-
-    const calculateSummary = (items) => {
-        const subtotal = items.reduce((sum, item) => sum + item.itemTotal, 0);
-        const uniqueVendors = new Set(items.map(item => item.vendorId || item.vendorName));
-        const shipping = uniqueVendors.size * 5;
-        const tax = subtotal * 0.10;
-        const total = subtotal + shipping + tax;
-        const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-        setCartSummary({ subtotal, shipping, tax, total, itemCount });
-    };
+    }, []);
 
     const handleUpdateQuantity = async (cartId, newQuantity) => {
         if (newQuantity < 1) {
@@ -69,7 +62,7 @@ function Cart() {
         setUpdating(true);
         try {
             await updateQuantity(cartId, newQuantity);
-            await fetchCartRef.current?.();
+            await fetchCart();
         } catch (err) {
             console.error('Failed to update quantity', err);
             alert('Failed to update quantity. Please try again.');
@@ -132,8 +125,6 @@ function Cart() {
         groups[vendorKey].items.push(item);
         return groups;
     }, {});
-    fetchCartRef.current = fetchCart;
-
 
     if (loading) {
         return (
