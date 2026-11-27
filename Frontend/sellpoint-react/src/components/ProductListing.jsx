@@ -1,5 +1,5 @@
 // src/components/ProductListing.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { catalogService } from '../services/catalogService';
 import ProductCard from './ProductCard';
@@ -8,6 +8,8 @@ import { addToCart } from '../services/cartHelper';
 import { IS_DEMO_MODE } from '../config/appConfig';
 
 function ProductListing() {
+    const fetchProductsRef = useRef(null);
+
     const navigate = useNavigate();
     const location = useLocation();
     const [products, setProducts] = useState([]);
@@ -49,7 +51,7 @@ function ProductListing() {
 
     // Fetch products when filters change
     useEffect(() => {
-        fetchProducts();
+        fetchProductsRef.current?.();
     }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, minRating, inStock, sortBy, sortOrder, currentPage]);
 
     const fetchCategories = async () => {
@@ -140,6 +142,8 @@ function ProductListing() {
             alert('Failed to add to cart. Please try again.');
         }
     };
+    fetchProductsRef.current = fetchProducts;
+
 
     return (
         <div className={styles['product-listing-container']}>
