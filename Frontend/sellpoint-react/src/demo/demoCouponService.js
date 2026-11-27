@@ -25,7 +25,7 @@ export const validateDemoCoupon = (state, code, customerId, subtotal, now = new 
   if (orderSubtotal < Number(coupon.minimumSubtotal || 0)) return { valid: false, message: `Your subtotal must be at least $${Number(coupon.minimumSubtotal || 0).toFixed(2)}.` };
   const redemptions = coupon.redemptions || [];
   if (coupon.usageLimit != null && Number(coupon.usageCount || 0) >= Number(coupon.usageLimit)) return { valid: false, message: 'This coupon has reached its total usage limit.' };
-  if (coupon.perCustomerLimit != null && redemptions.filter(item => Number(item.customerId) === Number(customerId)).length >= Number(coupon.perCustomerLimit)) return { valid: false, message: 'You have reached the usage limit for this coupon.' };
+  if (coupon.perCustomerLimit != null && redemptions.filter(item => Number(item.customerId) === Number(customerId)).length >= Number(coupon.perCustomerLimit)) return { valid: false, message: 'You have reached the per-customer usage limit for this coupon.' };
   return { valid: true, coupon, code: normalized, discountAmount: calculateCouponDiscount(coupon, orderSubtotal),
     message: coupon.discountType === 'percentage' ? `${coupon.discountValue}% discount applied.` : `$${Number(coupon.discountValue).toFixed(2)} discount applied.` };
 };
