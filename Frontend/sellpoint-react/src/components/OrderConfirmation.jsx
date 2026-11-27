@@ -5,6 +5,7 @@ import api from '../services/api';
 import styles from './OrderConfirmation.module.css';
 
 function OrderConfirmation() {
+    const fetchOrderDetailsRef = useRef(null);
     const { id } = useParams();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
@@ -18,8 +19,8 @@ function OrderConfirmation() {
             navigate('/login');
             return;
         }
-        fetchOrderDetails();
-    }, [id]);
+        fetchOrderDetailsRef.current?.();
+    }, [id, navigate];
 
     const fetchOrderDetails = async () => {
         setLoading(true);
@@ -41,6 +42,8 @@ function OrderConfirmation() {
         }
     };
 
+    fetchOrderDetailsRef.current = fetchOrderDetails;
+
     const handleContinueShopping = () => {
         navigate('/products');
     };
@@ -48,10 +51,7 @@ function OrderConfirmation() {
     const handleViewOrders = () => {
         navigate('/order-history');
     };
-    fetchOrderDetailsRef.current = fetchOrderDetails;
-
-
-    if (loading) {
+if (loading) {
         return (
             <div className={styles['confirmation-container']}>
                 <div className={styles['loading-state']}>
