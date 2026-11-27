@@ -9,15 +9,7 @@ function AdminReviews() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
-        if (!token || userType !== 'Admin') {
-            navigate('/login');
-            return;
-        }
-        fetchPendingReviews();
-    }, [fetchPendingReviews, navigate]);
+
 
     const fetchPendingReviews = useCallback(async () => {
         setLoading(true);
@@ -30,6 +22,16 @@ function AdminReviews() {
             setLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+        if (!token || userType !== 'Admin') {
+            navigate('/login');
+            return;
+        }
+        fetchPendingReviews();
+    }, [fetchPendingReviews, navigate]);
 
     const handleApprove = async (reviewId) => {
     try {
