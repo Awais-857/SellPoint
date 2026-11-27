@@ -12,14 +12,7 @@ function OrderConfirmation() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchOrderDetails();
-    }, [id, navigate, fetchOrderDetails]);
+
 
     const fetchOrderDetails = useCallback(async () => {
         setLoading(true);
@@ -40,6 +33,15 @@ function OrderConfirmation() {
             setLoading(false);
         }
     }, [id]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchOrderDetails();
+    }, [id, navigate, fetchOrderDetails]);
 
     const handleContinueShopping = () => {
         navigate('/products');
