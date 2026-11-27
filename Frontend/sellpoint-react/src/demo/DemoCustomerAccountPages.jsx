@@ -103,7 +103,7 @@ export function DemoCustomerAddressesPage() {
             <p>Phone: {address.phone}</p>
             <div className="demo-wishlist-actions"><button className="demo-outline-button" onClick={() => startEdit(address)}>Edit</button>{!address.isDefault && <button className="demo-outline-button" onClick={() => makeDefault(address.addressId)}>Set as default</button>}<button className="demo-outline-button" onClick={() => remove(address.addressId)}>Delete</button></div>
           </article>)}</div>}
-        {(editingId !== null || form !== emptyAddress && feedback === '') && <form className="demo-shop-card demo-address-form" onSubmit={save}>
+        {(editingId !== null || (form !== emptyAddress && feedback === '')) && <form className="demo-shop-card demo-address-form" onSubmit={save}>
           <h2>{editingId === null ? 'Add a delivery address' : 'Edit delivery address'}</h2>
           <div className="demo-address-grid">
             <label>Address label<input value={form.label} onChange={event => setForm(current => ({ ...current, label: event.target.value }))} placeholder="Home, Office, etc." /></label>
