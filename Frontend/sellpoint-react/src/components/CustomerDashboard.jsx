@@ -1,5 +1,5 @@
 // src/components/CustomerDashboard.jsx
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './Dashboard.module.css';
@@ -66,6 +66,8 @@ function CustomerDashboard() {
         localStorage.clear();
         navigate('/login');
     };
+    fetchCustomerDataRef.current = fetchCustomerData;
+
 
     if (loading) {
         return (
