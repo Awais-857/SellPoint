@@ -11,3 +11,5 @@
 @media(max-width:600px){.demo-review-purchase{align-items:flex-start;flex-direction:column}.demo-review-history-heading{align-items:flex-start;flex-direction:column}}
 
 .demo-payment-simulation{margin-top:22px}.demo-payment-simulation h2{margin-top:0}.demo-payment-simulation>p{color:#68788e;line-height:1.6}.demo-payment-simulation .demo-shop-actions{margin-top:14px}
+
+.demo-coupon-entry{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:12px 0}.demo-coupon-entry input{min-width:0;flex:1;padding:11px 12px;border:1px solid #d8e1ec;border-radius:8px;font:inherit}.demo-coupon-success{color:#237849;font-size:13px;font-weight:700}.demo-coupon-discount strong{color:#237849}
