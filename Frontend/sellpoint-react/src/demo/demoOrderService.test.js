@@ -30,6 +30,29 @@ describe('demoOrderService', () => {
     expect(result.payment).toMatchObject({ method: 'Demo Card (no charge)', status: 'Pending', amount: 203 });
   });
 
+  test('applies one coupon to a multi-vendor parent order and allocates discounts proportionally', () => {
+    const secondProduct = { ...product, productId: 2, productName: 'Demo Lamp', businessName: 'Urban Home', vendorId: 102 };
+    const multiState = { ...state, products: [product, secondProduct],
+      vendors: [...state.vendors, { vendorId: 102, status: 'Approved', isActive: true }],
+      coupons: [{ couponId: 1, code: 'SAVE10', discountType: 'percentage', discountValue: 10, minimumSubtotal: 0,
+        isActive: true, usageCount: 0, usageLimit: 5, perCustomerLimit: 1, redemptions: [] }] };
+    const multiCart = [
+      { ...cart[0], quantity: 1, itemTotal: 90 },
+      { productId: 2, productName: 'Demo Lamp', vendorId: 102, vendorName: 'Urban Home', quantity: 1, itemTotal: 90 }
+    ];
+    const result = buildDemoOrder(multiState, session, multiCart, address, 'CashOnDelivery', 'SAVE10', new Date('2026-11-26T10:00:00Z'));
+    expect(result.order).toMatchObject({ originalSubtotal: 180, subtotal: 162, couponCode: 'SAVE10', couponDiscount: 18, shipping: 10, tax: 16.2, totalAmount: 188.2 });
+    expect(result.order.items.map(item => item.couponDiscount)).toEqual([9, 9]);
+    expect(result.order.items.map(item => item.itemTotal)).toEqual([81, 81]);
+    expect(result.nextState.coupons[0]).toMatchObject({ usageCount: 1, redemptions: [{ orderId: result.order.orderId, customerId: 301 }] });
+  });
+
+  test('revalidates coupons when placing an order and rejects expired or limited codes', () => {
+    const couponState = { ...state, coupons: [{ couponId: 1, code: 'ONLYONE', discountType: 'fixed', discountValue: 5,
+      minimumSubtotal: 0, isActive: true, usageCount: 1, usageLimit: 1, redemptions: [] }] };
+    expect(() => buildDemoOrder(couponState, session, cart, address, 'CashOnDelivery', 'ONLYONE')).toThrow(/usage limit/);
+  });
+
   test('deducts and restores the stock of the selected variant only', () => {
     const variantProduct = { ...product, stockQuantity: 5, variants: [
       { variantId: 11, variantName: 'Black', price: 100, stockQuantity: 3 },
