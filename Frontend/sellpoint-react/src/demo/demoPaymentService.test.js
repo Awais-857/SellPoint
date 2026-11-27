@@ -30,6 +30,15 @@ describe('demoPaymentService', () => {
     expect(next.products[0].stockQuantity).toBe(5);
   });
 
+  test('releases a coupon reservation when simulated card payment fails', () => {
+    const coupon = { couponId: 1, code: 'WELCOME10', usageCount: 1, redemptions: [{ orderId: 5001, customerId: 301 }] };
+    const order = { ...baseOrder, couponCode: 'WELCOME10' };
+    const state = { ...baseState(), orders: [order], coupons: [coupon] };
+    const failed = simulateDemoCardPayment(state, 5001, 301, 'Failure', new Date('2026-11-27T11:00:00Z'));
+    expect(failed.coupons[0]).toMatchObject({ usageCount: 0, redemptions: [] });
+    expect(failed.orders[0].couponUsageReleased).toBe(true);
+  });
+
   test('prevents another customer or duplicate payment attempt', () => {
     const state = baseState();
     expect(() => simulateDemoCardPayment(state, 5001, 302, 'Success')).toThrow(/not found/);
