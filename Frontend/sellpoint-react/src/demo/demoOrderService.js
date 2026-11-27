@@ -1,24 +1,29 @@
 import { isPublicDemoProduct } from '../services/catalogService';
 import { createDemoPayment, recordDemoRefund } from './demoPaymentService';
+import { validateDemoCoupon, redeemDemoCoupon, releaseDemoCoupon } from './demoCouponService';
 
 export const DEMO_CART_KEY = 'sellpoint_demo_cart_v1';
 
-export const calculateDemoCartSummary = (items) => {
+export const calculateDemoCartSummary = (items, discountAmount = 0) => {
   const subtotal = items.reduce((sum, item) => sum + Number(item.itemTotal || 0), 0);
   const vendorCount = new Set(items.map(item => item.vendorId || item.vendorName)).size;
   const shipping = vendorCount * 5;
-  const tax = subtotal * 0.1;
+  const discount = Math.min(subtotal, Math.max(0, Number(discountAmount || 0)));
+  const discountedSubtotal = Number((subtotal - discount).toFixed(2));
+  const tax = discountedSubtotal * 0.1;
   return {
     subtotal: Number(subtotal.toFixed(2)),
+    discount: Number(discount.toFixed(2)),
+    discountedSubtotal,
     shipping: Number(shipping.toFixed(2)),
     tax: Number(tax.toFixed(2)),
-    total: Number((subtotal + shipping + tax).toFixed(2)),
+    total: Number((discountedSubtotal + shipping + tax).toFixed(2)),
     itemCount: items.reduce((sum, item) => sum + Number(item.quantity || 0), 0),
     vendorCount
   };
 };
 
-export const buildDemoOrder = (demoState, session, cartItems, address, paymentMethod, date = new Date()) => {
+export const buildDemoOrder = (demoState, session, cartItems, address, paymentMethod, couponCode = '', date = new Date()) => {
   if (!session || session.role !== 'Customer') throw new Error('A Customer demo session is required.');
   if (!cartItems.length) throw new Error('Your cart is empty.');
 
@@ -61,7 +66,23 @@ export const buildDemoOrder = (demoState, session, cartItems, address, paymentMe
     };
   });
 
-  const subtotal = Number(orderItems.reduce((sum, item) => sum + item.itemTotal, 0).toFixed(2));
+  const originalSubtotal = Number(orderItems.reduce((sum, item) => sum + item.itemTotal, 0).toFixed(2));
+  const couponValidation = couponCode ? validateDemoCoupon(demoState, couponCode, session.userId, originalSubtotal, date) : null;
+  if (couponValidation && !couponValidation.valid) throw new Error(couponValidation.message);
+  const couponDiscount = couponValidation?.discountAmount || 0;
+  let allocated = 0;
+  orderItems.forEach((item, index) => {
+    const lineDiscount = index === orderItems.length - 1
+      ? Number((couponDiscount - allocated).toFixed(2))
+      : Number((originalSubtotal ? couponDiscount * item.itemTotal / originalSubtotal : 0).toFixed(2));
+    allocated = Number((allocated + lineDiscount).toFixed(2));
+    const grossLineTotal = item.itemTotal;
+    item.originalUnitPrice = item.unitPrice;
+    item.couponDiscount = lineDiscount;
+    item.unitPrice = Number(((grossLineTotal - lineDiscount) / item.quantity).toFixed(4));
+    item.itemTotal = Number((grossLineTotal - lineDiscount).toFixed(2));
+  });
+  const subtotal = Number((originalSubtotal - couponDiscount).toFixed(2));
   const vendorCount = new Set(orderItems.map(item => item.vendorId)).size;
   const shipping = vendorCount * 5;
   const tax = Number((subtotal * 0.1).toFixed(2));
@@ -74,7 +95,10 @@ export const buildDemoOrder = (demoState, session, cartItems, address, paymentMe
     orderStatus: 'Pending',
     paymentStatus: 'Pending',
     paymentMethod: paymentMethod === 'DemoCard' ? 'Demo Card (no charge)' : 'CashOnDelivery',
+    originalSubtotal,
     subtotal,
+    couponCode: couponValidation?.code || null,
+    couponDiscount,
     shipping,
     tax,
     totalAmount: Number((subtotal + shipping + tax).toFixed(2)),
@@ -96,12 +120,10 @@ export const buildDemoOrder = (demoState, session, cartItems, address, paymentMe
   return {
     order,
     payment,
-    nextState: {
-      ...demoState,
-      products,
-      orders: [order, ...demoState.orders],
-      payments: [payment, ...(demoState.payments || [])]
-    }
+    nextState: (() => {
+      const withOrder = { ...demoState, products, orders: [order, ...demoState.orders], payments: [payment, ...(demoState.payments || [])] };
+      return couponValidation ? redeemDemoCoupon(withOrder, couponValidation.coupon, orderId, session.userId) : withOrder;
+    })()
   };
 };
 
@@ -135,6 +157,7 @@ export const cancelDemoOrder = (demoState, orderId, customerId) => {
     payments,
     orders: demoState.orders.map(item => item.orderId === order.orderId ? cancelledOrder : item)
   };
+  nextState = releaseDemoCoupon(nextState, order);
   const linkedPayment = (demoState.payments || []).find(item => Number(item.orderId) === Number(order.orderId));
   if (linkedPayment && ['Paid', 'Partially Refunded'].includes(linkedPayment.status)) {
     const remainingRefund = Number((Number(linkedPayment.amount) - Number(linkedPayment.refundedAmount || 0)).toFixed(2));
