@@ -8,6 +8,7 @@ import {
 } from './demoAdminService';
 import './demoAdmin.css';
 import { recordDemoCashCollection } from './demoPaymentService';
+import { saveDemoCoupon, toggleDemoCouponActive } from './demoCouponService';
 
 const money = value => `$${Number(value || 0).toFixed(2)}`;
 const dateLabel = value => value ? new Date(value).toLocaleDateString() : '—';
@@ -23,6 +24,7 @@ function AdminHeader({ active }) {
     ['categories', 'Categories', '/admin/categories'],
     ['orders', 'Orders', '/admin/orders'],
     ['payments', 'Payments', '/admin/payments'],
+    ['coupons', 'Coupons', '/admin/coupons'],
     ['disputes', 'Disputes', '/admin/disputes'],
     ['reviews', 'Reviews', '/admin/reviews'],
     ['returns', 'Returns', '/admin/returns'],
@@ -256,6 +258,61 @@ export function DemoAdminReviews() {
       {r.moderationReason&&<small>{r.moderationReason}</small>}
       <div className="demo-admin-review-actions"><span className="demo-admin-pill">{r.status}</span>{r.status==='Pending'&&<><button onClick={()=>decide(r.reviewId,'Approved')}>Approve</button><button className="danger" onClick={()=>decide(r.reviewId,'Rejected')}>Reject</button></>}{['Approved','Rejected'].includes(r.status)&&<button className="danger" onClick={()=>decide(r.reviewId,'Removed')}>Remove</button>}</div>
     </article>)}</div>
+  </AdminPage>;
+}
+
+
+export function DemoAdminCoupons() {
+  const { demoState, updateDemoState } = useAdminState();
+  const blank = { code: '', discountType: 'percentage', discountValue: '10', minimumSubtotal: '0', startsAt: '', expiresAt: '', usageLimit: '', perCustomerLimit: '' };
+  const [values, setValues] = useState(blank);
+  const [editingId, setEditingId] = useState(null);
+  const [message, setMessage] = useState('');
+  const save = event => {
+    event.preventDefault();
+    try {
+      updateDemoState(saveDemoCoupon(demoState, values, editingId));
+      setMessage(editingId ? 'Coupon updated.' : 'Coupon created.');
+      setValues(blank);
+      setEditingId(null);
+    } catch (error) { setMessage(error.message); }
+  };
+  const edit = coupon => {
+    setEditingId(coupon.couponId);
+    setValues({ code: coupon.code, discountType: coupon.discountType, discountValue: String(coupon.discountValue),
+      minimumSubtotal: String(coupon.minimumSubtotal || 0), startsAt: coupon.startsAt || '', expiresAt: coupon.expiresAt || '',
+      usageLimit: coupon.usageLimit == null ? '' : String(coupon.usageLimit),
+      perCustomerLimit: coupon.perCustomerLimit == null ? '' : String(coupon.perCustomerLimit) });
+    setMessage('');
+  };
+  const toggle = coupon => {
+    try { updateDemoState(toggleDemoCouponActive(demoState, coupon.couponId)); setMessage(`Coupon ${coupon.code} status updated.`); }
+    catch (error) { setMessage(error.message); }
+  };
+  const coupons = (demoState.coupons || []).slice().sort((a,b) => a.code.localeCompare(b.code));
+  return <AdminPage active="coupons" eyebrow="SALES PROMOTIONS" title="Coupons & promotions" description="Create percentage or fixed discounts, set limits and track redemptions. One coupon is allowed per order; shipping is not discounted.">
+    {message && <p className="demo-admin-message" role="status">{message}</p>}
+    <section className="demo-admin-report-card demo-coupon-admin-form">
+      <h2>{editingId ? 'Edit coupon' : 'Create coupon'}</h2>
+      <form onSubmit={save}>
+        <label>Coupon code<input required maxLength="24" value={values.code} onChange={e=>setValues(v=>({...v,code:e.target.value.toUpperCase()}))} placeholder="e.g. WELCOME10"/></label>
+        <div className="demo-coupon-form-grid">
+          <label>Discount type<select value={values.discountType} onChange={e=>setValues(v=>({...v,discountType:e.target.value}))}><option value="percentage">Percentage (%)</option><option value="fixed">Fixed amount ($)</option></select></label>
+          <label>Discount value<input required type="number" min="0.01" step="0.01" max={values.discountType==='percentage'?'100':undefined} value={values.discountValue} onChange={e=>setValues(v=>({...v,discountValue:e.target.value}))}/></label>
+          <label>Minimum subtotal ($)<input type="number" min="0" step="0.01" value={values.minimumSubtotal} onChange={e=>setValues(v=>({...v,minimumSubtotal:e.target.value}))}/></label>
+          <label>Total usage limit<input type="number" min="1" step="1" value={values.usageLimit} onChange={e=>setValues(v=>({...v,usageLimit:e.target.value}))} placeholder="Unlimited"/></label>
+          <label>Uses per customer<input type="number" min="1" step="1" value={values.perCustomerLimit} onChange={e=>setValues(v=>({...v,perCustomerLimit:e.target.value}))} placeholder="Unlimited"/></label>
+          <label>Start date<input type="date" value={values.startsAt} onChange={e=>setValues(v=>({...v,startsAt:e.target.value}))}/></label>
+          <label>Expiry date<input type="date" value={values.expiresAt} onChange={e=>setValues(v=>({...v,expiresAt:e.target.value}))}/></label>
+        </div>
+        <div className="demo-admin-coupon-actions"><button className="demo-admin-primary" type="submit">{editingId ? 'Save changes' : 'Create coupon'}</button>{editingId && <button type="button" onClick={()=>{setValues(blank);setEditingId(null);setMessage('Editing cancelled.');}}>Cancel</button>}</div>
+      </form>
+    </section>
+    <StatCards items={[['Coupons',coupons.length,'Created promotion codes'],['Active coupons',coupons.filter(c=>c.isActive).length,'Available subject to rules'],['Total redemptions',coupons.reduce((sum,c)=>sum+Number(c.usageCount||0),0),'Orders using coupons'],['Discount types',new Set(coupons.map(c=>c.discountType)).size,'Percentage and fixed']]}/>
+    <div className="demo-admin-table-wrap"><table className="demo-admin-table"><thead><tr><th>Code</th><th>Discount</th><th>Minimum</th><th>Usage</th><th>Per customer</th><th>Validity</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+      {coupons.map(coupon=><tr key={coupon.couponId}><td><strong>{coupon.code}</strong></td><td>{coupon.discountType==='percentage'?`${coupon.discountValue}%`:money(coupon.discountValue)}</td><td>{money(coupon.minimumSubtotal)}</td><td>{coupon.usageCount||0}{coupon.usageLimit==null?'':` / ${coupon.usageLimit}`}</td><td>{coupon.perCustomerLimit??'Unlimited'}</td><td>{dateLabel(coupon.startsAt)} – {dateLabel(coupon.expiresAt)}</td><td><span className={`demo-admin-pill ${coupon.isActive?'approved':'rejected'}`}>{coupon.isActive?'Active':'Inactive'}</span></td><td><button onClick={()=>edit(coupon)}>Edit</button> <button onClick={()=>toggle(coupon)}>{coupon.isActive?'Deactivate':'Activate'}</button></td></tr>)}
+    </tbody></table></div>
+    <p className="demo-shop-muted">Used coupons are retained for order history and cannot be deleted. Deactivate a coupon to stop new redemptions. Failed card payments and eligible cancellations release the reserved usage.</p>
   </AdminPage>;
 }
 
