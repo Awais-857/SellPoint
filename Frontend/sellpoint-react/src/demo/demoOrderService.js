@@ -24,6 +24,7 @@ export const calculateDemoCartSummary = (items, discountAmount = 0) => {
 };
 
 export const buildDemoOrder = (demoState, session, cartItems, address, paymentMethod, couponCode = '', date = new Date()) => {
+  if (couponCode instanceof Date) { date = couponCode; couponCode = ''; }
   if (!session || session.role !== 'Customer') throw new Error('A Customer demo session is required.');
   if (!cartItems.length) throw new Error('Your cart is empty.');
 
