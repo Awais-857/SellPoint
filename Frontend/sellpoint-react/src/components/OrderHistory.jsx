@@ -5,6 +5,7 @@ import api from '../services/api';
 import styles from './OrderHistory.module.css';
 
 function OrderHistory() {
+    const fetchOrdersRef = useRef(null);
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,7 +19,7 @@ function OrderHistory() {
             return;
         }
 fetchOrdersRef.current?.();
-    }, [navigate]);
+    }, [navigate];
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -34,6 +35,8 @@ fetchOrdersRef.current?.();
             setLoading(false);
         }
     };
+
+    fetchOrdersRef.current = fetchOrders;
 
     const handleViewOrder = (orderId) => {
         navigate(`/order-detail/${orderId}`);
@@ -62,7 +65,7 @@ fetchOrdersRef.current?.();
 
         try {
             await api.put(`/orders/${orderId}/cancel`);
-            fetchOrders(); // Refresh orders
+            fetchOrdersRef.current?.(); // Refresh orders
             alert('Order cancelled successfully');
         } catch (err) {
             console.error('Failed to cancel order', err);
@@ -108,10 +111,7 @@ fetchOrdersRef.current?.();
                 return 'payment-default';
         }
     };
-    fetchOrdersRef.current = fetchOrders;
-
-
-    if (loading) {
+if (loading) {
         return (
             <div className={styles['order-history-container']}>
                 <div className={styles['order-history-header']}>
