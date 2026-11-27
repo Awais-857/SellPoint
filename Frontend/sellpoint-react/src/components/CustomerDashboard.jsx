@@ -33,7 +33,7 @@ function CustomerDashboard() {
         }
 
         fetchCustomerDataRef.current?.();
-    }, [navigate, userType];
+    }, [navigate, userType]);
 
     const fetchCustomerData = async () => {
         setLoading(true);
