@@ -2,6 +2,26 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDemo } from './DemoProvider';
 import { useTheme } from '../theme/ThemeProvider';
+import {
+  ChartLine,
+  ChevronRight,
+  ClipboardList,
+  Grid2X2,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Moon,
+  Package,
+  RotateCcw,
+  Scale,
+  Star,
+  Store,
+  Sun,
+  Tag,
+  Users,
+  Wallet,
+  X
+} from 'lucide-react';
 import './DemoDashboardChrome.css';
 
 const navigation = {
@@ -29,29 +49,30 @@ const navigation = {
   ]
 };
 
-const iconPaths = {
-  layout: <><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></>,
-  package: <><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 8 9 5 9-5"/><path d="M3 8v9l9 5 9-5V8"/><path d="M12 13v9"/></>,
-  store: <><path d="M3 10h18l-1.4-6H4.4L3 10Z"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/><path d="M3 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/></>,
-  orders: <><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h8M8 16h5"/></>,
-  star: <path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/>,
-  return: <><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/></>,
-  chart: <><path d="M3 3v18h18"/><path d="m7 14 4-4 4 3 6-7"/></>,
-  users: <><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></>,
-  grid: <><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></>,
-  wallet: <><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 9h18"/><path d="M16 14h2"/></>,
-  tag: <><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1"/></>,
-  scale: <><path d="m16 3 5 5-5 5"/><path d="M21 8H9a6 6 0 0 0 0 12h2"/><path d="M8 3 3 8l5 5"/></>,
-  menu: <><path d="M4 6h16M4 12h16M4 18h16"/></>,
-  close: <><path d="m18 6-12 12M6 6l12 12"/></>,
-  sun: <><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></>,
-  moon: <path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>,
-  chevron: <path d="m9 18 6-6-6-6"/>,
-  logout: <><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></>
+const iconComponents = {
+  layout: LayoutDashboard,
+  package: Package,
+  store: Store,
+  orders: ClipboardList,
+  star: Star,
+  return: RotateCcw,
+  chart: ChartLine,
+  users: Users,
+  grid: Grid2X2,
+  wallet: Wallet,
+  tag: Tag,
+  scale: Scale,
+  menu: Menu,
+  close: X,
+  sun: Sun,
+  moon: Moon,
+  chevron: ChevronRight,
+  logout: LogOut
 };
 
 function Icon({ name, size = 19 }) {
-  return <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{iconPaths[name] || iconPaths.layout}</svg>;
+  const IconComponent = iconComponents[name] || LayoutDashboard;
+  return <IconComponent aria-hidden="true" size={size} strokeWidth={1.8} />;
 }
 
 export function DemoDashboardChrome({ role, active }) {
