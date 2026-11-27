@@ -1,10 +1,12 @@
 // src/components/VendorRevenue.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './VendorRevenue.module.css';
 
 function VendorRevenue() {
+    const fetchRevenueDataRef = useRef(null);
+
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -88,6 +90,8 @@ function VendorRevenue() {
     };
 
     if (loading) {
+    fetchRevenueDataRef.current = fetchRevenueData;
+
         return (
             <div className={styles['vendor-revenue-container']}>
                 <div className={styles['vendor-revenue-header']}>
