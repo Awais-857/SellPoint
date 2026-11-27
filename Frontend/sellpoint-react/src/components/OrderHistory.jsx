@@ -11,14 +11,7 @@ function OrderHistory() {
     const [error, setError] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchOrders();
-    }, [navigate, fetchOrders]);
+
 
     const fetchOrders = useCallback(async () => {
         setLoading(true);
@@ -34,6 +27,15 @@ function OrderHistory() {
             setLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchOrders();
+    }, [navigate, fetchOrders]);
 
     const handleViewOrder = (orderId) => {
         navigate(`/order-detail/${orderId}`);
