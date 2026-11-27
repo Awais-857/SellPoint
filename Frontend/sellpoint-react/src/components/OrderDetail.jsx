@@ -15,14 +15,7 @@ function OrderDetail() {
     const [disputeReason, setDisputeReason] = useState('');
     const [showDisputeForm, setShowDisputeForm] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        fetchOrderDetails();
-    }, [id, navigate, fetchOrderDetails]);
+
 
     const fetchOrderDetails = useCallback(async () => {
         setLoading(true);
@@ -43,6 +36,15 @@ function OrderDetail() {
             setLoading(false);
         }
     }, [id]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        fetchOrderDetails();
+    }, [id, navigate, fetchOrderDetails]);
 
     const handleCancelOrder = async () => {
         if (!window.confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
