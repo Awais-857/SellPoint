@@ -1,10 +1,12 @@
 // src/components/VendorProducts.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './VendorProducts.module.css';
 
 function VendorProducts() {
+    const fetchProductsRef = useRef(null);
+
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -189,6 +191,8 @@ function VendorProducts() {
     };
 
     if (loading) {
+    fetchProductsRef.current = fetchProducts;
+
         return (
             <div className={styles['vendor-products-container']}>
                 <div className={styles['vendor-products-header']}>
