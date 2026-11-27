@@ -217,7 +217,11 @@ export const DEMO_SEED_DATA = {
   reviews,
   disputes,
   returnRequests: [],
-  notifications: []
+  notifications: [],
+  coupons: [
+    { couponId: 1, code: 'WELCOME10', discountType: 'percentage', discountValue: 10, minimumSubtotal: 50, startsAt: '2026-01-01', expiresAt: '2027-12-31', usageLimit: 100, perCustomerLimit: 1, isActive: true, usageCount: 0, redemptions: [] },
+    { couponId: 2, code: 'SAVE5', discountType: 'fixed', discountValue: 5, minimumSubtotal: 25, startsAt: '2026-01-01', expiresAt: '2027-12-31', usageLimit: null, perCustomerLimit: null, isActive: true, usageCount: 0, redemptions: [] }
+  ]
 };
 
 export const createDemoState = () => {
