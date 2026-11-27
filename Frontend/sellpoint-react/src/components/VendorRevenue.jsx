@@ -1,12 +1,10 @@
 // src/components/VendorRevenue.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './VendorRevenue.module.css';
 
 function VendorRevenue() {
-    const fetchRevenueDataRef = useRef(null);
-
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -37,10 +35,10 @@ function VendorRevenue() {
             return;
         }
 
-        fetchRevenueDataRef.current?.();
-    }, [selectedPeriod, navigate]);
+        fetchRevenueData();
+    }, [selectedPeriod, navigate, fetchRevenueData]);
 
-    const fetchRevenueData = async () => {
+    const fetchRevenueData = useCallback(async () => {
         setLoading(true);
         try {
             // Fetch revenue summary
@@ -64,9 +62,7 @@ function VendorRevenue() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchRevenueDataRef.current = fetchRevenueData;
+    }, [selectedPeriod]);
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
@@ -92,7 +88,7 @@ function VendorRevenue() {
     };
 
     if (loading) {
-return (
+        return (
             <div className={styles['vendor-revenue-container']}>
                 <div className={styles['vendor-revenue-header']}>
                     <h1 onClick={() => navigate('/dashboard')}>SellPoint Vendor</h1>
