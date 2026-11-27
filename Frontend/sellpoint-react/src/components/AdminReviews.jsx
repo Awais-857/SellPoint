@@ -4,6 +4,7 @@ import api from '../services/api';
 import styles from './AdminReviews.module.css';
 
 function AdminReviews() {
+    const fetchPendingReviewsRef = useRef(null);
     const navigate = useNavigate();
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -30,6 +31,8 @@ function AdminReviews() {
             setLoading(false);
         }
     };
+
+    fetchPendingReviewsRef.current = fetchPendingReviews;
 
     const handleApprove = async (reviewId) => {
     try {
