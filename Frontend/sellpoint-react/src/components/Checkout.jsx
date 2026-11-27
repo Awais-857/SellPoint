@@ -260,10 +260,7 @@ function Checkout() {
                 </div>
             </div>
         );
-    }
-
-    const selectedAddress = addresses.find(a => a.addressId === selectedAddressId);
-
+    }
     return (
         <div className={styles['checkout-container']}>
             {/* Header */}
