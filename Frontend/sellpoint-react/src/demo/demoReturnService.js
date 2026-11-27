@@ -52,7 +52,7 @@ export const createDemoReturnRequest = (demoState, { orderId, orderItemId, custo
     purchasedQuantity: Number(eligibility.item.quantity),
     quantity: requestedQuantity,
     unitPrice: roundMoney(Number(eligibility.item.itemTotal ?? (Number(eligibility.item.unitPrice) * Number(eligibility.item.quantity))) / Number(eligibility.item.quantity)),
-    refundAmount: roundMoney((Number(eligibility.item.itemTotal || (Number(eligibility.item.unitPrice) * Number(eligibility.item.quantity))) / Number(eligibility.item.quantity)) * requestedQuantity),
+    refundAmount: roundMoney((Number(eligibility.item.itemTotal ?? (Number(eligibility.item.unitPrice) * Number(eligibility.item.quantity))) / Number(eligibility.item.quantity)) * requestedQuantity),
     reason: String(reason).trim(),
     status: 'Pending Vendor Review',
     createdAt: new Date(now).toISOString(),
@@ -127,11 +127,11 @@ export const decideDemoReturnAsAdmin = (demoState, returnId, decision, { restock
     adminDecision: { decision, notes: String(notes || '').trim(), decidedAt: new Date(now).toISOString(), restock: decision === 'Approved' && Boolean(restock) }
   };
   if (decision === 'Approved') {
-    updated.refundStatus = 'Simulated refund recorded';
+    updated.refundStatus = request.refundAmount > 0 ? 'Simulated refund recorded' : 'No refund due';
     updated.refundedAt = new Date(now).toISOString();
   }
   let next = { ...demoState, returnRequests: demoState.returnRequests.map(entry => entry.returnId === request.returnId ? updated : entry) };
-  if (decision === 'Approved') next = recordDemoRefund(next, request.orderId, request.refundAmount, `return-${request.returnId}`, now);
+  if (decision === 'Approved' && request.refundAmount > 0) next = recordDemoRefund(next, request.orderId, request.refundAmount, `return-${request.returnId}`, now);
   return decision === 'Approved' && restock ? restockReturnedItem(next, updated) : next;
 };
 
