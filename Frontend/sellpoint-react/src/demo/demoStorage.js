@@ -2,7 +2,7 @@ import { createDemoState } from './demoSeedData';
 
 export const DEMO_STATE_STORAGE_KEY = 'sellpoint_demo_state_v1';
 export const DEMO_SESSION_STORAGE_KEY = 'sellpoint_demo_session_v1';
-export const DEMO_STATE_VERSION = 8;
+export const DEMO_STATE_VERSION = 9;
 export const DEMO_CART_STORAGE_KEY = 'sellpoint_demo_cart_v1';
 
 const readJson = (key) => {
@@ -27,7 +27,7 @@ const writeJson = (key, value) => {
 const isValidDemoState = (data) => {
   const collectionNames = [
     'categories', 'vendors', 'customers', 'addresses', 'products',
-    'orders', 'reviews', 'disputes', 'returnRequests', 'notifications', 'payments'
+    'orders', 'reviews', 'disputes', 'returnRequests', 'notifications', 'payments', 'coupons'
   ];
   return Boolean(data) && collectionNames.every(name => Array.isArray(data[name]));
 };
@@ -57,11 +57,12 @@ export const getDemoState = () => {
   if (stored && stored.version === DEMO_STATE_VERSION && isValidDemoState(stored.data)) return stored.data;
 
   // Preserve visitor changes while adding payment records to existing Demo data.
-  if (stored && [6, 7].includes(stored.version) && stored.data) {
+  if (stored && [6, 7, 8].includes(stored.version) && stored.data) {
     const migrated = {
       ...stored.data,
       notifications: Array.isArray(stored.data.notifications) ? stored.data.notifications : [],
-      payments: (stored.data.payments || []).length ? stored.data.payments : createLegacyDemoPayments(stored.data)
+      payments: (stored.data.payments || []).length ? stored.data.payments : createLegacyDemoPayments(stored.data),
+      coupons: Array.isArray(stored.data.coupons) ? stored.data.coupons : createDemoState().coupons
     };
     if (isValidDemoState(migrated)) {
       saveDemoState(migrated);
