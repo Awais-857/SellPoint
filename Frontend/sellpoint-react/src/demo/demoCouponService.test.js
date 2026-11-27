@@ -19,6 +19,11 @@ describe('demoCouponService', () => {
     expect(validateDemoCoupon({ coupons: [{ ...state.coupons[0], expiresAt: '2026-01-01' }] }, 'WELCOME10', 301, 100, now).message).toMatch(/expired/);
     expect(validateDemoCoupon(state, 'WELCOME10', 301, 20, now).message).toMatch(/at least/);
   });
+  test('keeps a coupon valid through the end of its expiry date', () => {
+    const expiresToday = { coupons: [{ ...state.coupons[0], expiresAt: '2026-11-27' }] };
+    expect(validateDemoCoupon(expiresToday, 'WELCOME10', 301, 100, new Date('2026-11-27T23:59:00')).valid).toBe(true);
+    expect(validateDemoCoupon(expiresToday, 'WELCOME10', 301, 100, new Date('2026-11-28T00:00:00')).valid).toBe(false);
+  });
   test('enforces total and per-customer usage limits', () => {
     const used = { coupons: [{ ...state.coupons[0], usageCount: 3 }] };
     expect(validateDemoCoupon(used, 'WELCOME10', 301, 100, now).message).toMatch(/total usage/);
