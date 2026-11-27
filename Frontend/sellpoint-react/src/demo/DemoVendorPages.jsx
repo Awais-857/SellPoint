@@ -13,6 +13,9 @@ import {
 } from './demoVendorService';
 import './demoVendor.css';
 import { DemoDashboardChrome } from './DemoDashboardChrome';
+import { Card, PageHeading, Alert } from '../components/common/ui';
+import StatusBadge from '../components/common/StatusBadge';
+import { Package, ClipboardList, Store, ChartLine, RotateCcw } from 'lucide-react';
 
 const money = value => `$${Number(value || 0).toFixed(2)}`;
 const dateLabel = value => new Date(value).toLocaleDateString();
@@ -30,32 +33,57 @@ function useVendorContext() {
 export function DemoVendorDashboard() {
   const navigate = useNavigate();
   const { demoState, vendor, vendorId } = useVendorContext();
-  if (!vendor) return <main className="demo-vendor-page"><VendorHeader active="dashboard" /><p className="demo-vendor-error">Vendor profile not found.</p></main>;
+  if (!vendor) return <main className="demo-vendor-page demo-vendor-dashboard"><VendorHeader active="dashboard" /><p className="demo-vendor-error">Vendor profile not found.</p></main>;
   const products = getVendorProducts(demoState, vendorId);
   const orders = getVendorOrders(demoState, vendorId);
   const revenue = getVendorRevenue(demoState, vendorId);
   const activeProducts = products.filter(product => product.isActive).length;
+  const actions = [
+    { label: 'Manage products', description: "View product options and each variant's available stock; add, edit or pause listings", path: '/vendor/products', Icon: Package },
+    { label: 'Customer orders', description: 'Review orders and update item status', path: '/vendor/orders', Icon: ClipboardList },
+    { label: 'Public store profile', description: 'Manage your store branding, description and customer contact information', path: '/vendor/store-profile', Icon: Store },
+    { label: 'Revenue overview', description: 'Review sales, payments and trends', path: '/vendor/revenue', Icon: ChartLine },
+    { label: 'Returns & refunds', description: 'Review customer return requests and record simulated refunds', path: '/vendor/returns', Icon: RotateCcw }
+  ];
 
   return (
-    <main className="demo-vendor-page"><VendorHeader active="dashboard" />
+    <main className="demo-vendor-page demo-vendor-dashboard">
+      <VendorHeader active="dashboard" />
       <section className="demo-vendor-content">
-        <div className="demo-vendor-welcome"><div><p className="demo-vendor-eyebrow">VENDOR WORKSPACE</p><h1>Welcome, {vendor.ownerName}</h1><p>{vendor.businessName} · <span className="demo-vendor-approved">{vendor.status}{vendor.status === 'Approved' && !vendor.isActive ? ' (Suspended)' : ''}</span></p></div><span className="demo-vendor-avatar">🏪</span></div>
-        {(vendor.status !== 'Approved' || !vendor.isActive) && <div className="demo-vendor-alert" role="status">{vendor.status === 'Pending' ? 'Your vendor application is awaiting admin approval. Public listings and product management are unavailable.' : vendor.status === 'Rejected' ? (vendor.rejectionReason || 'Your vendor application was rejected. Public listings and product management are unavailable.') : 'This vendor account is suspended. Its public store and product listings are hidden.'}</div>}
-        <div className="demo-vendor-stats">
-          <article><span>Total products</span><strong>{products.length}</strong><small>{activeProducts} active listings</small></article>
-          <article><span>Orders</span><strong>{orders.length}</strong><small>Orders containing your products</small></article>
-          <article><span>Total sales</span><strong>{money(revenue.summary.totalSales)}</strong><small>Excludes cancelled/refunded orders</small></article>
-          <article><span>Pending payments</span><strong>{money(revenue.summary.pendingPayments)}</strong><small>Demo order records</small></article>
+        <PageHeading
+          eyebrow="VENDOR WORKSPACE"
+          title={`Welcome, ${vendor.ownerName}`}
+          description={<>{vendor.businessName} · <StatusBadge status={vendor.status === 'Approved' && !vendor.isActive ? 'Suspended' : vendor.status} /></>}
+        />
+        {(vendor.status !== 'Approved' || !vendor.isActive) && (
+          <Alert tone={vendor.status === 'Rejected' ? 'danger' : 'warning'} className="demo-vendor-dashboard-alert">
+            {vendor.status === 'Pending'
+              ? 'Your vendor application is awaiting admin approval. Public listings and product management are unavailable.'
+              : vendor.status === 'Rejected'
+                ? (vendor.rejectionReason || 'Your vendor application was rejected. Public listings and product management are unavailable.')
+                : 'This vendor account is suspended. Its public store and product listings are hidden.'}
+          </Alert>
+        )}
+        <div className="demo-vendor-stats demo-dashboard-stat-grid">
+          <Card className="demo-dashboard-stat"><span>Total products</span><strong>{products.length}</strong><small>{activeProducts} active listings</small></Card>
+          <Card className="demo-dashboard-stat"><span>Orders</span><strong>{orders.length}</strong><small>Orders containing your products</small></Card>
+          <Card className="demo-dashboard-stat"><span>Total sales</span><strong>{money(revenue.summary.totalSales)}</strong><small>Excludes cancelled/refunded orders</small></Card>
+          <Card className="demo-dashboard-stat"><span>Pending payments</span><strong>{money(revenue.summary.pendingPayments)}</strong><small>Demo order records</small></Card>
         </div>
         <div className="demo-vendor-section-heading"><h2>Store management</h2><p>Manage your own products, customer orders and sales activity.</p></div>
-        <div className="demo-vendor-action-grid">
-          <button onClick={() => navigate('/vendor/products')}><span>📦</span><strong>Manage products</strong><small>View product options and each variant's available stock; add, edit or pause listings</small></button>
-          <button onClick={() => navigate('/vendor/orders')}><span>🧾</span><strong>Customer orders</strong><small>Review orders and update item status</small></button>
-          <button onClick={() => navigate('/vendor/store-profile')}><span>🏪</span><strong>Public store profile</strong><small>Manage your store branding, description and customer contact information</small></button>
-          <button onClick={() => navigate('/vendor/revenue')}><span>📈</span><strong>Revenue overview</strong><small>Review sales, payments and trends</small></button>
-          <button onClick={() => navigate('/vendor/returns')}><span>↩️</span><strong>Returns & refunds</strong><small>Review customer return requests and record simulated refunds</small></button>
+        <div className="demo-vendor-action-grid demo-dashboard-action-grid">
+          {actions.map(({ label, description, path, Icon }) => (
+            <button className="sp-dashboard-action" key={path} onClick={() => navigate(path)}>
+              <span className="sp-dashboard-action-icon"><Icon size={21} strokeWidth={1.8} /></span>
+              <strong>{label}</strong>
+              <small>{description}</small>
+            </button>
+          ))}
         </div>
-        <div className="demo-vendor-shop-card"><div><h2>Store information</h2><p>Business owner: {vendor.ownerName}</p><p>Contact: {vendor.email}</p><p>Joined: {dateLabel(vendor.joinedAt)}</p></div><div><span>Store status</span><strong>{vendor.isActive ? 'Active' : 'Inactive'}</strong></div></div>
+        <Card className="demo-vendor-shop-card demo-dashboard-store-card">
+          <div><h2>Store information</h2><p>Business owner: {vendor.ownerName}</p><p>Contact: {vendor.email}</p><p>Joined: {dateLabel(vendor.joinedAt)}</p></div>
+          <div><span>Store status</span><StatusBadge status={vendor.isActive ? 'Active' : 'Inactive'} /></div>
+        </Card>
       </section>
     </main>
   );

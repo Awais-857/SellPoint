@@ -8,7 +8,8 @@ import {
 } from './demoAdminService';
 import './demoAdmin.css';
 import { DemoDashboardChrome } from './DemoDashboardChrome';
-import { PageHeading } from '../components/common/ui';
+import { PageHeading, Card } from '../components/common/ui';
+import { Store, Package, Tags, ClipboardList, CreditCard, Scale, Star, ChartLine, RotateCcw } from 'lucide-react';
 import { recordDemoCashCollection } from './demoPaymentService';
 import { saveDemoCoupon, toggleDemoCouponActive } from './demoCouponService';
 
@@ -24,12 +25,12 @@ function useAdminState() {
   return { demoState, updateDemoState };
 }
 
-function AdminPage({ active, eyebrow, title, description, children }) {
-  return <main className="demo-admin-page"><AdminHeader active={active}/><section className="demo-admin-content"><PageHeading eyebrow={eyebrow} title={title} description={description}/>{children}</section></main>;
+function AdminPage({ active, eyebrow, title, description, children, className = '' }) {
+  return <main className={`demo-admin-page ${className}`.trim()}><AdminHeader active={active}/><section className="demo-admin-content"><PageHeading eyebrow={eyebrow} title={title} description={description}/>{children}</section></main>;
 }
 
 function StatCards({ items }) {
-  return <div className="demo-admin-stats">{items.map(([label,value,detail]) => <article key={label}><span>{label}</span><strong>{value}</strong><small>{detail}</small></article>)}</div>;
+  return <div className="demo-admin-stats demo-dashboard-stat-grid">{items.map(([label,value,detail]) => <Card className="demo-dashboard-stat" key={label}><span>{label}</span><strong>{value}</strong><small>{detail}</small></Card>)}</div>;
 }
 
 export function DemoAdminDashboard() {
@@ -37,17 +38,17 @@ export function DemoAdminDashboard() {
   const { demoState } = useAdminState();
   const stats = getAdminOverview(demoState);
   const actions = [
-    ['Vendors','Approve applications and manage seller accounts','/admin/vendors','🏪'],
-    ['Products','Review vendor product submissions','/admin/products','📦'],
-    ['Categories','Organize the marketplace catalogue','/admin/categories','🗂️'],
-    ['Orders','Monitor all marketplace orders','/admin/orders','📦'],
-    ['Payments','Review payment records and simulated refunds','/admin/payments','💳'],
-    ['Disputes','Review and record dispute decisions','/admin/disputes','⚖️'],
-    ['Reviews','Moderate customer product reviews','/admin/reviews','⭐'],
-    ['Reports','Explore marketplace sales and trends','/admin/reports','📊'],
-    ['Returns','Review escalated customer return requests','/admin/returns','↩️']
+    ['Vendors','Approve applications and manage seller accounts','/admin/vendors',Store],
+    ['Products','Review vendor product submissions','/admin/products',Package],
+    ['Categories','Organize the marketplace catalogue','/admin/categories',Tags],
+    ['Orders','Monitor all marketplace orders','/admin/orders',ClipboardList],
+    ['Payments','Review payment records and simulated refunds','/admin/payments',CreditCard],
+    ['Disputes','Review and record dispute decisions','/admin/disputes',Scale],
+    ['Reviews','Moderate customer product reviews','/admin/reviews',Star],
+    ['Reports','Explore marketplace sales and trends','/admin/reports',ChartLine],
+    ['Returns','Review escalated customer return requests','/admin/returns',RotateCcw]
   ];
-  return <AdminPage active="dashboard" eyebrow="MARKETPLACE CONTROL CENTRE" title="Admin dashboard" description="A marketplace-wide overview using fictional SellPoint demo data.">
+  return <AdminPage className="demo-admin-dashboard" active="dashboard" eyebrow="MARKETPLACE CONTROL CENTRE" title="Admin dashboard" description="A marketplace-wide overview using fictional SellPoint demo data.">
     <StatCards items={[
       ['Customers',stats.totalCustomers,'Demo customer accounts'],
       ['Vendors',stats.totalVendors,`${stats.approvedVendors} approved · ${stats.pendingVendors} pending`],
@@ -59,7 +60,7 @@ export function DemoAdminDashboard() {
       ['Pending vendors',stats.pendingVendors,'Awaiting approval']
     ]}/>
     <div className="demo-admin-section-heading"><h2>Administration</h2><p>Choose an area to manage the demo marketplace.</p></div>
-    <div className="demo-admin-action-grid">{actions.map(([label,desc,path,icon]) => <button key={path} onClick={() => navigate(path)}><span>{icon}</span><strong>{label}</strong><small>{desc}</small></button>)}</div>
+    <div className="demo-admin-action-grid demo-dashboard-action-grid">{actions.map(([label,desc,path,Icon]) => <button className="sp-dashboard-action" key={path} onClick={() => navigate(path)}><span className="sp-dashboard-action-icon"><Icon size={21} strokeWidth={1.8}/></span><strong>{label}</strong><small>{desc}</small></button>)}</div>
   </AdminPage>;
 }
 

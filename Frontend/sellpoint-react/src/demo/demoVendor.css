@@ -5,3 +5,30 @@
 
 
 .demo-vendor-review-list{display:grid;gap:15px;margin-top:22px}.demo-vendor-review-card{padding:22px;background:#fff;border:1px solid #e1e8f0;border-radius:12px}.demo-vendor-review-heading{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.demo-vendor-review-heading>div{display:flex;flex-direction:column;gap:6px}.demo-vendor-review-heading small,.demo-vendor-review-card>small{color:#7b899b}.demo-vendor-review-card>p{color:#53647b;line-height:1.6}.demo-vendor-review-reply{display:flex;flex-direction:column;gap:9px;margin-top:15px}.demo-vendor-review-reply label{font-size:13px;font-weight:700;color:#45566e}.demo-vendor-review-reply textarea{width:100%;box-sizing:border-box;padding:11px;border:1px solid #d8e1ec;border-radius:8px;font:inherit;resize:vertical}.demo-vendor-review-reply .demo-vendor-primary{align-self:flex-start}.demo-vendor-review-response{margin:15px 0}
+
+
+/* Dashboard overview: shared SellPoint design tokens and primitives */
+.demo-vendor-dashboard{background:var(--sp-bg);color:var(--sp-text)}
+.demo-vendor-dashboard .demo-vendor-content{max-width:var(--sp-content-max-width)}
+.demo-vendor-dashboard .sp-page-heading{align-items:center;padding:4px 0 18px}
+.demo-vendor-dashboard .sp-page-description{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.demo-vendor-dashboard .demo-vendor-stats{margin:10px 0 30px}
+.demo-vendor-dashboard .demo-dashboard-stat{display:flex;flex-direction:column;gap:8px;padding:19px;min-height:116px}
+.demo-vendor-dashboard .demo-dashboard-stat span,.demo-vendor-dashboard .demo-dashboard-stat small{color:var(--sp-text-muted);font-size:12px}
+.demo-vendor-dashboard .demo-dashboard-stat strong{color:var(--sp-text);font-size:25px;font-weight:750}
+.demo-vendor-dashboard .demo-vendor-section-heading h2{color:var(--sp-text)}
+.demo-vendor-dashboard .demo-vendor-section-heading p{color:var(--sp-text-muted)}
+.demo-vendor-dashboard .demo-dashboard-action-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.demo-vendor-dashboard .sp-dashboard-action{min-height:156px;padding:20px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;background:var(--sp-surface);border:1px solid var(--sp-border);border-radius:var(--sp-radius-lg);color:var(--sp-text);cursor:pointer;transition:border-color var(--sp-transition-fast),transform var(--sp-transition-fast),box-shadow var(--sp-transition-fast)}
+.demo-vendor-dashboard .sp-dashboard-action:hover{border-color:var(--sp-color-primary);box-shadow:var(--sp-shadow-md);transform:translateY(-2px)}
+.demo-vendor-dashboard .sp-dashboard-action:focus-visible{outline:3px solid var(--sp-color-primary-soft);outline-offset:2px}
+.demo-vendor-dashboard .sp-dashboard-action-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:var(--sp-radius-md);background:var(--sp-color-primary-soft);color:var(--sp-color-primary)}
+.demo-vendor-dashboard .sp-dashboard-action strong{color:var(--sp-text);font-size:15px}
+.demo-vendor-dashboard .sp-dashboard-action small{color:var(--sp-text-muted);line-height:1.5}
+.demo-vendor-dashboard .demo-dashboard-store-card{display:flex;justify-content:space-between;gap:20px;background:var(--sp-surface)}
+.demo-vendor-dashboard .demo-dashboard-store-card h2{color:var(--sp-text)}
+.demo-vendor-dashboard .demo-dashboard-store-card p,.demo-vendor-dashboard .demo-dashboard-store-card>div:last-child>span{color:var(--sp-text-muted)}
+.demo-vendor-dashboard .demo-dashboard-store-card>div:last-child{align-items:flex-start}
+.demo-vendor-dashboard .demo-vendor-dashboard-alert{margin:0 0 18px}
+@media(max-width:800px){.demo-vendor-dashboard .demo-dashboard-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.demo-vendor-dashboard .demo-dashboard-action-grid{grid-template-columns:1fr}.demo-vendor-dashboard .demo-dashboard-store-card{flex-direction:column}}
