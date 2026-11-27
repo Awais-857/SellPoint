@@ -1,11 +1,10 @@
 // src/components/CustomerDashboard.jsx
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './Dashboard.module.css';
 
 function CustomerDashboard() {
-    const fetchCustomerDataRef = useRef(null);
     const navigate = useNavigate();
     const username = localStorage.getItem('username');
     const email = localStorage.getItem('userEmail');
@@ -32,10 +31,10 @@ function CustomerDashboard() {
             return;
         }
 
-        fetchCustomerDataRef.current?.();
-    }, [navigate, userType]);
+        fetchCustomerData();
+    }, [navigate, userType, fetchCustomerData]);
 
-    const fetchCustomerData = async () => {
+    const fetchCustomerData = useCallback(async () => {
         setLoading(true);
         try {
             // Fetch orders to calculate stats
@@ -61,15 +60,14 @@ function CustomerDashboard() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchCustomerDataRef.current = fetchCustomerData;
+    }, []);
 
     const handleLogout = () => {
         localStorage.clear();
         navigate('/login');
     };
-if (loading) {
+
+    if (loading) {
         return (
             <div className={styles['dashboard-container']}>
                 <nav className={styles['dashboard-nav']}>
