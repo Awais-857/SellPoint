@@ -1,5 +1,6 @@
 import { getAdminOverview, getAdminReport, getAdminTopProducts, getAdminTopVendors, moderateAdminProduct, moderateAdminReview, saveAdminCategory, toggleCategoryActive, toggleVendorActive, updateAdminDispute, updateAdminOrderStatus, updateVendorApproval } from './demoAdminService';
 import { createDemoState } from './demoSeedData';
+import { saveDemoCoupon, toggleDemoCouponActive } from './demoCouponService';
 
 describe('demoAdminService', () => {
   let state;
@@ -73,6 +74,17 @@ describe('demoAdminService', () => {
     const removed = moderateAdminReview(approved, pending.reviewId, 'Removed');
     expect(removed.reviews.find(r => r.reviewId === pending.reviewId).status).toBe('Removed');
     expect(() => moderateAdminReview(approved, pending.reviewId, 'Rejected')).toThrow(/Only pending/);
+  });
+
+  test('manages coupon records and preserves redemption history when edited', () => {
+    const added = saveDemoCoupon(state, { code: 'HELLO10', discountType: 'percentage', discountValue: 10, minimumSubtotal: 20, usageLimit: 10, perCustomerLimit: 1 });
+    const coupon = added.coupons.find(item => item.code === 'HELLO10');
+    const redeemedState = { ...added, coupons: added.coupons.map(item => item.couponId === coupon.couponId
+      ? { ...item, usageCount: 1, redemptions: [{ orderId: 5001, customerId: 301 }] } : item) };
+    const edited = saveDemoCoupon(redeemedState, { code: 'HELLO10', discountType: 'fixed', discountValue: 5, minimumSubtotal: 0 }, coupon.couponId);
+    expect(edited.coupons.find(item => item.couponId === coupon.couponId)).toMatchObject({ usageCount: 1, redemptions: [{ orderId: 5001, customerId: 301 }], discountType: 'fixed' });
+    expect(toggleDemoCouponActive(edited, coupon.couponId).coupons.find(item => item.couponId === coupon.couponId).isActive).toBe(false);
+    expect(() => saveDemoCoupon(edited, { code: 'NEWCODE', discountType: 'fixed', discountValue: 5 }, coupon.couponId)).toThrow(/cannot be renamed/);
   });
 
   test('creates date-grouped reports and top product/vendor summaries', () => {
