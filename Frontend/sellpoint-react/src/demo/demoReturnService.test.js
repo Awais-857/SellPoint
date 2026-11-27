@@ -59,6 +59,16 @@ describe('demoReturnService', () => {
     const approved = decideDemoReturnAsVendor(requested, requested.returnRequests[0].returnId, 101, 'Approved', {}, now);
     expect(approved.payments[0].refundedAmount).toBe(72.89);
   });
+  test('does not attempt a cash refund for an item fully covered by a coupon', () => {
+    const freeItem = fixture();
+    freeItem.orders[0].items[0].itemTotal = 0;
+    freeItem.orders[0].items[0].unitPrice = 0;
+    const requested = create(freeItem, 1);
+    expect(requested.returnRequests[0]).toMatchObject({ refundAmount: 0, unitPrice: 0 });
+    const approved = decideDemoReturnAsVendor(requested, requested.returnRequests[0].returnId, 101, 'Approved', {}, now);
+    expect(approved.returnRequests[0].refundStatus).toBe('No refund due');
+    expect(approved.payments[0].refundedAmount).toBe(0);
+  });
   test('rejects quantity above purchased amount and blank reason', () => {
     expect(() => create(fixture(), 3)).toThrow(/between 1 and 2/);
     expect(() => createDemoReturnRequest(fixture(), { orderId: 5017, orderItemId: 8201, customerId: 301, quantity: 1, reason: ' ' }, now)).toThrow(/reason/);
