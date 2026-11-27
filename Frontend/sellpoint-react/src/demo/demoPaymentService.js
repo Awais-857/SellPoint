@@ -60,9 +60,14 @@ export const simulateDemoCardPayment = (demoState, orderId, customerId, outcome,
 export const recordDemoRefund = (demoState, orderId, amount, reference, now = new Date()) => {
   const payment = (demoState.payments || []).find(item => Number(item.orderId) === Number(orderId));
   if (!payment) throw new Error('The original payment record could not be found.');
-  if (!['Paid', 'Partially Refunded'].includes(payment.status)) throw new Error('Only a captured payment can be refunded.');
   const refundAmount = roundMoney(amount);
   const remaining = roundMoney(Number(payment.amount) - Number(payment.refundedAmount || 0));
+  // A fully refunded payment has no refundable balance; report that specific limit
+  // instead of the more general captured-payment status error.
+  if (payment.status === 'Refunded' && refundAmount > remaining) {
+    throw new Error(`Refund amount must be greater than zero and no more than ${remaining.toFixed(2)}.`);
+  }
+  if (!['Paid', 'Partially Refunded'].includes(payment.status)) throw new Error('Only a captured payment can be refunded.');
   if (!Number.isFinite(refundAmount) || refundAmount <= 0 || refundAmount > remaining) {
     throw new Error(`Refund amount must be greater than zero and no more than ${remaining.toFixed(2)}.`);
   }
