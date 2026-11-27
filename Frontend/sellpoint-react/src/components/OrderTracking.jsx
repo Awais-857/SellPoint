@@ -4,6 +4,7 @@ import api from '../services/api';
 import styles from './OrderTracking.module.css';
 
 function OrderTracking() {
+    const fetchTrackingRef = useRef(null);
     const { id } = useParams();
     const navigate = useNavigate();
     const [tracking, setTracking] = useState(null);
@@ -16,8 +17,8 @@ function OrderTracking() {
             navigate('/login');
             return;
         }
-        fetchTracking();
-    }, [id]);
+        fetchTrackingRef.current?.();
+    }, [id, navigate];
 
     const fetchTracking = async () => {
         setLoading(true);
@@ -31,15 +32,14 @@ function OrderTracking() {
         }
     };
 
+    fetchTrackingRef.current = fetchTracking;
+
     const getStatusStep = (status) => {
         const steps = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
         const currentIndex = steps.findIndex(s => s.toLowerCase() === status?.toLowerCase());
         return currentIndex;
     };
-    fetchTrackingRef.current = fetchTracking;
-
-
-    if (loading) return <div className={styles['tracking-loading']}>Loading tracking info...</div>;
+if (loading) return <div className={styles['tracking-loading']}>Loading tracking info...</div>;
     if (error || !tracking) return <div className={styles['tracking-error']}>{error || 'Order not found'}</div>;
 
     const statusSteps = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
