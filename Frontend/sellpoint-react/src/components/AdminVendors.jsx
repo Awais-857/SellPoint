@@ -1,5 +1,5 @@
 // src/components/AdminVendors.jsx
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminVendors.module.css';
@@ -30,8 +30,8 @@ function AdminVendors() {
             return;
         }
 
-        fetchVendors();
-    }, []);
+        fetchVendorsRef.current?.();
+    }, [navigate]);
 
     const fetchVendors = async () => {
         setLoading(true);
@@ -150,6 +150,8 @@ function AdminVendors() {
         if (!dateString) return 'N/A';
         return new Date(dateString).toLocaleDateString();
     };
+    fetchVendorsRef.current = fetchVendors;
+
 
     if (loading) {
         return (
