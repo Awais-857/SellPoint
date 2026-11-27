@@ -31,7 +31,7 @@ describe('demoStorage', () => {
     const recovered = getDemoState();
 
     expect(recovered.products.length).toBeGreaterThan(0);
-    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(8);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(9);
 
     saveDemoState({ products: [] });
     const unsupported = getDemoState();
@@ -49,7 +49,7 @@ describe('demoStorage', () => {
     expect(migrated.products[0].productName).toBe('Visitor custom product name');
     expect(migrated.notifications).toEqual(existing.notifications);
     expect(migrated.payments.length).toBe(migrated.orders.length);
-    expect(stored.version).toBe(8);
+    expect(stored.version).toBe(9);
   });
 
   test('migrates existing v7 notifications and visitor changes while adding payment records', () => {
@@ -64,7 +64,7 @@ describe('demoStorage', () => {
     expect(migrated.notifications).toEqual(existing.notifications);
     expect(migrated.payments.length).toBe(migrated.orders.length);
     expect(migrated.payments.find(payment => payment.orderId === 5017)).toMatchObject({ status: 'Partially Refunded', refundedAmount: 10 });
-    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(8);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(9);
   });
 
   test('migrates version 8 visitor data and adds the coupon collection', () => {
