@@ -1,11 +1,10 @@
 // src/components/Checkout.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './Checkout.module.css';
 
 function Checkout() {
-    const fetchCheckoutDataRef = useRef(null);
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [addresses, setAddresses] = useState([]);
@@ -50,10 +49,10 @@ function Checkout() {
             navigate('/login');
             return;
         }
-        fetchCheckoutDataRef.current?.();
-    }, [navigate]);
+        fetchCheckoutData();
+    }, [navigate, fetchCheckoutData]);
 
-    const fetchCheckoutData = async () => {
+    const fetchCheckoutData = useCallback(async () => {
     setLoading(true);
     setError('');
 
@@ -98,9 +97,7 @@ function Checkout() {
     } finally {
         setLoading(false);
     }
-};
-
-    fetchCheckoutDataRef.current = fetchCheckoutData;
+}, [navigate]);
 
     const handleAddAddress = async (e) => {
         e.preventDefault();
@@ -247,7 +244,8 @@ function Checkout() {
         groups[vendorKey].items.push(item);
         return groups;
     }, {});
-if (loading) {
+
+    if (loading) {
         return (
             <div className={styles['checkout-container']}>
                 <div className={styles['checkout-header']}>
@@ -270,9 +268,9 @@ if (loading) {
             <div className={styles['checkout-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                 <div className={styles['header-steps']}>
-                    <span className={`${styles['step']} ${styles['completed']}`}>Cart</span>
+                    <span className={styles['step']} className={styles['completed']}>Cart</span>
                     <span className={styles['step-separator']}>→</span>
-                    <span className={`${styles['step']} ${styles['active']}`}>Checkout</span>
+                    <span className={styles['step']} className={styles['active']}>Checkout</span>
                     <span className={styles['step-separator']}>→</span>
                     <span className={styles['step']}>Confirmation</span>
                 </div>
@@ -581,7 +579,7 @@ if (loading) {
                                 <span>${cartSummary.tax.toFixed(2)}</span>
                             </div>
                             <div className={styles['summary-divider']}></div>
-                            <div className={`${styles['summary-row']} ${styles['total']}`}>
+                            <div className={styles['summary-row']} className={styles['total']}>
                                 <span>Total</span>
                                 <span>${cartSummary.total.toFixed(2)}</span>
                             </div>
