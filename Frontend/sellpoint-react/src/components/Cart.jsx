@@ -32,7 +32,7 @@ function Cart() {
 
     useEffect(() => {
         fetchCartRef.current?.();
-    }, []);
+    }, [];
 
     const fetchCart = async () => {
         setLoading(true);
@@ -48,6 +48,8 @@ function Cart() {
             setLoading(false);
         }
     };
+
+    fetchCartRef.current = fetchCart;
 
     const calculateSummary = (items) => {
         const subtotal = items.reduce((sum, item) => sum + item.itemTotal, 0);
@@ -67,7 +69,7 @@ function Cart() {
         setUpdating(true);
         try {
             await updateQuantity(cartId, newQuantity);
-            await fetchCart();
+            await fetchCartRef.current?.();
         } catch (err) {
             console.error('Failed to update quantity', err);
             alert('Failed to update quantity. Please try again.');
