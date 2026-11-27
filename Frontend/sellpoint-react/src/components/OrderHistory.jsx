@@ -19,7 +19,7 @@ function OrderHistory() {
             return;
         }
 fetchOrdersRef.current?.();
-    }, [navigate];
+    }, [navigate]);
 
     const fetchOrders = async () => {
         setLoading(true);
