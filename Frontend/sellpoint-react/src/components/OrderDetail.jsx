@@ -1,11 +1,10 @@
 // src/components/OrderDetail.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderDetail.module.css';
 
 function OrderDetail() {
-    const fetchOrderDetailsRef = useRef(null);
     const { id } = useParams();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
@@ -22,10 +21,10 @@ function OrderDetail() {
             navigate('/login');
             return;
         }
-        fetchOrderDetailsRef.current?.();
-    }, [id, navigate]);
+        fetchOrderDetails();
+    }, [id, navigate, fetchOrderDetails]);
 
-    const fetchOrderDetails = async () => {
+    const fetchOrderDetails = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -43,9 +42,7 @@ function OrderDetail() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchOrderDetailsRef.current = fetchOrderDetails;
+    }, [id]);
 
     const handleCancelOrder = async () => {
         if (!window.confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
@@ -146,7 +143,8 @@ function OrderDetail() {
                 return 'item-default';
         }
     };
-if (loading) {
+
+    if (loading) {
         return (
             <div className={styles['order-detail-container']}>
                 <div className={styles['order-detail-header']}>
