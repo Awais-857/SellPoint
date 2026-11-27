@@ -22,7 +22,7 @@ describe('demoStorage', () => {
     const stored = JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY));
 
     expect(state.products.length).toBeGreaterThan(0);
-    expect(stored.version).toBe(8);
+    expect(stored.version).toBe(9);
     expect(stored.data.products).toHaveLength(state.products.length);
   });
 
@@ -65,6 +65,17 @@ describe('demoStorage', () => {
     expect(migrated.payments.length).toBe(migrated.orders.length);
     expect(migrated.payments.find(payment => payment.orderId === 5017)).toMatchObject({ status: 'Partially Refunded', refundedAmount: 10 });
     expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(8);
+  });
+
+  test('migrates version 8 visitor data and adds the coupon collection', () => {
+    const existing = getDemoState();
+    existing.products[0].productName = 'Saved before coupon update';
+    delete existing.coupons;
+    window.localStorage.setItem(DEMO_STATE_STORAGE_KEY, JSON.stringify({ version: 8, data: existing }));
+    const migrated = getDemoState();
+    expect(migrated.products[0].productName).toBe('Saved before coupon update');
+    expect(migrated.coupons.length).toBeGreaterThan(0);
+    expect(JSON.parse(window.localStorage.getItem(DEMO_STATE_STORAGE_KEY)).version).toBe(9);
   });
 
   test('seed data includes payment records for existing orders', () => {
