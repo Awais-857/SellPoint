@@ -4,6 +4,7 @@ import api from '../services/api';
 import styles from './AdminDisputes.module.css';
 
 function AdminDisputes() {
+    const fetchDisputesRef = useRef(null);
     const navigate = useNavigate();
     const [disputes, setDisputes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -32,6 +33,8 @@ function AdminDisputes() {
             setLoading(false);
         }
     };
+
+    fetchDisputesRef.current = fetchDisputes;
 
     const handleResolve = async (disputeId) => {
         if (!adminNotes.trim()) {
