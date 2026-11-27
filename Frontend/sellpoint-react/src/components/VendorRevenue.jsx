@@ -38,7 +38,7 @@ function VendorRevenue() {
         }
 
         fetchRevenueDataRef.current?.();
-    }, [selectedPeriod, navigate];
+    }, [selectedPeriod, navigate]);
 
     const fetchRevenueData = async () => {
         setLoading(true);
