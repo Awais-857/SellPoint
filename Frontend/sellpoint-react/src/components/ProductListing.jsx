@@ -1,5 +1,5 @@
 // src/components/ProductListing.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { catalogService } from '../services/catalogService';
 import ProductCard from './ProductCard';
@@ -8,8 +8,6 @@ import { addToCart } from '../services/cartHelper';
 import { IS_DEMO_MODE } from '../config/appConfig';
 
 function ProductListing() {
-    const fetchProductsRef = useRef(null);
-
     const navigate = useNavigate();
     const location = useLocation();
     const [products, setProducts] = useState([]);
@@ -47,23 +45,23 @@ function ProductListing() {
     // Fetch categories on load
     useEffect(() => {
         fetchCategories();
-    }, []);
+    }, [fetchCategories]);
 
     // Fetch products when filters change
     useEffect(() => {
-        fetchProductsRef.current?.();
-    }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, minRating, inStock, sortBy, sortOrder, currentPage]);
+        fetchProducts();
+    }, [fetchProducts]);
 
-    const fetchCategories = async () => {
+    const fetchCategories = useCallback(async () => {
         try {
             const categoriesData = await catalogService.getCategories();
             setCategories(categoriesData);
         } catch (err) {
             console.error('Failed to fetch categories', err);
         }
-    };
+    }, []);
 
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -89,7 +87,7 @@ function ProductListing() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedCategory, appliedSearchTerm, minPrice, maxPrice, minRating, inStock, sortBy, sortOrder, currentPage]);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -142,8 +140,6 @@ function ProductListing() {
             alert('Failed to add to cart. Please try again.');
         }
     };
-    fetchProductsRef.current = fetchProducts;
-
 
     return (
         <div className={styles['product-listing-container']}>
