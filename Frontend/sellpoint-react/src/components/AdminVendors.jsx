@@ -1,11 +1,10 @@
 // src/components/AdminVendors.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminVendors.module.css';
 
 function AdminVendors() {
-    const fetchVendorsRef = useRef(null);
     const navigate = useNavigate();
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -31,10 +30,10 @@ function AdminVendors() {
             return;
         }
 
-        fetchVendorsRef.current?.();
-    }, [navigate]);
+        fetchVendors();
+    }, [fetchVendors, navigate]);
 
-    const fetchVendors = async () => {
+    const fetchVendors = useCallback(async () => {
         setLoading(true);
         setError('');
         try {
@@ -57,9 +56,7 @@ function AdminVendors() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchVendorsRef.current = fetchVendors;
+    }, []);
 
     const handleViewVendor = (vendor) => {
         setSelectedVendor(vendor);
@@ -153,8 +150,6 @@ function AdminVendors() {
         if (!dateString) return 'N/A';
         return new Date(dateString).toLocaleDateString();
     };
-    fetchVendorsRef.current = fetchVendors;
-
 
     if (loading) {
         return (
