@@ -1,11 +1,10 @@
 // src/components/OrderConfirmation.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderConfirmation.module.css';
 
 function OrderConfirmation() {
-    const fetchOrderDetailsRef = useRef(null);
     const { id } = useParams();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
@@ -19,10 +18,10 @@ function OrderConfirmation() {
             navigate('/login');
             return;
         }
-        fetchOrderDetailsRef.current?.();
-    }, [id, navigate]);
+        fetchOrderDetails();
+    }, [id, navigate, fetchOrderDetails]);
 
-    const fetchOrderDetails = async () => {
+    const fetchOrderDetails = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -40,9 +39,7 @@ function OrderConfirmation() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchOrderDetailsRef.current = fetchOrderDetails;
+    }, [id]);
 
     const handleContinueShopping = () => {
         navigate('/products');
@@ -51,7 +48,8 @@ function OrderConfirmation() {
     const handleViewOrders = () => {
         navigate('/order-history');
     };
-if (loading) {
+
+    if (loading) {
         return (
             <div className={styles['confirmation-container']}>
                 <div className={styles['loading-state']}>
