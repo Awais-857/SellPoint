@@ -85,7 +85,7 @@ function AdminReports() {
         } catch (err) {
             console.error('Failed to fetch dashboard stats', err);
         }
-    };
+    }, []);
 
     const handleExportCSV = () => {
         if (!reportData.length) {
@@ -141,7 +141,7 @@ function AdminReports() {
         const maxRevenue = getMaxRevenue();
         if (maxRevenue === 0) return '0%';
         return `${(revenue / maxRevenue) * 100}%`;
-    }, []);
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
