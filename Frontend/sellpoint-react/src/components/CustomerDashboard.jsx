@@ -5,6 +5,7 @@ import api from '../services/api';
 import styles from './Dashboard.module.css';
 
 function CustomerDashboard() {
+    const fetchCustomerDataRef = useRef(null);
     const navigate = useNavigate();
     const username = localStorage.getItem('username');
     const email = localStorage.getItem('userEmail');
@@ -31,8 +32,8 @@ function CustomerDashboard() {
             return;
         }
 
-        fetchCustomerData();
-    }, []);
+        fetchCustomerDataRef.current?.();
+    }, [navigate, userType];
 
     const fetchCustomerData = async () => {
         setLoading(true);
@@ -62,14 +63,13 @@ function CustomerDashboard() {
         }
     };
 
+    fetchCustomerDataRef.current = fetchCustomerData;
+
     const handleLogout = () => {
         localStorage.clear();
         navigate('/login');
     };
-    fetchCustomerDataRef.current = fetchCustomerData;
-
-
-    if (loading) {
+if (loading) {
         return (
             <div className={styles['dashboard-container']}>
                 <nav className={styles['dashboard-nav']}>
