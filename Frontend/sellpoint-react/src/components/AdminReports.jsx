@@ -1,14 +1,10 @@
 // src/components/AdminReports.jsx
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './AdminReports.module.css';
 
 function AdminReports() {
-    const fetchReportsRef = useRef(null);
-    const fetchTopVendorsRef = useRef(null);
-    const fetchTopProductsRef = useRef(null);
-    const fetchDashboardStatsRef = useRef(null);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -44,13 +40,13 @@ function AdminReports() {
             return;
         }
 
-        fetchReportsRef.current?.();
-        fetchTopVendorsRef.current?.();
-        fetchTopProductsRef.current?.();
-        fetchDashboardStatsRef.current?.();
-    }, [reportType, dateRange, navigate]);
+        fetchReports();
+        fetchTopVendors();
+        fetchTopProducts();
+        fetchDashboardStats();
+    }, [reportType, dateRange, navigate, fetchReports, fetchTopVendors, fetchTopProducts, fetchDashboardStats]);
 
-    const fetchReports = async () => {
+    const fetchReports = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get('/admin/reports/sales', {
@@ -67,11 +63,9 @@ function AdminReports() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [reportType, dateRange]);
 
-    fetchReportsRef.current = fetchReports;
-
-    const fetchTopVendors = async () => {
+    const fetchTopVendors = useCallback(async () => {
         try {
             const response = await api.get('/admin/reports/top-vendors', {
                 params: {
@@ -84,11 +78,9 @@ function AdminReports() {
         } catch (err) {
             console.error('Failed to fetch top vendors', err);
         }
-    };
+    }, [dateRange]);
 
-    fetchTopVendorsRef.current = fetchTopVendors;
-
-    const fetchTopProducts = async () => {
+    const fetchTopProducts = useCallback(async () => {
         try {
             const response = await api.get('/admin/reports/top-products', {
                 params: {
@@ -101,11 +93,9 @@ function AdminReports() {
         } catch (err) {
             console.error('Failed to fetch top products', err);
         }
-    };
+    }, [dateRange]);
 
-    fetchTopProductsRef.current = fetchTopProducts;
-
-    const fetchDashboardStats = async () => {
+    const fetchDashboardStats = useCallback(async () => {
         try {
             const response = await api.get('/admin/dashboard/stats');
             setDashboardStats(response.data);
@@ -168,11 +158,9 @@ function AdminReports() {
         const maxRevenue = getMaxRevenue();
         if (maxRevenue === 0) return '0%';
         return `${(revenue / maxRevenue) * 100}%`;
-    };
+    }, []);
 
     if (loading && reportData.length === 0) {
-    fetchReportsRef.current = fetchReports;
-
         return (
             <div className={styles['admin-reports-container']}>
                 <div className={styles['admin-reports-header']}>
@@ -194,8 +182,6 @@ function AdminReports() {
             </div>
         );
     }
-
-    fetchDashboardStatsRef.current = fetchDashboardStats;
 
     return (
         <div className={styles['admin-reports-container']}>
