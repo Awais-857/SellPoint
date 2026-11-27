@@ -1,10 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderTracking.module.css';
 
 function OrderTracking() {
-    const fetchTrackingRef = useRef(null);
     const { id } = useParams();
     const navigate = useNavigate();
     const [tracking, setTracking] = useState(null);
@@ -17,10 +16,10 @@ function OrderTracking() {
             navigate('/login');
             return;
         }
-        fetchTrackingRef.current?.();
-    }, [id, navigate]);
+        fetchTracking();
+    }, [id, navigate, fetchTracking]);
 
-    const fetchTracking = async () => {
+    const fetchTracking = useCallback(async () => {
         setLoading(true);
         try {
             const response = await api.get(`/orders/${id}/tracking`);
@@ -30,16 +29,15 @@ function OrderTracking() {
         } finally {
             setLoading(false);
         }
-    };
-
-    fetchTrackingRef.current = fetchTracking;
+    }, [id]);
 
     const getStatusStep = (status) => {
         const steps = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
         const currentIndex = steps.findIndex(s => s.toLowerCase() === status?.toLowerCase());
         return currentIndex;
     };
-if (loading) return <div className={styles['tracking-loading']}>Loading tracking info...</div>;
+
+    if (loading) return <div className={styles['tracking-loading']}>Loading tracking info...</div>;
     if (error || !tracking) return <div className={styles['tracking-error']}>{error || 'Order not found'}</div>;
 
     const statusSteps = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
