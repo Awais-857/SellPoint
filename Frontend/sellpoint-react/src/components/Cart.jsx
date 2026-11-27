@@ -29,9 +29,7 @@ function Cart() {
     const loggedIn = isLoggedIn();
     const demoMode = IS_DEMO_MODE;
 
-    useEffect(() => {
-        fetchCart();
-    }, [fetchCart]);
+
 
     const fetchCart = useCallback(async () => {
         setLoading(true);
@@ -53,6 +51,10 @@ function Cart() {
             setLoading(false);
         }
     }, []);
+
+    useEffect(() => {
+        fetchCart();
+    }, [fetchCart]);
 
     const handleUpdateQuantity = async (cartId, newQuantity) => {
         if (newQuantity < 1) {
