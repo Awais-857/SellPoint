@@ -5,6 +5,10 @@ import api from '../services/api';
 import styles from './AdminReports.module.css';
 
 function AdminReports() {
+    const fetchReportsRef = useRef(null);
+    const fetchTopVendorsRef = useRef(null);
+    const fetchTopProductsRef = useRef(null);
+    const fetchDashboardStatsRef = useRef(null);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -40,10 +44,10 @@ function AdminReports() {
             return;
         }
 
-        fetchReports();
-        fetchTopVendors();
-        fetchTopProducts();
-        fetchDashboardStats();
+        fetchReportsRef.current?.();
+        fetchTopVendorsRef.current?.();
+        fetchTopProductsRef.current?.();
+        fetchDashboardStatsRef.current?.();
     }, [reportType, dateRange, navigate]);
 
     const fetchReports = async () => {
@@ -65,6 +69,8 @@ function AdminReports() {
         }
     };
 
+    fetchReportsRef.current = fetchReports;
+
     const fetchTopVendors = async () => {
         try {
             const response = await api.get('/admin/reports/top-vendors', {
@@ -80,6 +86,8 @@ function AdminReports() {
         }
     };
 
+    fetchTopVendorsRef.current = fetchTopVendors;
+
     const fetchTopProducts = async () => {
         try {
             const response = await api.get('/admin/reports/top-products', {
@@ -94,6 +102,8 @@ function AdminReports() {
             console.error('Failed to fetch top products', err);
         }
     };
+
+    fetchTopProductsRef.current = fetchTopProducts;
 
     const fetchDashboardStats = async () => {
         try {
@@ -184,6 +194,8 @@ function AdminReports() {
             </div>
         );
     }
+
+    fetchDashboardStatsRef.current = fetchDashboardStats;
 
     return (
         <div className={styles['admin-reports-container']}>
