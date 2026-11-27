@@ -22,21 +22,7 @@ function VendorRevenue() {
     const [monthlyRevenue, setMonthlyRevenue] = useState([]);
     const [selectedPeriod, setSelectedPeriod] = useState('monthly'); // 'monthly', 'yearly'
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userType = localStorage.getItem('userType');
 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-        if (userType !== 'Vendor') {
-            navigate('/dashboard');
-            return;
-        }
-
-        fetchRevenueData();
-    }, [selectedPeriod, navigate, fetchRevenueData]);
 
     const fetchRevenueData = useCallback(async () => {
         setLoading(true);
@@ -63,6 +49,22 @@ function VendorRevenue() {
             setLoading(false);
         }
     }, [selectedPeriod]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+        if (userType !== 'Vendor') {
+            navigate('/dashboard');
+            return;
+        }
+
+        fetchRevenueData();
+    }, [selectedPeriod, navigate, fetchRevenueData]);
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
