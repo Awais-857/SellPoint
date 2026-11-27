@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import styles from './OrderTracking.module.css';
@@ -36,6 +36,8 @@ function OrderTracking() {
         const currentIndex = steps.findIndex(s => s.toLowerCase() === status?.toLowerCase());
         return currentIndex;
     };
+    fetchTrackingRef.current = fetchTracking;
+
 
     if (loading) return <div className={styles['tracking-loading']}>Loading tracking info...</div>;
     if (error || !tracking) return <div className={styles['tracking-error']}>{error || 'Order not found'}</div>;
