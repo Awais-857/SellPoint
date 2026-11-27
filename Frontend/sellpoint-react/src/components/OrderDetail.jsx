@@ -5,6 +5,7 @@ import api from '../services/api';
 import styles from './OrderDetail.module.css';
 
 function OrderDetail() {
+    const fetchOrderDetailsRef = useRef(null);
     const { id } = useParams();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
@@ -21,8 +22,8 @@ function OrderDetail() {
             navigate('/login');
             return;
         }
-        fetchOrderDetails();
-    }, [id]);
+        fetchOrderDetailsRef.current?.();
+    }, [id, navigate];
 
     const fetchOrderDetails = async () => {
         setLoading(true);
@@ -43,6 +44,8 @@ function OrderDetail() {
             setLoading(false);
         }
     };
+
+    fetchOrderDetailsRef.current = fetchOrderDetails;
 
     const handleCancelOrder = async () => {
         if (!window.confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
@@ -143,10 +146,7 @@ function OrderDetail() {
                 return 'item-default';
         }
     };
-    fetchOrderDetailsRef.current = fetchOrderDetails;
-
-
-    if (loading) {
+if (loading) {
         return (
             <div className={styles['order-detail-container']}>
                 <div className={styles['order-detail-header']}>
