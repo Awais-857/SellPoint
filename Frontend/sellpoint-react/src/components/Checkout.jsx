@@ -270,9 +270,9 @@ function Checkout() {
             <div className={styles['checkout-header']}>
                 <h1 onClick={() => navigate('/products')}>SellPoint</h1>
                 <div className={styles['header-steps']}>
-                    <span className={styles['step']} className={styles['completed']}>Cart</span>
+                    <span className={`${styles['step']} ${styles['completed']}`}>Cart</span>
                     <span className={styles['step-separator']}>→</span>
-                    <span className={styles['step']} className={styles['active']}>Checkout</span>
+                    <span className={`${styles['step']} ${styles['active']}`}>Checkout</span>
                     <span className={styles['step-separator']}>→</span>
                     <span className={styles['step']}>Confirmation</span>
                 </div>
@@ -581,7 +581,7 @@ function Checkout() {
                                 <span>${cartSummary.tax.toFixed(2)}</span>
                             </div>
                             <div className={styles['summary-divider']}></div>
-                            <div className={styles['summary-row']} className={styles['total']}>
+                            <div className={`${styles['summary-row']} ${styles['total']}`}>
                                 <span>Total</span>
                                 <span>${cartSummary.total.toFixed(2)}</span>
                             </div>
